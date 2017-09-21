@@ -1,11 +1,12 @@
 import React from "react";
 import moment from 'moment';
-import { Requests,RequestActions } from '/modules/models/Requests';
+import { Requests,RequestActions,PPM_Schedulers } from '/modules/models/Requests';
 import { Files } from '/modules/models/Files';
 import { Reports } from '/modules/models/Reports';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { TextArea } from '/modules/ui/MaterialInputs';
 import { AutoForm } from '/modules/core/AutoForm';
+import { ContactCard } from '/modules/mixins/Members';
 import { Modal } from '/modules/ui/Modal';
 
 const WoTable = React.createClass( {
@@ -14,7 +15,7 @@ const WoTable = React.createClass( {
       let team = user.getSelectedTeam();
       let facility = Session.getSelectedFacility();
         return{
-            data:[],
+            data: this.props.data || [],
             removedImg:[],
             expandall: false,
             comment: "",
@@ -24,94 +25,54 @@ const WoTable = React.createClass( {
           };
     },
 
-	componentWillMount() {
-    this.updateImages();
-    let query = {
-      "facility._id" : this.state.facility._id ,
-      service: this.props.service,
-      type : "toggle"}
-    let RemovedWoKeys =  Reports.findOne(query);
+  componentWillReceiveProps(props){
     this.setState({
-      removedImg : RemovedWoKeys && RemovedWoKeys.keys ? RemovedWoKeys.keys : []
-    })
-	},
-  componentWillReceiveProps(){
-    this.updateImages();
-    let query = {
-      "facility._id" : this.state.facility._id ,
-      service: this.props.service,
-      type : "toggle"}
-    let RemovedWoKeys =  Reports.findOne(query);
-    this.setState({
-      removedImg : RemovedWoKeys && RemovedWoKeys.keys ? RemovedWoKeys.keys : []
+      data: props.data || []
     })
   },
+
   componentDidMount(){
     	$(".loader").hide();
   },
-    updateImages(){
-      var user, team, facility, requests, data = [];
-          var user = Meteor.user();
-  		if ( user ) {
-  			var q = {};
-  			team = Session.getSelectedTeam();
-  			facility = Session.getSelectedFacility();
-  			if ( facility ) {
-  				let services = facility.servicesRequired;
-          // console.log(services);
-          services = services.filter((val)=> val != null)
-                  q['facility._id'] = facility._id;
-                  // q['closeDetails.completionDate'] = {
-                  //     $gte: moment().startOf("month").toDate(),
-                  //     $lte: moment().endOf("month").toDate()
-                  // };
-                  //  q['dueDate'] = {
-                  //      $gte: moment().startOf("month").toDate(),
-                  //      $lte: moment().endOf("month").toDate()
-                  //  };
 
-                  q["type"] = {$ne:'Defect'}
-
-                  q['status'] ={$nin:['Deleted','PPM']};
-                      q['service.name'] = this.props.service;
-                      let requests = Requests.findAll(q);
-                      if (requests.length){
-                          data.push({
-                              name: this.props.service,
-                              requests: requests
-                          })
-                      }
-  			}
-  		}
-  		this.setState({
-              data
-          })
-    },
-    handleReload(){
-      var facility = this.state.facility
-      let query = {
-        "facility._id" : facility._id ,
-        service: this.props.service,
-        type : "toggle"}
-      let RemovedWoKeys =  Reports.findOne(query);
-      if(RemovedWoKeys){
-        RemovedWoKeys.keys = [] ;
-        this.setState({
-          removedImg : RemovedWoKeys.keys
-        },()=>{
-          Reports.save.call(RemovedWoKeys);
-        })
-      }else{
-        return
+  isHidden(facility, service ){
+    let query = {
+      "facility._id" : facility._id ,
+      type : this.props.defect ? "defectToggle" : "toggle" }
+      if(service){
+        query.service = service;
       }
+    let RemovedWoKeys =  Reports.findOne(query);
+    return RemovedWoKeys ? true : false;
+  },
+
+    handleReload(){
+      if(this.props.reload){
+        this.props.reload();
+      }
+      // var facility = this.state.facility
+      // let query = {
+      //   "facility._id" : facility._id ,
+      //   service: this.props.service,
+      //   type : this.props.defect ? "defectToggle" : "toggle" }
+      // let RemovedWoKeys =  Reports.findOne(query);
+      // if(RemovedWoKeys){
+      //   RemovedWoKeys.keys = [] ;
+      //   this.setState({
+      //     removedImg : RemovedWoKeys.keys
+      //   },()=>{
+      //     Reports.save.call(RemovedWoKeys);
+      //   })
+      // }else{
+      //   return
+      // }
 
     },
-    handleRemove( key,r ){
-        var facility = this.state.facility
+    handleRemove( facility, key ,r ){
         let query = {
           "facility._id" : facility._id ,
           service: r.service.name,
-          type : "toggle"}
+          type : this.props.defect ? "defectToggle" : "toggle" }
         let RemovedWoKeys =  Reports.findOne(query);
         console.log(RemovedWoKeys);
 
@@ -122,7 +83,7 @@ const WoTable = React.createClass( {
             } ,
             service : r.service.name,
             keys:[key],
-            type : "toggle"
+            type : this.props.defect ? "defectToggle" : "toggle"
           }
           this.setState({
             removedImg : item.keys
@@ -154,7 +115,7 @@ const WoTable = React.createClass( {
                       title="Hide image"
                       onClick={(e) => {
                         e.stopPropagation();
-                        this.handleRemove(_id,r)}}
+                        this.handleRemove(r.facility, _id,r)}}
                       >
                         &times;
                       </span>
@@ -165,9 +126,7 @@ const WoTable = React.createClass( {
         }
         return null;
     },
-    getComment(s) {
-
-      var facility = this.state.facility
+    getComment(facility, s) {
       var query = {};
       if ( facility ) {
         query[ "facility._id" ] = facility._id;
@@ -180,7 +139,7 @@ const WoTable = React.createClass( {
       let commentQuery = {}
       commentQuery[ "facility._id" ] = facility._id;
       commentQuery[ "team._id" ] = team._id;
-      commentQuery["type"]="WOComment";
+      commentQuery["type"]=this.props.defect ? "defect" : "WOComment";
       commentQuery["code"]= s.code ;
       commentQuery["createdAt"] = {
         $gte: moment().subtract(0, "months").startOf("month").toDate(),
@@ -206,7 +165,7 @@ const WoTable = React.createClass( {
             currentMonth = false
             finalComment = previousMonthServiceComment
           }
-          return <CommentRequest serviceName={s.service.name} request = {s} commentData = {finalComment} currentMonth ={currentMonth}/>
+          return <CommentRequest serviceName={s.service && s.service.name} facility={facility} request = {s} commentData = {finalComment} currentMonth ={currentMonth} {...this.props}/>
         }
         //console.log(d);
       }
@@ -216,7 +175,7 @@ const WoTable = React.createClass( {
 
 		return (
 			<div className = "defectTable">
-        <div style={{
+        {!this.props.WoReport && <div style={{
           color:"#0152b5",
           fontSize:"10px",
           fontWeight:"900",
@@ -225,81 +184,79 @@ const WoTable = React.createClass( {
               }} onClick={(e)=>{
                 e.stopPropagation();
                 this.handleReload();
-              }}>Reload</div>
+              }}>Reload</div>}
                 <div className="ibox-content">
                   <table>
                     <thead>
                     <tr>
                     <th>WO#</th>
                     <th>Summary & Images</th>
-                    <th>Value</th>
+                    {this.props.defect ? <th>Status</th> : <th>Value</th>}
+                    {this.props.WoReport && <th>Status</th> }
+                    {this.props.WoReport && <th>Supplier</th>}
                     <th>Comments</th>
                     <th>Opt</th>
                   </tr>
                   </thead>
                 <tbody>
 
-                  {this.state.data.map( ( d, idx ) => {
-                    return(
-
-                      _.flatten(d.requests.map( (r, idy) => {
-                        if(!_.contains(this.state.removedImg, r._id) ){
-                          let imgs = [];
-                          let owner = r.getOwner();
-                          if (r.attachments && r.attachments.length) {
-                            r.attachments.map( (attach, idz) => {
-                              let element = this.getImage(attach._id,r);
-                              // console.log(element);
-                              if( element ) {
-                                imgs.push( element);
-                              }
-                            });
+                  {this.state.data.map( ( r, idx ) => {
+                    if(!this.isHidden(r.facility, r.service && r.service.name)){
+                      let imgs = [];
+                      let owner = r.getOwner();
+                      if (r.attachments && r.attachments.length) {
+                        r.attachments.map( (attach, idz) => {
+                          let element = this.getImage(attach._id,r);
+                          if( element ) {
+                            imgs.push( element);
                           }
-                          return (
-                            <tr key={idx + idy} className="row-WO">
-                              <td onClick={()=>{
-                                r["tabIndex"]= 0
-                                RequestActions.view.run( r )
-                              }}></td>
-                              <td style={{width:"45%"}} onClick={()=>{
-                                r["tabIndex"]= 0
-                                RequestActions.view.run( r )
-                              }}>
-                              <label style={{position:"absolute",left:"40px",cursor:"pointer"}}>{r.code}</label>
-                              <span style={{
-                                color:"#0152b5",
-                                fontSize:"10px",
-                                fontWeight:"900",
-                                float:"right",
-                                cursor:"pointer",
-                                padding:"5px"
-                              }} onClick={(e)=>{
-                                e.stopPropagation();
-                                r["tabIndex"]= 1
-                                RequestActions.view.run( r )
-                              }}>+ Add-image</span>
-                              <div style={{cursor:"pointer"}}>{r.name}</div>
-                              <div style={{cursor:"pointer"}}>{(r.hasOwnProperty("subservice") && r.subservice != null && r.subservice.hasOwnProperty("name")) ? "Sub-Service :" +  r.subservice.name :null }</div>
-                              <div style={{cursor:"pointer"}}>Due Date : {moment(r.dueDate).format("DD-MM-YYYY")}</div>
-                              {imgs}
-                            </td>
-                            <td>{r.costThreshold}</td>
-                            <td key ={idx + idy + 20}>{this.getComment(r)}</td>
-                            <td  style={{
-                              color:"#0152b5",
-                              fontSize:"10px",
-                              fontWeight:"900",
-                              cursor:"pointer",
-                              padding:"5px"
-                            }} onClick={(e)=>{
-                              e.stopPropagation();
-                              this.handleRemove(r._id,r)
-                            }}>hide</td>
-                          </tr>)
-                        }
-                        return null ;
-                      }), true)
-                )
+                        });
+                      }
+                      return (
+                        <tr key={idx} className="row-WO">
+                          <td onClick={()=>{
+                            r["tabIndex"]= 0
+                            RequestActions.view.run( r )
+                          }}><label style={{cursor:"pointer"}}>{r.code}</label></td>
+                          <td style={{width:"45%"}} onClick={()=>{
+                            r["tabIndex"]= 0
+                            RequestActions.view.run( r )
+                          }}>
+                          <span style={{
+                            color:"#0152b5",
+                            fontSize:"10px",
+                            fontWeight:"900",
+                            float:"right",
+                            cursor:"pointer",
+                            padding:"5px"
+                          }} onClick={(e)=>{
+                            e.stopPropagation();
+                            r["tabIndex"]= 1
+                            RequestActions.view.run( r )
+                          }}>+ Add-image</span>
+                          <div style={{cursor:"pointer"}}>{r.name}</div>
+                          <div style={{cursor:"pointer"}}>{(r.hasOwnProperty("subservice") && r.subservice != null && r.subservice.hasOwnProperty("name")) ? "Sub-Service :" +  r.subservice.name :null }</div>
+                          {this.props.defect ? null : <div style={{cursor:"pointer"}}>Due Date : {moment(r.dueDate).format("DD-MM-YYYY")}</div>}
+                          <div style={{cursor:"pointer"}}>Issued Date : {moment(r.issuedAt).format("DD-MM-YYYY")}</div>
+                          {imgs}
+                        </td>
+                        {this.props.defect ? <td>{r.status}</td> : <td>{r.costThreshold}</td>}
+                        {this.props.WoReport && <td>{r.status}</td> }
+                        {this.props.WoReport && <td><ContactCard item = { r.supplier }/></td>}
+                        <td key ={idx + 20}>{this.getComment(r.facility, r)}</td>
+                        <td  style={{
+                          color:"#0152b5",
+                          fontSize:"10px",
+                          fontWeight:"900",
+                          cursor:"pointer",
+                          padding:"5px"
+                        }} onClick={(e)=>{
+                          e.stopPropagation();
+                          this.handleRemove(r.facility, r._id, r)
+                        }}>hide</td>
+                      </tr>)
+                    }
+                    return null ;
               })}
                 </tbody>
                   </table>
@@ -331,7 +288,7 @@ const CommentRequest = React.createClass( {
 	handleComment(item){
 		let	user = Meteor.user();
 		let team = user.getSelectedTeam();
-		let facility = Session.getSelectedFacility();
+		let facility = this.props.facility; //Session.getSelectedFacility();
 		let commentSchema = {
 			service : this.props.serviceName,
       code:this.props.request.code,
@@ -341,7 +298,7 @@ const CommentRequest = React.createClass( {
 			facility :{
 				_id : facility._id
 			},
-      type:"WOComment",
+      type:this.props.defect ? "defect" : "WOComment",
 			comment : this.state.comment.trim()
 		}
 

@@ -20,6 +20,11 @@ const ServicesRequiredEditorRow = React.createClass( {
 
 	mixins: [ ReactMeteorData ],
 
+	getInitialState() {
+		return {
+		}
+	},
+
 	getMeteorData() {
 		var service, supplier, suppliers, defaultContact;
 		service = this.props.service;
@@ -44,6 +49,9 @@ const ServicesRequiredEditorRow = React.createClass( {
 			service,
 			supplier,
 		}
+	},
+
+	componentWillReceiveProps(){
 	},
 
 	updateSupplier( supplier, event ) {
@@ -89,8 +97,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 	removeService(){
 		if(this.props.onChange){
 			this.props.onChange(null);
-				Modal.hide();
-			}
+			Modal.hide();
+		}
 	},
 
 	render() {
@@ -107,14 +115,25 @@ const ServicesRequiredEditorRow = React.createClass( {
 					{clickExpand?<span onClick={clickExpand} className="services-editor-expand-icon"><i className="fa fmc-fa-icon-expand"></i></span>:null}
 
 		    		<input
-		    			defaultValue={service.name||undefined}
+		    			//defaultValue={service.name||undefined}
+						value={service.name||undefined}
 		    			readOnly={readOnly}
 		    			onChange={this.updateServiceName}
-						onKeyDown={ (evt) => this.props.onKeyDown(evt) }
+						onKeyDown={ (evt) => {
+							this.props.onKeyDown(evt) }}
 						id={this.props.id}
+						onBlur={()=>{
+							if(_.isEmpty(service.name)){
+								this.removeService();
+							}
+							if(this.props.sortService){
+								this.props.sortService()
+							}
+						}}
 					/>
 						{!readOnly?<span className="services-editor-delete-icon"
 							onClick = {
+
 								() => {
 									localStorage.removeItem('defaultService');
 									localStorage.setItem('defaultService', JSON.stringify(this.data.service));
@@ -134,7 +153,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 													}
 												}
 											/>
-											<button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={this.removeService}>&times; Delete</button>
+											<button style={{float:"left", color: "red", position:"relative",top:"-43px"}} className="btn btn-flat btn-primary" onClick={this.removeService}> Delete</button>
 									</div>
 								})
 							} } ><i title="Configure" className="fa fa-cogs" aria-hidden="true"></i></span>:null}

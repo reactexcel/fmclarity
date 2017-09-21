@@ -11,7 +11,6 @@ export default function ContactCard( props ) {
 		view = null,
 		role = null,
 		removeEmail = props.removeEmail;
-
 	if ( contact && contact.getProfile ) {
 		profile = contact.getProfile();
 	}
@@ -19,6 +18,9 @@ export default function ContactCard( props ) {
 	if ( group != null ) {
 		role = RBAC.getRole( contact, props.group );
 	} else if ( props.team ) {
+		role = RBAC.getRole( contact, props.team );
+	}
+	if(role == undefined){
 		role = RBAC.getRole( contact, props.team );
 	}
 

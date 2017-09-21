@@ -16,6 +16,7 @@ import { Documents } from '/modules/models/Documents';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
+import { Files } from '/modules/models/Files';
 import { Users } from '/modules/models/Users';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { AssigneeRequestEmailView } from '/modules/core/Email';
@@ -34,7 +35,8 @@ const Requests = new Model( {
         [ DocMessages, {
             helpers: {
                 getInboxName() {
-                    return "work order #" + this.code + ' "' + this.getName() + '"';
+                    var title = this.invoiceDetails && this.invoiceDetails.invoiceNumber ? "invoice #" + this.invoiceDetails.invoiceNumber : "work order #" + this.code;
+                    return title + ' "' + this.getName() + '"';
                 },
                 getWatchers( message ) {
                     let members = this.getMembers(),
@@ -91,7 +93,7 @@ const Requests = new Model( {
 } )
 
 Requests.save.before( ( request ) => {
-    if ( request.type == "Preventative" ) {
+    if ( request.type == "Schedular" ) {
         request.status = "PPM";
         request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
@@ -234,8 +236,7 @@ Requests.methods( {
 
     create: {
         authentication: true,
-        method: function( request ) {
-
+        method: function( request, furtherWorkRequired ) {
             let status = 'New';
 
             // The description field simply carries the value to be sent to the notification or comment.
@@ -248,7 +249,7 @@ Requests.methods( {
                 request.costThreshold = 0;
             }
 
-            if ( request.type == 'Preventative' ) {
+            if ( request.type == 'Schedular' ) {
                 status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
@@ -279,14 +280,16 @@ Requests.methods( {
                 if (newRequest.assignee ) {
                     newRequest.setAssignee( newRequest.assignee );
                 }
-                newRequest.distributeMessage( {
-                    message: {
-                        verb: "created",
-                        read: false,
-                        subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
-                        body: description
-                    }
-                } );
+                if(!furtherWorkRequired){
+                    newRequest.distributeMessage( {
+                        message: {
+                            verb: "created",
+                            read: false,
+                            subject: "A new work order has been created" + ( owner ? ` by ${owner.getName()}` : '' ),
+                            body: description
+                        }
+                    } )
+                }
             }
             return newRequest;
         }
@@ -827,7 +830,7 @@ function checkIssuePermissions( role, user, request ) {
     let hasSupplier = request.supplier && request.supplier._id,
         userCanIssue = false;
 
-    if ( request.type != 'Preventative' && hasSupplier ) {
+    if ( request.type != 'Schedular' && hasSupplier ) {
         let team = Teams.findOne( request.team._id ),
             role = team.getMemberRole( user ),
             requestIsInvoice = request.invoiceDetails && request.invoiceDetails.details;
@@ -907,11 +910,12 @@ function actionIssue( request ) {
 
     if ( request ) {
         if ( request.code ) {
-            //code = request.code;
+            code = request.code;
             let team = Teams.findOne( {
                 _id: request.team._id
             } );
-            code = team.getNextWOCode();
+            //code = team.getNextWOCode();
+            code = request.code;
         } else if ( request.team ) {
             let team = Teams.findOne( {
                 _id: request.team._id
@@ -1078,6 +1082,13 @@ function actionComplete( request ) {
 
     if ( request.closeDetails.furtherWorkRequired ) {
 
+        request.distributeMessage( {
+            message: {
+                verb: 'completed',
+                subject: "Work order #" + request.code + " has been completed"
+            }
+        } );
+
         var closer = Meteor.user(),
             closerRole = closer.getRole();
 
@@ -1094,6 +1105,7 @@ function actionComplete( request ) {
             service: request.service,
             subservice: request.subservice,
             name: "FOLLOW UP - " + request.name,
+            //name: request.name,
             description: request.closeDetails.furtherWorkDescription,
             priority: request.closeDetails.furtherPriority || 'Scheduled',
             costThreshold: request.closeDetails.furtherQuoteValue
@@ -1104,8 +1116,48 @@ function actionComplete( request ) {
             newRequest.code = team.getNextWOCode();
         }
 
-        var response = Meteor.call( 'Issues.create', newRequest );
+        var response = Meteor.call( 'Issues.create', newRequest, true );
         var newRequest = Requests.findOne( response._id );
+        request.distributeMessage( {
+            message: {
+                verb: "raised a follow up",
+                subject: "Work order #" + newRequest.code + " requested",
+                target: newRequest.getInboxId(),
+                digest: false,
+                read: true,
+                body: request.description,
+                //alert: false
+            }
+        } );
+        newRequest.distributeMessage( {
+            message: {
+                verb: "requested a follow up to",
+                subject: closer.getName() + " requested a follow up to " + request.getName(),
+                body: newRequest.description,
+                target: request.getInboxId(),
+                digest: false,
+                read: true,
+                //alert: false
+            }
+        } );
+        //let newResponse = Meteor.call( 'Issues.issue', newRequest );
+        let newRequest = Requests.findOne( response._id )
+        newRequest.distributeMessage( {
+            message: {
+                verb: "created",
+                read: false,
+                subject: "work order #" + ( newRequest ? `  ${newRequest.code}` : '' ),
+                body: newRequest.description
+            }
+        } )
+        /*newRequest.distributeMessage( {
+            message: {
+                verb: "created",
+                read: false,
+                subject: "work order" + ( owner ? ` by ${owner.getName()}` : '' ),
+                body: newRequest.description
+            }
+        } );*/
         //ok cool - but why send notification and not distribute message?
         //is it because distribute message automatically goes to all recipients
         //I think this needs to be replaced with distribute message
@@ -1120,57 +1172,57 @@ function actionComplete( request ) {
                 read: true,
                 //alert: false
             }
-        } );
-
-        newRequest.distributeMessage( {
-            message: {
-                verb: "requested a follow up to",
-                subject: closer.getName() + " requested a follow up to " + request.getName(),
-                body: newRequest.description,
-                target: request.getInboxId(),
-                digest: false,
-                read: true,
-                //alert: false
-            }
         } );*/
 
-        let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
+
+
+        /*let roles = [ "portfolio manager", "facility manager", "team portfolio manager" ]
         if ( _.indexOf( roles, closerRole ) > -1 ) {
             Meteor.call( 'Issues.issue', newRequest );
-        }
+        }*/
 
 
     } else if( request.closeDetails.jobCancelled == true ){
         request.distributeMessage( {
             message: {
-                verb: 'closed',
+                verb: 'cancelled',
                 body: "JOB CANCELLED: "+request.closeDetails.comment,
-                subject: "Work order #" + request.code + " has been closed"
+                subject: "Work order #" + request.code + " has been cancelled"
             }
         } );
     } else {
-
         request.distributeMessage( {
             message: {
                 verb: 'completed',
                 subject: "Work order #" + request.code + " has been completed"
             }
         } );
-
     }
 
     return request;
 }
 
 function actionInvoice( request ) {
+    request.invoiceDetails.status = 'New';
+    if ( request.invoiceDetails && request.invoiceDetails.invoice ) {
+        var files = request.invoiceDetails.invoice;
+        for (var i = 0; i < files.length; i++) {
+            var file = Files.findOne({_id:files[i]._id});
+            var filename = file && file.original && file.original.name;
+            var fileExists = false;
+            for (var x = 0; x < request.attachments.length; x++) {
 
-    if ( request.invoiceDetails && request.invoiceDetails.details ) {
-
-        if ( request.invoiceDetails.invoice ) {
-            request.attachments.push( request.invoiceDetails.invoice );
+                let f = Files.findOne({_id:request.attachments[x]._id}),
+                fname = f && f.original && f.original.name;
+                if (filename == fname) {
+                    fileExists =  true;
+                }
+            }
+            if (!fileExists) {
+                request.attachments.push( files[i] );
+              }
         }
     }
-    request.invoiceDetails.status = 'New';
     Meteor.call( 'Issues.save', request );
     request = Requests.findOne( request._id );
 

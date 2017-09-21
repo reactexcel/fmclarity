@@ -18,14 +18,14 @@ const ServicesRequiredEditor = React.createClass( {
 		let item = this.props.item || this.state.item,
 			field = this.props.field || "servicesRequired",
 			services = item && field ? item[ field ] : [];
-
+            services = this.sortServices(services)
 		return {
 			item,
 			field,
 			services: services || [],
 			expanded: {},
 			drag: false,
-      suppliers: this.props.suppliers,
+            suppliers: this.props.suppliers,
 		}
 	},
 
@@ -38,12 +38,13 @@ const ServicesRequiredEditor = React.createClass( {
 			item = props.item;
 			field = props.field || "servicesRequired";
 			services = item && field ? item[ field ] : [];
+            services = this.sortServices(services)
 			this.setState( {
 				item: item,
 				field: field,
 				services: services || [],
 				expanded: {},
-        suppliers: this.props.suppliers,
+                suppliers: this.props.suppliers,
 			} );
 		}
 	},
@@ -54,7 +55,7 @@ const ServicesRequiredEditor = React.createClass( {
 
 	componentDidMount() {
 		this.save = _.debounce( this.save, 1000 );
-		$("#sortable").sortable({
+		/*$("#sortable").sortable({
 			stop: function(event, ui) {
 				console.log( { val: ui.item.val() } );
 				console.log(parseInt(ui.position.top / ui.item.height()) -2 );
@@ -86,7 +87,7 @@ const ServicesRequiredEditor = React.createClass( {
 			placeholder: "ui-state-highlight",
 			axis: "y",
 		});
-		$( "#sortable" ).disableSelection();
+		$( "#sortable" ).disableSelection();*/
 	},
 
 	save() {
@@ -136,12 +137,13 @@ const ServicesRequiredEditor = React.createClass( {
 			services.push( {
 				name: ""
 			} );
+            //services = this.sortServices(services)
 			this.setState( {
 				services: services
 			}, () => {
-        $("input#service-" + (services.length -1 )).click();
-        $("input#service-" + (services.length -1 )).focus();
-      } )
+                $("input#service-" + (services.length -1 )).click();
+                $("input#service-" + (services.length -1 )).focus();
+            } )
 			this.save();
 		}
 	},
@@ -156,12 +158,13 @@ const ServicesRequiredEditor = React.createClass( {
 			services[ idx ].children.push( {
 				name: ""
 			} );
+            //services = this.sortServices(services)
 			this.setState( {
 				services: services
 			}, () => {
-        $("input#subservice-" + (services[idx].children.length -1 )).click();
-        $("input#subservice-" + (services[idx].children.length -1 )).focus();
-      } )
+                $("input#subservice-" + (services[idx].children.length -1 )).click();
+                $("input#subservice-" + (services[idx].children.length -1 )).focus();
+            } )
 			this.save();
 		}
 	},
@@ -183,7 +186,6 @@ const ServicesRequiredEditor = React.createClass( {
       } else {
         this.addService();
       }
-      console.log({t:"Added to ",row, subRow});
       } else {
         console.log(((subRow||row)+1),"count",{row,subRow});
          $("input"+ selectorID +((subRow && subRow >= 0?subRow:row)+1)).click();
@@ -192,25 +194,49 @@ const ServicesRequiredEditor = React.createClass( {
     }
   },
 
+  sortServices(services){
+      services = _.without(services, null);
+      services = this.sortingFunction(services)
+      services.map((s,i)=>{
+          if(services[i].children && !_.isEmpty(services[i].children)){
+              services[i].children = _.without(services[i].children, null);
+              services[i].children = this.sortingFunction(services[i].children)
+          }
+      })
+      return services;
+  },
+
+  sortingFunction(arr) {
+      let sortedList = arr.sort( (a, b) => {
+          if( a && a.name && b && b.name ) {
+              var textA = a.name.toUpperCase();
+              var textB = b.name.toUpperCase();
+              return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+          } else {
+              return 0;
+          }
+      });
+      return sortedList
+  },
+
 	render() {
 		let facility = this.state.item;
-		services = this.state.services;
-		readOnly = false;
-		_component = this;
-		_services = services;
+        let services = this.state.services;
+		let readOnly = false;
+		let _component = this;
+		let _services = services;
 		return (
 			<div className="services-editor" style={{overflow: 'hidden'}}>
 				<div className="services-editor-row services-editor-row-header" style={{paddingLeft:"30px"}}>
 					<div className="services-editor-col services-editor-col-header" style={{width:"70%"}}>Service</div>
 					<div className="services-editor-col services-editor-col-header" style={{width:"30%"}}>Supplier</div>
 				</div>
-				<ul id="sortable">
+				<ul>
 				{services?services.map( (service,idx) => {
 
 					if( !service ) {
 						return <li key = {idx}></li>;
 					}
-
 					let expanded = this.state.expanded[ service.name ],
 						size = services.length,
 						key = size+'-'+idx;
@@ -218,32 +244,28 @@ const ServicesRequiredEditor = React.createClass( {
 					return (
 						<li key={key} className={"ui-state-default services-editor-row-li"}>
               <div className="row">
-                <div style={{
-										height:'48px',
-										width: '2%',
-									}} className="col-xs-2">
-									<span className="reorder">
-										<i className="fa fa-bars fa-2x reorder" aria-hidden="true"></i>
-									</span>
-								</div>
 								<div style={{
-    							width: '97%',
-    							position: 'relative',
-    							//bottom: '48px',
-    							left: '1%',
-                }} className="col-xs-10">
+    						    	width: '100%',
+    							    position: 'relative'
+                                }} className="col-xs-12">
 									<div key={key} className={expanded?"services-editor-service-expanded":""}>
 										<div className="services-editor-row">
 
 											<ServicesRequiredEditorRow
-                        id={"service-"+idx}
+                                                id              = {"service-"+idx}
 												facility 		= { facility }
 												service 		= { service }
 												readOnly 		= { readOnly }
-												clickExpand 	= { () => { this.toggleExpanded( service.name ) } }
-												onChange 		= { (service) => { this.updateService( idx ,service) /* added @param {service} to the function */} }
-                        onKeyDown  ={ evt => this.handleKeyDown( evt, services, "#service-", idx ) }
-                        suppliers  ={this.state.suppliers}
+												clickExpand 	= { () => {this.toggleExpanded( service.name ) } }
+												onChange 		= { (service) => {this.updateService( idx ,service)/* added @param {service} to the function */} }
+                                                onKeyDown       = { evt => this.handleKeyDown( evt, services, "#service-", idx ) }
+                                                suppliers       = {this.state.suppliers}
+                                                sortService     = {()=>{
+                                                    let s =  this.sortServices(services)
+                                                    this.setState( {
+                                        				services: s
+                                        			})
+                                                }}
 											/>
 
 										</div>
@@ -257,14 +279,20 @@ const ServicesRequiredEditor = React.createClass( {
 														return (
 															<div key={key} className="services-editor-row services-editor-row-child">
 																<ServicesRequiredEditorRow
-                                  id={"subservice-"+subIdx}
+                                                                    id={"subservice-"+subIdx}
 																	facility 	= { facility }
 																	service 	= { subservice }
 																	readOnly 	= { readOnly }
 																	onChange 	= { (service) => { this.updateSubService( idx, subIdx, service ) /* added @param {service} to the function */} }
-                                  onKeyDown  ={ evt => this.handleKeyDown( evt, service.children, "#subservice-", idx, subIdx ) }
-                                  suppliers  ={this.state.suppliers}
-                                  />
+                                                                    onKeyDown   ={ evt => this.handleKeyDown( evt, service.children, "#subservice-", idx, subIdx ) }
+                                                                    suppliers   ={this.state.suppliers}
+                                                                    sortService = {()=>{
+                                                                        let s =  this.sortServices(services)
+                                                                        this.setState( {
+                                                            				services: s
+                                                            			})
+                                                                    }}
+                                                                />
 															</div>
 														)
 													}):null}

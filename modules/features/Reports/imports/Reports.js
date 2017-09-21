@@ -9,6 +9,7 @@ import MBMDefectImages from './reports/MBMDefectImages.jsx';
 import MBMReport from './reports/MBMReport.jsx';
 import MonthlyReport from './reports/MonthlyReport.jsx';
 import MBMBuildingServiceReport from './reports/MBMBuildingServiceReport.jsx';
+import WorkOrderReport from './reports/WorkOrderReport.jsx';
 
 const Reports = {
 	dict: {},
@@ -31,7 +32,7 @@ Reports.register( {
 
 Reports.register( {
 	id: "requests-status",
-	name: "Requests Status Report",
+	name: "Request Status Report",
 	content: RequestsStatusReport
 } )
 
@@ -54,22 +55,28 @@ Reports.register( {
 } )
 
 
-Reports.register( {
-	id: "mbm-service-image",
-	name: "MBM Service Image",
-	content: MBMServiceImages
-} )
+// Reports.register( {
+// 	id: "mbm-service-image",
+// 	name: "Service Image",
+// 	content: MBMServiceImages
+// } )
 
 Reports.register( {
 	id: "mbm-report-contract",
-	name: "MBM Report (Service Contract)",
+	name: "Report (Service Contract)",
 	content: MBMReport
 } )
 
 Reports.register( {
 	id: "mbm-report-request",
-	name: "MBM Report (Building Service Requests)",
+	name: "Report (Building Service Requests)",
 	content: MBMBuildingServiceReport
+} )
+
+Reports.register( {
+	id: "work-order-report",
+	name: "Work Order Report",
+	content: WorkOrderReport
 } )
 
 export default Reports;

@@ -27,10 +27,13 @@ const RequestsStatusReport = React.createClass( {
 	getInitialState() {
 		return {
 			service: null,
+			showServiceField:true,
 			startDate: null,
 			endDate: null,
-			showFacilityName: true,
+			showFacilityField: true,
 			dataset:null,
+			selectedStatus:null,
+			showStatusField:true,
 			supplier:null
 		}
 	},
@@ -45,19 +48,23 @@ const RequestsStatusReport = React.createClass( {
 
 	getMeteorData() {
 
-		var user, team, facility, requests, data = {};
+		var user, team, facility, requests, status, data = {};
 		user = Meteor.user();
 		if ( user ) {
 			var q = {};
 			team = user.getSelectedTeam();
 			facility = this.state.facility;
 			service = this.state.service;
+			status = this.state.selectedStatus;
 			supplier = this.state.supplier;
 			if ( facility ) {
 				q[ "facility._id" ] = facility._id;
 			}
 			if ( service ) {
 				q[ "service.name" ] = service.name;
+			}
+			if( status ){
+				q[ "status" ] = status;
 			}
 			if( supplier ){
 				q[ "supplier.name" ] = supplier
@@ -72,14 +79,17 @@ const RequestsStatusReport = React.createClass( {
 				q.issuedAt.$lte = this.state.endDate;
 			}
 			if ( team ) {
-				data.requests = user.getRequests( q );
+				let { requests } = user.getRequests( q );
+				data.requests = requests;
 			}
 		}
 		return {
 			team: team,
 			facility: facility,
 			reportData: data,
-			showFacilityName: this.state.showFacilityName,
+			showFacilityField: this.state.showFacilityField,
+			showStatusField: this.state.showStatusField,
+			showServiceField: this.state.showServiceField
 		}
 	},
 
@@ -120,8 +130,10 @@ const RequestsStatusReport = React.createClass( {
 		},
 		Facility: "facility.name",
 		"PO#": "code",
+		//Issue: "name",
+		Issued: "issuedAt",
+		Due: "dueDate",
 		Summary: "name",
-		//Issued: "issuedAt",
 		Supplier: "supplier.name",
 		/*Supplier: ( item ) => {
 			let supplier = item.getSupplier();
@@ -200,8 +212,10 @@ const RequestsStatusReport = React.createClass( {
 			return <div/>
 		}
 
-		let { team, showFacilityName } = this.data, { facility, service } = this.state;
-		let fields = showFacilityName ? this.fields : _.omit( this.fields, "Facility" );
+		let { team, showFacilityField, showStatusField, showServiceField } = this.data, { facility, service } = this.state;
+		let fields = showFacilityField ? this.fields : _.omit( this.fields, "Facility" );
+		    fields = showStatusField ? fields : _.omit(fields, "Status");
+			fields = showServiceField ? fields : _.omit(fields, "Service");
 		let styleForPDF = '<style type="text/css" media="print">@page { size: landscape; } .table {border-top: 2px solid black;border-bottom: 2px solid black;border-left: 2px solid black;border-right: 2px solid black;} #pre-head {border-right:2px solid black;text-align:center;border-bottom: 2px solid black; padding-left: 0px; padding-right: 10px;} #last-head {text-align:center;border-bottom: 2px solid black; padding-left: 0px; padding-right: 10px;} #pre-col {text-align:left; border-right:1px solid black; border-bottom:1px solid black; padding-left: 0px;  padding-right: 10px;} .Summary{min-width:320px;} .Supplier{min-width:120px;} .Service{min-w-width:120px;} #last-col {text-align:left; border-bottom:1px solid black;  padding-left: 0px;  padding-right: 10px;}</style>';
 		//let pdfTitle = (this.state.facility ? this.state.facility.name+' ' : '')+'Status Report '+(this.state.startDate || this.state.endDate ?'for ('+(this.state.startDate? moment( this.state.startDate ).format('DD/MM/YY'):'')+' -'(this.state.endDate? moment( this.state.endDate ).format('DD/MM/YY'):'')+' )':'')
 		let pdfTitle = (this.state.facility ? this.state.facility.name+' ' : 'All Facility ')+'Status Report '+((this.state.startDate || this.state.endDate)?('for ('+(this.state.startDate ? moment( this.state.startDate ).format('DD/MM/YY'):'')+' - '+(this.state.endDate ? moment( this.state.endDate ).format('DD/MM/YY'):'')+')'):'')
@@ -220,7 +234,7 @@ const RequestsStatusReport = React.createClass( {
 					<Menu items = { [ download(this.state.dataset,pdfDetails), print(this.state.dataset, this.refs.printable, pdfDetails) ] } />
 				</div>:null}
 					<div className="row">
-						<div className="col-md-4">
+						{/*<div className="col-md-4">
 
 							<Select
 								placeholder = "Team"
@@ -231,12 +245,12 @@ const RequestsStatusReport = React.createClass( {
 									this.setState( {
 										facility: null,
 										service: null,
-										showFacilityName: true
+										showFacilityField: true
 									} )
 								} }
 							/>
 
-						</div>
+						</div>*/}
 						<div className="col-md-3">
 							<Select
 								placeholder = "Facility"
@@ -245,13 +259,11 @@ const RequestsStatusReport = React.createClass( {
 								onChange    = { ( facility ) => {
 									let stateToSet = {
 										facility: facility,
-										showFacilityName: false
+										showFacilityField: _.isEmpty(facility) ? true : false
 									}
-									if(_.isEmpty(facility)){
-										stateToSet.showFacilityName = (facility && facility.name ? false : true);
-										stateToSet.service = null;
-									}
-									this.setState(stateToSet)
+									stateToSet.service = _.isEmpty(facility) ? null : this.state.service;
+									stateToSet.showServiceField = _.isEmpty(stateToSet.service) ? true : false;
+									this.setState( stateToSet )
 								} }
 							/>
 
@@ -262,13 +274,31 @@ const RequestsStatusReport = React.createClass( {
 								placeholder = "Service"
 								value       = { this.state.service }
 								items       = { this.state.facility ? this.state.facility.servicesRequired : null }
-								onChange    = { ( service ) => { this.setState( { service } ) } }
+								onChange    = { ( service ) => {
+									this.setState( {
+										service: service,
+										showServiceField: _.isEmpty(service) ? true : false
+									 } )
+								} }
 							/>
 
 						</div>
 					</div>
 					<div className="row">
-						<div className="col-md-4">
+						<div className="col-md-3">
+							<Select
+								placeholder = "Status"
+				                value       = { this.state.selectedStatus }
+				                items       = { [ "Booking", "Complete", "Deleted", "Issued", "New", "PMP", "PPM" ] }
+				                onChange    = { ( item ) => {
+									this.setState({
+										selectedStatus: item,
+										showStatusField: _.isEmpty(item) ? true : false
+									})
+				                } }
+				            />
+						</div>
+						<div className="col-md-3">
 							<Text
 								placeholder="Supplier"
 								value={this.state.supplier?this.state.supplier.$regex:''}
@@ -281,30 +311,25 @@ const RequestsStatusReport = React.createClass( {
 								} }
 							/>
 						</div>
-						<div className="col-md-4">
-
+						<div className="col-md-3">
 							<DateTime
 								placeholder = "Start Date"
 								onChange    = { ( startDate ) => { this.setState( { startDate } ) } }
 								value ={ this.state.startDate }
 							/>
-
 						</div>
-						<div className="col-md-4">
-
+						<div className="col-md-3">
 							<DateTime
 								placeholder = "End Date"
 								onChange    = { ( endDate ) => { this.setState( { endDate } ) } }
 								value ={ this.state.endDate }
 							/>
-
 						</div>
-
 					</div>
 
 				</div>
 				<div className = "ibox" ref="printable">
-					<DataTable items={data} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+					<DataTable items={data.requests} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
 				</div>
 			</div>
 		)

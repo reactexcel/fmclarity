@@ -15,6 +15,8 @@ import { Switch } from '/modules/ui/MaterialInputs';
 
 import { Documents } from '/modules/models/Documents';
 
+import { Requests, RequestActions } from '/modules/models/Requests';
+
 export default function DocIcon( props ) {
 
     function showFileDetailsModal() {
@@ -90,9 +92,11 @@ export default function DocIcon( props ) {
     if ( item.type ) {
         color = getColorFromString( item.type );
     }
-    var url = item.serviceType && item.serviceType.data && item.serviceType.data.request ? 'requests/'+item.serviceType.data.request._id : "";
+    var url = item.reminder && item.reminder._id ? 'requests/'+item.reminder._id : "";
     let docAlmostExpires = checkCondition(this.DocumentSchema.expiryDate.condition, item) && item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') <= 14 && moment(item.expiryDate).diff(moment(new Date()), 'days') >= 0;
     let docExpired = checkCondition(this.DocumentSchema.expiryDate.condition, item) && item.expiryDate && moment(item.expiryDate).diff(moment(new Date()), 'days') < 0;
+    let reminderName =  "Update Document - "+item.name+' - Expiry: '+moment(item.expiryDate).format('YYYY-MM-DD');
+    let reminder = item.getReminder();
     return (
         <div>
 		{ _.contains([ 'facility manager', 'fmc support', "portfolio manager" ], props.role ) || !item.private || _.contains( item.visibleTo, props.role )?
@@ -111,12 +115,14 @@ export default function DocIcon( props ) {
 					onClick={
 						( event ) => {
 							event.stopPropagation();
-							if(props.handleListUpdate){
+                            runaction( DocActions.destroy.bind(props.team, item ) );
+                            props.onChange();
+							/*if(props.handleListUpdate){
 								removeDocumentFromList( item );
 							} else {
 								runaction( DocActions.destroy.bind(props.team, item ) );
 								props.onChange();
-							}
+							}*/
 						}
 					}>
 					<span>&times;</span>
@@ -127,14 +133,22 @@ export default function DocIcon( props ) {
 					{item.private?<i className="fa fa-lock" aria-hidden="true" title="Private document"></i>:<i className="fa fa-globe" aria-hidden="true" title="Public document"></i>}
 			</span> : null }
             { docAlmostExpires || docExpired  ?
-                item.serviceType && item.serviceType.data && item.serviceType.data.request ? 
+                reminder && reminder.name == reminderName ? 
                     <span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
-                        <a   href={url}
+                        <button
+                             type        = "button"
                              className   = "btn btn-flat"
                              title="View Update request"
-                             >
+                             onClick={
+                                 ( event ) => {
+                                     event.stopPropagation();
+                                     selectedRequest = Requests.findOne( reminder._id );
+                                             RequestActions.view.run( selectedRequest );
+                                             props.onChange();
+                                 }
+                             }>
                              <span><i className="fa fa-eye" aria-hidden="true"></i></span>
-                         </a>
+                         </button>
                     </span>:<span style={{display:"inline-block",width:"4%",minWidth:"15px",whiteSpace:"nowrap",textDecoratin:"underline",paddingLeft:"0px"}}>
                                  <button
                                      type        = "button"
@@ -144,13 +158,8 @@ export default function DocIcon( props ) {
                                          ( event ) => {
                                              event.stopPropagation();
                                              item.dueDate = docAlmostExpires ? item.expiryDate : moment(new Date()).add( { days: 1 } ).toDate();
-                                                 FlowRouter.go('requests');
-                                                 setTimeout(function () {
-                                                     runaction( DocActions.createUpdateRequest.bind( item ) );
+                                                     runaction( DocActions.createUpdateRequest.bind( null, item ) );
                                                      props.onChange();
-                                                 },200);
-                                                 
-
                                          }
                                      }>
                                      <span>&#43;</span>

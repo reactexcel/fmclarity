@@ -67,7 +67,7 @@ function FacilityPanel( { item } ) {
 		} )
 
 	  }
-    
+      
     return (
 
 		<div>
@@ -113,27 +113,33 @@ function FacilityPanel( { item } ) {
 						tab:        <span id="discussion-tab">Updates</span>,
 						content:    <Inbox for = { facility } truncate = { true }/>
 					},{
-						hide:     	!facility.canAddDocument() || teamType!='fm',
+                        //hide:     	!facility.canAddDocument() || teamType!='fm'
+						hide:     	!facility.canAddDocument() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) )  ? false : true ) : false,
 						tab:        <span id="documents-tab">Documents</span>,
 						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit = { true }/>
 					},{
-						hide:       !facility.canAddMember(),
+						//hide:       !facility.canAddMember(),
+                        hide:     	!facility.canAddMember() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) ) ? false : true ) : false,
 						tab:        <span id="personnel-tab">Personnel</span>,
-						content:    <ContactList  group = { facility } filter = { {role: {$in: [ 'staff', 'manager', 'caretaker', 'property manager' ] } } } defaultRole = "staff" team = { facility.team }/>
+						content:    <ContactList  group = { facility } filter = { {role: {$in: [ 'staff', 'manager', 'caretaker', 'property manager', 'portfolio manager' ] } } } defaultRole = "staff" team = { facility.team }/>
 					},{
-						hide:       !facility.canAddTenant()||teamType!='fm',
+						//hide:       !facility.canAddTenant()||teamType!='fm',
+                        hide:     	!facility.canAddTenant() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) ) ? false : true ) : false,
 						tab:        <span id="tenants-tab">Tenants</span>,
 						content:    <ContactList group = { facility } filter = { {role: {$in: [ 'tenant', 'resident' ] } } } defaultRole = {facility.type == "Residential" ? "resident" : "tenant"} team = { facility.team }/>
 					},{
-						hide:       !facility.canSetAreas(),
+						//hide:       !facility.canSetAreas(),
+                        hide:     	!facility.canSetAreas() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) ) ? false : true ) : false,
 						tab:        <span id="areas-tab">Areas</span>,
 						content:    <AreasEditor item = { facility }/>
 					},{
-						hide:       !facility.canSetServicesRequired(),
+						//hide:       !facility.canSetServicesRequired(),
+                        hide:     	!facility.canSetServicesRequired() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) ) ? false : true ) : false,
 						tab:        <span id="services-tab">Services</span>,
 						content:    <ServicesRequiredEditor item = { facility } field = { "servicesRequired" }/>
 					},{
-						hide:     	!facility.canAddPMP()||teamType!='fm',
+						//hide:     	!facility.canAddPMP()||teamType!='fm',
+                        hide:     	!facility.canAddPMP() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) ) ? false : true ) : false,
 						tab:        <span id="pmp-tab">PPM</span>,
 						content:    <PMPList filter = { {"facility._id":facility._id} }/>
 					},{

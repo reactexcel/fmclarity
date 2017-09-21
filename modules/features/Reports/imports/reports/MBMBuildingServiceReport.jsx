@@ -3,7 +3,7 @@ import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { Requests } from '/modules/models/Requests';
+import { Requests,PPM_Schedulers } from '/modules/models/Requests';
 import { Reports } from '/modules/models/Reports';
 import { ServicesRequestsView } from '/modules/mixins/Services';
 import { Facilities } from '/modules/models/Facilities';
@@ -56,7 +56,7 @@ const MBMBuildingServiceReport = React.createClass( {
 		if ( team ) {
 			query[ "team._id" ] = team._id;
 		}
-		const handle = Meteor.subscribe('User: Facilities, Requests');
+		const handle = Meteor.subscribe('User: Facilities, Requests , PPM_Schedulers');
 		var labels = [];
 		var set = [];
         var queries = [];
@@ -69,7 +69,7 @@ const MBMBuildingServiceReport = React.createClass( {
             queries.unshift( Object.assign({},query) );
             let requestCursor = Requests.find( query )
 
-            set.unshift( requestCursor.count() );
+            set.unshift( requestCursor.count() + PPM_Schedulers.find( query ).count() );
             labels.unshift( moment().subtract(i, "months").startOf("month").format("MMM-YY") );
         }
 				let commentQuery = {}
@@ -109,7 +109,7 @@ const MBMBuildingServiceReport = React.createClass( {
 								let dataset = queries.map( function(q){
 									q["service.name"] = s.name;
 
-									return Requests.find( q ).count();
+									return Requests.find( q ).count() + PPM_Schedulers.find( q ).count();
 								});
 
 								let showChart = false ;
@@ -374,6 +374,10 @@ const SingleServiceRequest = React.createClass( {
 		this.chart.update();
 	},
 
+	componentWillMount(){
+		this.getWorkOrderData();
+	},
+
 	componentDidMount() {
 		this.resetChart();
 		setTimeout(function(){
@@ -416,6 +420,33 @@ const SingleServiceRequest = React.createClass( {
 
 		return data;
 	},
+
+	getWorkOrderData() {
+		var user = Meteor.user();
+		if ( user ) {
+			let facility = Session.getSelectedFacility();
+			if ( facility ) {
+				var q = {};
+				q['facility._id'] = facility._id;
+				 q['issuedAt'] = {
+						 $gte: moment().startOf("month").toDate(),
+						 $lte: moment().endOf("month").toDate()
+				 };
+					q["type"] = {$ne:'Defect'}
+					q['status'] ={$nin:['Deleted','PPM','New']};
+					q['service.name'] = this.props.serviceName;
+					let requests = Requests.findAll(q);
+					let PPMIssued = PPM_Schedulers.findAll(q);
+					if(PPMIssued.length > 0){
+						PPMIssued.map((val)=>{
+							requests.push(val)
+						})
+					}
+					this.setState({WoData: requests.length ? requests : [] });
+			}
+		}
+	},
+
 	handleComment(item){
 		let	user = Meteor.user();
 		let team = user.getSelectedTeam();
@@ -510,7 +541,7 @@ const SingleServiceRequest = React.createClass( {
 				</div>
 				<div className="data-table">
 					<div style={{marginTop:'20px', marginBottom:"20px", border:"1px solid"}}>
-						<WoTable service={this.props.serviceName}/>
+						<WoTable data={this.state.WoData} reload={this.getWorkOrderData}/>
 					</div>
 				</div>
 			</div>

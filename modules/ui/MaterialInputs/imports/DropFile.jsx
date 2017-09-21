@@ -19,7 +19,6 @@ export default class DropFileContainer extends React.Component {
 
     $("body").on("dragend", function(event){
         event.preventDefault();
-        console.log("end");
         $("#drop-box").css("display", "none");
         $("#drop").css("display", "hide");
     })

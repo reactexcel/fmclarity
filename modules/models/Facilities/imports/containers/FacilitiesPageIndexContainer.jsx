@@ -19,7 +19,7 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 		facilities = [];
 
 	if ( facility ) {
-		let requests = Meteor.user().getRequests( { 'facility._id': facility._id } );
+		let {requests} = Meteor.user().getRequests( { 'facility._id': facility._id } );
 
 		if( requests ) {
 			let requestIds = _.pluck( requests, '_id' );
@@ -44,7 +44,13 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 			Meteor.subscribe( 'Thumbs', facilityThumbs );
 		}
 	}
-
+	let logedUser = Meteor.user();
+	if(logedUser){
+		if(!_.contains(['fmc support','portfolio manager'],logedUser.getRole())){
+	        let newFacilityList = Roles.getAssociateFacility( logedUser );
+	        facilities = newFacilityList
+	    }
+	}
 	return {
 		team,
 		facility,

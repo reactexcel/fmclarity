@@ -138,7 +138,6 @@ const TeamStepper = React.createClass( {
     },
 
     handleInvite( supplier = {} ) {
-
         var viewersTeam = this.data.viewersTeam;
         var group = this.data.group;
         var input = this.refs.invitation;
@@ -227,7 +226,6 @@ const TeamStepper = React.createClass( {
     },
 
     render() {
-      console.log(this.props ,this.data);
         var viewingTeam = this.data.viewingTeam;
         var teamsFound = this.state.foundTeams;
         var role = this.props.role;
@@ -287,9 +285,22 @@ const TeamStepper = React.createClass( {
 
                 <Stepper
                   submitForm = {
-                    ( callback ) => {
+                    ( activeTab, callback ) => {
                       if( this.submitFormCallback && this.submitFormCallbackForWorkOrder ){
-                        this.submitFormCallback( ( errorList ) => {
+                          if(activeTab == 2){
+                              callback({});
+                          }else{
+                              this.submitFormCallback( ( errorList ) => {
+                                this.submitFormCallbackForWorkOrder( ( error ) => {
+                                  let keys = Object.keys( error );
+                                  _.forEach( keys, ( k ) => {
+                                    errorList[ k ] = error[ k ];
+                                  } );
+                                  callback( errorList );
+                                } );
+                            } );
+                          }
+                        /*this.submitFormCallback( ( errorList ) => {
                           this.submitFormCallbackForWorkOrder( ( error ) => {
                             let keys = Object.keys( error );
                             _.forEach( keys, ( k ) => {
@@ -297,7 +308,7 @@ const TeamStepper = React.createClass( {
                             } );
                             callback( errorList );
                           } );
-                        } );
+                      } );*/
                       }
                     }
                   }
@@ -331,21 +342,43 @@ const TeamStepper = React.createClass( {
                                                 team = Teams.collection._transform(item);
                                                 // console.log(this.data.viewer);
                                                 // console.log(item,team);
-                                                if(this.data.viewer.role === "fmc support"){
-                                                  // console.log("working");
-                                                  item.members = [{
-                                                    _id : this.data.viewer._id,
-                                                    role : "fmc support",
-                                                    name :  this.data.viewer.profile.name
-                                                  }]
+                                                if(item.members && item.members.length){
+                                                  let arr = item.members.filter((val)=> val._id === this.data.viewer._id)
+                                                  if(!arr.length > 0 ){
+                                                    if(this.data.viewer.role === "fmc support" || this.data.viewer.role === "admin"){
+                                                      // console.log("working");
+                                                      item.members.push({
+                                                        _id : this.data.viewer._id,
+                                                        role : "fmc support",
+                                                        name :  this.data.viewer.profile.name
+                                                      })
+                                                    }else{
+                                                      // console.log("working");
+                                                      // console.log(item,item.members);
+                                                      item.members.push({
+                                                        _id : this.data.viewer._id,
+                                                        role : "portfolio manager",
+                                                        name :  this.data.viewer.profile.name
+                                                      })
+                                                    }
+                                                  }
                                                 }else{
-                                                  // console.log("working");
-                                                  // console.log(item,item.members);
-                                                  item.members = [{
-                                                    _id : this.data.viewer._id,
-                                                    role : "portfolio manager",
-                                                    name :  this.data.viewer.profile.name
-                                                  }]
+                                                  if(this.data.viewer.role === "fmc support" || this.data.viewer.role === "admin"){
+                                                    // console.log("working");
+                                                    item.members = [{
+                                                      _id : this.data.viewer._id,
+                                                      role : "fmc support",
+                                                      name :  this.data.viewer.profile.name
+                                                    }]
+                                                  }else{
+                                                    // console.log("working");
+                                                    // console.log(item,item.members);
+                                                    item.members = [{
+                                                      _id : this.data.viewer._id,
+                                                      role : "portfolio manager",
+                                                      name :  this.data.viewer.profile.name
+                                                    }]
+                                                  }
                                                 }
                                                 // console.log( Meteor.user(),item,team,"------------------------");
                                                 if (Session.getSelectedFacility()) {
@@ -354,8 +387,22 @@ const TeamStepper = React.createClass( {
                                                 }
 
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
+                                                    var defaultRole = "manager";
+                                                    switch(team.type) {
+                                                        case "fm":
+                                                            defaultRole = 'portfolio manager';
+                                                            break;
+                                                        case "real estate":
+                                                            defaultRole = 'property manager';
+                                                            break;
+                                                        case "contractor":
+                                                            defaultRole = 'manager';
+                                                            break;
+                                                        default:
+                                                            defaultRole = 'manager';
+                                                    }
                                                 team.inviteMember( team.email, {
-                                                      role: role ? role : "portfolio manager",
+                                                      role: role ? role : defaultRole,
                                                       owner: {
                                                         type: 'team',
                                                         _id: team._id,
@@ -393,7 +440,7 @@ const TeamStepper = React.createClass( {
                         content:    <ContactList
                                         team        = { viewingTeam }
                                         group       = { viewingTeam }
-                                        filter      = { {role: {$in: ['staff', 'manager', 'caretaker', 'portfolio manager', 'property manager'] } } }
+                                        filter      = { {role: {$in: ['staff', 'manager', 'caretaker', 'fmc support', 'portfolio manager', 'property manager', 'resident', 'support', 'tenant' ] } } }
                                         defaultRole = "staff"
                                     />,
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>

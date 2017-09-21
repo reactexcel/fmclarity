@@ -1,6 +1,7 @@
 import { createContainer } from 'meteor/react-meteor-data';
 import DocsSinglePageIndex from '../components/DocsSinglePageIndex.jsx';
 import { Documents } from '/modules/models/Documents'
+import { Roles } from '/modules/mixins/Roles';
 
 export default DocsSinglePageIndexContainer = createContainer( ( params ) => {
     Meteor.subscribe( 'User: Facilities, Requests' );
@@ -11,23 +12,19 @@ export default DocsSinglePageIndexContainer = createContainer( ( params ) => {
         facilities = null,
         query = { $or: [] };
 
-    // if ( facility ){
-    //   query.$or.push( { 'facility._id': facility._id } );
-    // }
     if ( team ) {
         facilities = team.getFacilities( { 'team._id': team._id } )
     }
-    /*if(_.contains(['caretaker', 'facility manager', 'portfolio manager', 'property manager', 'manager'],Meteor.user().getRole())){
+    if(!_.contains(['fmc support','portfolio manager'],user.getRole())){
         let newFacilityList = []
-        let logedUser = Meteor.user();
         _.map(facilities,( fac, i ) => {
-            let facilityMembers = fac.getMembers({'_id':logedUser._id});
+            let facilityMembers = fac.getMembers({'_id':user._id});
             if(facilityMembers.length){
                 newFacilityList.push(fac)
             }
         })
         facilities = newFacilityList
-    }*/
+    }
 
     return {
         documents,

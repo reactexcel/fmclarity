@@ -1,11 +1,8 @@
 export default CreateRequestForm = [
-	/*'team',*/
 	'type',
-	/* 'occupancy', */
 	'facility',
 	'location',
 	'incidentVictim',
-	'reporter',
 	'name',
 	'reporterContact',
 	'level',
@@ -27,12 +24,10 @@ export default CreateRequestForm = [
 	'incidenceDate',
 	'duration',
 	'costThreshold',
-	//'requireServiceReport',
-	//'requireInvoice',
-
+	'description',
 	'memberName',
 	'numberOfPersons',
-	'description',
+    'readBookingInstructions',
 	'incidentFurtherComments',
 	'attachments',
 	'footer'

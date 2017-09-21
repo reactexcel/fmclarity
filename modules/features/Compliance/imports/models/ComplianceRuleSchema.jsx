@@ -7,7 +7,7 @@ import ServiceListTile from '../components/ComplianceServiceListTile.jsx';
 
 
 import { Text, Select, DateInput } from '/modules/ui/MaterialInputs';
-import { RequestFrequencySchema, Requests, RequestActions } from '/modules/models/Requests';
+import { RequestFrequencySchema, Requests, RequestActions, PPM_Schedulers } from '/modules/models/Requests';
 import { TeamActions } from '/modules/models/Teams';
 import ComplianceDocumentSearchSchema from './ComplianceDocumentSearchSchema.jsx';
 
@@ -118,12 +118,19 @@ export default ComplianceRuleSchema = {
             import { Requests } from '/modules/models/Requests';
             let query = {
                  "facility._id": item.facility._id,
-                 type: "Preventative",
+                 type: "Schedular",
              };
             if ( item.service ) query[ "service.name" ] = item.service.name;
             if ( item.subservice ) query[ "subservice.name" ] = item.subservice.name;
             return {
-                items: _.pluck(Requests.findAll( query , {
+                /*items: _.pluck(Requests.findAll( query , {
+                        fields: {
+                             name: true
+                         }
+                     }
+                 ), "name"),*/
+
+                items: _.pluck(PPM_Schedulers.findAll( query , {
                         fields: {
                              name: true
                          }
@@ -134,7 +141,19 @@ export default ComplianceRuleSchema = {
                     label: "Add New",
                     onAddNewItem: ( callback ) => {
                         let team = Session.getSelectedTeam();
-                        TeamActions.createRequest.run( team , callback )
+                        let newRequest = PPM_Schedulers.create( {
+                            facility: Session.getSelectedFacility(),
+                            team: team,
+                            type: 'Schedular',
+                            priority: 'Standard',
+                            status: 'PMP',
+                            name: '',
+                            service: item.service,
+                            subservice: item.subservice || {},
+                            supplier: '',
+                            supplierContacts: ''
+                        } );
+                        TeamActions.createRequest.run( team , callback, newRequest )
                     }
                 }
             }
@@ -153,10 +172,11 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event );
+            item.event && ( query.name = item.event.name ? item.event.name : item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
-            let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+            //let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+            let lastWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
             let status  = lastWO.length && lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ].status;
                 //console.log(lastWO[lastWO.length - 1]);
             let team = Session.getSelectedTeam();
@@ -180,19 +200,23 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            item.event && ( query.name = item.event );
+            //item.event && ( query.name = item.event );
+            item.event && ( query.name = item.event.name ? item.event.name : item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
-            let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+            //let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
+            let nextWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
                 //console.log(nextWO[nextWO.length - 2],"asc");
             let team = Session.getSelectedTeam();
-            let status = nextWO.length && nextWO[nextWO.length - 1].status;
+            //let status = nextWO.length && nextWO[nextWO.length - 1].status;
+            let status  = nextWO.length && nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ].status;
             return (
                 nextWO.length ? ( <div>
             <span>
               <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   RequestActions.view.bind(nextWO[nextWO.length - 1]).run()
-                 }
+                   //RequestActions.view.bind(nextWO[nextWO.length - 1]).run()
+                   RequestActions.view.bind(nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ]).run()
+                }
                }> Next work order link </a>
             </span>
             <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
