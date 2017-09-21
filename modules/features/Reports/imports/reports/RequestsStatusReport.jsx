@@ -79,7 +79,8 @@ const RequestsStatusReport = React.createClass( {
 				q.issuedAt.$lte = this.state.endDate;
 			}
 			if ( team ) {
-				data.requests = user.getRequests( q );
+				let { requests } = user.getRequests( q );
+				data.requests = requests;
 			}
 		}
 		return {
