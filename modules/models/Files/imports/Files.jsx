@@ -31,7 +31,10 @@ const Files = new FS.Collection("File", {
 });
 
 if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
-  let query = s3Config.migrate.gridfs.all ? {} : { 'copies.s3Images.size': 0 };
+  let query = {
+    'copies.s3Images.size': { $gt: s3Config.migrate.gridfs.all ? -1: 0 },
+    'copies.master.size': { $gt: 0 }
+  };
   Files.find(query).forEach(function (fileObj) {
       let readStream = fileObj.createReadStream('master');
       let writeStream = fileObj.createWriteStream('s3Images');
