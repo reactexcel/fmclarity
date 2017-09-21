@@ -32,7 +32,7 @@ function FacilityFilter( props ) {
 					startOpen = { false }
 					onChange = { ( facility ) => {
 						if( props.onChange ) {
-							props.onChange();
+							props.onChange(facility);
 						}
 						Session.set( "selectedFacility", facility );
 					} }
