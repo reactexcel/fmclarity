@@ -19,7 +19,6 @@ const ServicesRequiredEditor = React.createClass( {
 			field = this.props.field || "servicesRequired",
 			services = item && field ? item[ field ] : [];
             services = this.sortServices(services)
-
 		return {
 			item,
 			field,

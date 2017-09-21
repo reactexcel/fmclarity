@@ -110,8 +110,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 	removeService(){
 		if(this.props.onChange){
 			this.props.onChange(null);
-				Modal.hide();
-			}
+			Modal.hide();
+		}
 	},
 
 	render() {
@@ -158,6 +158,7 @@ const ServicesRequiredEditorRow = React.createClass( {
 					/>
 						{!readOnly?<span className="services-editor-delete-icon"
 							onClick = {
+
 								() => {
 									localStorage.removeItem('defaultService');
 									localStorage.setItem('defaultService', JSON.stringify(this.data.service));

@@ -18,7 +18,6 @@ const PageCalendarContainer = createContainer( ( { params } ) => {
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		user = Meteor.user(),
-		requests = null,
 		facilities = null,
 		statusFilter = { "status": { $nin: [ "Cancelled", "Deleted", "Closed", "Reversed" ] } },
 		contextFilter = {};
@@ -39,8 +38,7 @@ const PageCalendarContainer = createContainer( ( { params } ) => {
 
 	if ( user != null ) {
 		// Requests.findForUser( Meteor.user() )...???
-		({requests} = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } ));
-		console.log(requests);
+		({ requests } = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true }));
 	}
 
 	return {

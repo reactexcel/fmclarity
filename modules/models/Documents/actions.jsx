@@ -73,24 +73,27 @@ const createUpdateRequest = new Action( {
 	action: ( doc ) => {
 		 team = Session.getSelectedTeam();
          let owner = team.getOwner(),
-         supplier = {
-                        _id: owner._id,
-                        name: owner.profile ? owner.profile.name : owner.name
-                    };
+             user = Meteor.user(),
+             supplier = null;
+         
+        if (doc.supplier) {
+            supplier = doc.supplier;
+        }
 		let item = Requests.create( {
                     team: team,
                     type: 'Reminder',
                     priority: 'Urgent',
                     dueDate: doc.dueDate,
-                    name: "Update "+doc.name+'. Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD')+' ('+doc.type+' document)',
+                    name: "Update Document - "+doc.name+' - Expiry: '+moment(doc.expiryDate).format('YYYY-MM-DD'),
                     service: doc.serviceType ? doc.serviceType : null,
                     supplier: supplier,
+                    costThreshold: '0',
                     // supplier: doc.serviceType && doc.serviceType.data && doc.serviceType.data.supplier ? doc.serviceType.data.supplier : null
                 } );
 		newItem = Requests.create( item );
         Modal.show( {
             content: <AutoForm
-            title = "Please tell us what needs to be updated."
+            title = "Please tell us a little bit more about the work that is required."
             model = { Requests }
             form = { CreateDocUpdateRequestForm  }
             item = { newItem }
@@ -178,7 +181,7 @@ const createUpdateRequest = new Action( {
                     let docRequest = {
                     	_id: newRequest._id,
                     }
-                    doc.serviceType.data.request = docRequest;
+                    doc.reminder = docRequest;
                     Documents.save.call(doc);
                     //callback( newRequest );
                 }

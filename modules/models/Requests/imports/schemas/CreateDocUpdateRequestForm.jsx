@@ -5,6 +5,7 @@ export default CreateDocUpdateRequestForm = [
 	'facility',
 
 	'name',
+	'level',
 
 	'service',
 	'subservice',
@@ -16,6 +17,7 @@ export default CreateDocUpdateRequestForm = [
 
 	'priority',
 	'dueDate',
+	'costThreshold',
 
 	'frequency',
 	'duration',
