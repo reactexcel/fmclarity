@@ -7,7 +7,7 @@
  * @memberOf        modules:models/Files
  */
 
-import s3Config, {  } from '/modules/config/s3';
+import s3Config from '/modules/config/s3';
 let stores = [];
 if (s3Config.enabled()) {
   const s3Store = new FS.Store.S3("s3Images", {
@@ -29,18 +29,6 @@ if (s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
 const Files = new FS.Collection("File", {
   stores: stores
 });
-
-if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
-  let query = {
-    'copies.s3Images.size': { $gt: s3Config.migrate.gridfs.all ? -1: 0 },
-    'copies.master.size': { $gt: 0 }
-  };
-  Files.find(query).forEach(function (fileObj) {
-      let readStream = fileObj.createReadStream('master');
-      let writeStream = fileObj.createWriteStream('s3Images');
-      readStream.pipe(writeStream);
-  });
-}
 
 if ( Meteor.isServer ) {
     Files.allow( {

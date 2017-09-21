@@ -44,6 +44,7 @@ Meteor.startup( function() {
     } );
 
     SyncedCron.start();
+    import './scripts/MigrateGFStoS3';
 } );
 
 FM.inDevelopment = function() {
