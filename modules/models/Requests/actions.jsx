@@ -12,6 +12,8 @@ import RequestPanel from './imports/components/RequestPanel.jsx';
 import { Teams } from '/modules/models/Teams';
 import { Files } from '/modules/models/Files';
 
+import { getDefaultDueDate } from '/modules/models/Requests/imports/schemas/PPMSchema'
+
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 
 
@@ -638,9 +640,10 @@ const clone = new Action({
   action: (request) => {
     request = Requests.collection._transform(request);
     let dueDate = request.getNextDate();
-
     let newRequest = Object.assign({}, request, {
       _id: Random.id(),
+      incidenceDate: getDefaultDueDate(request),
+      createdAt: new Date(),
       dueDate: dueDate,
       status: 'Issued',
       type: 'Preventative'

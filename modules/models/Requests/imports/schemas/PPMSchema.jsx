@@ -28,6 +28,17 @@ import moment from 'moment';
 const defaultContactRole = 'supplier manager';
 let onServiceChange = null;
 
+export const getDefaultDueDate = function( item ) {
+  if ( !item.team ) {
+    return new Date();
+  }
+  let team = Teams.findOne( item.team._id ),
+    timeframe = team.timeframes[ 'Standard' ] * 1000,
+    now = new Date();
+
+  return new Date( now.getTime() + timeframe );
+};
+
 const PPMSchema = {
 
         //$schema:              "http://json-schema.org/draft-04/schema#",
@@ -1965,17 +1976,6 @@ const PPMSchema = {
             return code;
         }
 
-        function getDefaultDueDate( item ) {
-            if ( !item.team ) {
-                return new Date();
-            }
-            let team = Teams.findOne( item.team._id ),
-                timeframe = team.timeframes[ 'Standard' ] * 1000,
-                now = new Date();
-
-            return new Date( now.getTime() + timeframe );
-        }
-
         function getRole() {
             return RBAC.getRole( Meteor.user(), Session.getSelectedTeam() );
         }
@@ -1987,4 +1987,5 @@ const PPMSchema = {
             return str;
         }
 
-        export default PPMSchema;
+export default PPMSchema;
+
