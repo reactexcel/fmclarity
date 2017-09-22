@@ -359,7 +359,6 @@ Users.actions({
                     } else {
                       copy = PPM_Schedulers.collection._transform(copy);
                       requests.push(copy);
-                      additionalEntries++;
                     }
                   }
                 } else {
