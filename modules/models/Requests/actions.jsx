@@ -53,7 +53,7 @@ const edit = new Action( {
     action: ( preRequest, callback ) => {
         let previousRequest = Object.assign( {}, preRequest );
         let oldRequest = Object.assign( {}, preRequest );
-        let isPPM = isRequestPPM(request);
+        let isPPM = isRequestPPM(preRequest);
 
         Modal.show( {
             content:
