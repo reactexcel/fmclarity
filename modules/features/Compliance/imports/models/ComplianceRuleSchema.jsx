@@ -118,7 +118,7 @@ export default ComplianceRuleSchema = {
             import { Requests } from '/modules/models/Requests';
             let query = {
                  "facility._id": item.facility._id,
-                 type: "Schedular",
+                 type: "Scheduler",
              };
             if ( item.service ) query[ "service.name" ] = item.service.name;
             if ( item.subservice ) query[ "subservice.name" ] = item.subservice.name;
