@@ -190,7 +190,7 @@ const createPPM_Schedulers = new Action( {
             item = options
         }
         newItem = PPM_Schedulers.create( item );
-        newItem.type = "Schedular";
+        newItem.type = "Scheduler";
         Modal.show( {
             content: <AutoForm
             title = "Please tell us a little bit more about the scheduled task"

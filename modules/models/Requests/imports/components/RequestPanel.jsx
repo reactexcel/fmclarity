@@ -43,7 +43,7 @@ export default RequestPanel = React.createClass( {
             if(request === undefined){
             request = PPM_Schedulers.findOne( { _id: this.props.item._id } );
           }
-          console.log(this.props.item);
+
             if ( request ) {
               if(this.props.item.hasOwnProperty("start")){
                 date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
@@ -61,7 +61,7 @@ export default RequestPanel = React.createClass( {
                 contact = request.getContact();
                 supplier = request.getSupplier();
                 // console.log(request);
-                if ( request.type == 'Schedular') {
+                if ( request.type == 'Schedular' || request.type == "Scheduler") {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
                     nextRequest = request.findCloneAt( nextDate );
@@ -157,7 +157,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         requestIsInvoice = true;
     }
 
-    if ( request.type == 'Schedular' ) {
+    if ( request.type == 'Schedular' || request.type == "Scheduler" ) {
         title = 'PPM';
         if ( nextDate ) {
             nextDateString = moment( nextDate ).format( 'ddd Do MMM YYYY' );
@@ -214,6 +214,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     role = supplier.getMemberRole( Meteor.user() );
     console.log(role,"role");*/
     var invLength = request.invoiceDetails && request.invoiceDetails.invoiceNumber && request.invoiceDetails.invoiceNumber.length;
+
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 

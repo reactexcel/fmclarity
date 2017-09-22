@@ -110,7 +110,7 @@ const RequestSchema = {
                         items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
                         afterChange: ( request ) => {
                             // prefill value with zero for defect
-                            if (_.contains( [ "Defect", "Incident", "Schedular", "Reminder" ], request.type )) {
+                            if (_.contains( [ "Defect", "Incident", "Schedular", "Scheduler", "Reminder" ], request.type )) {
                                 request.costThreshold= '0';
                             }
                             if (request.type == 'Incident') {
@@ -160,7 +160,7 @@ const RequestSchema = {
                                 afterChange: ( request ) => {
 
                                     // prefill value with zero for defect
-                                    if (_.contains( [ 'Defect', 'Schedular' ], request.type )) {
+                                    if (_.contains( [ 'Defect', 'Schedular', 'Scheduler' ], request.type )) {
                                         request.costThreshold= '0';
                                         /*request.frequency = {
                                             number: (request.type == 'Preventative' ? 1 : ""),
@@ -170,11 +170,11 @@ const RequestSchema = {
                                             unit: (request.type == 'Preventative' ? "years" : "")
                                         };*/
                                         request.frequency = {
-                                            number: (request.type == 'Schedular' ? 1 : ""),
-                                            repeats: (request.type == 'Schedular' ? 10 : ""),
+                                            number: (request.type == 'Schedular' || request.type == 'Scheduler' ? 1 : ""),
+                                            repeats: (request.type == 'Schedular' || request.type == 'Scheduler' ? 10 : ""),
                                             period: "",
                                             endDate: "",
-                                            unit: (request.type == 'Schedular' ? "years" : "")
+                                            unit: (request.type == 'Schedular' || request.type == 'Scheduler' ? "years" : "")
                                         }
                                     }
                                     if (request.type == 'Reminder') {
@@ -260,7 +260,7 @@ const RequestSchema = {
                 );
             },
             condition: (request)=>{
-                if(request.type == "Schedular"){
+                if(request.type == "Schedular" || request.type == 'Scheduler'){
                     return true;
                 }else{
                     return false
@@ -1204,7 +1204,7 @@ const RequestSchema = {
             description: "Latest date that the work can be completed",
             //input: DateTime,
             input: (props)=>{
-                return props.item.type == "Schedular" || props.item.status == "Issued" ? <DateInput
+                return props.item.type == "Schedular" || request.type == 'Scheduler' || props.item.status == "Issued" ? <DateInput
                     {...props}
                     onChange ={(val)=>{
                         props.onChange(val)
@@ -2058,7 +2058,7 @@ const RequestSchema = {
                         </div>
                     );
                 },
-                condition: "Schedular",
+                condition: "Scheduler",
             }
 
         }
