@@ -114,13 +114,13 @@ export default ServiceDetailsSchema = {
                     label: "Create New",
                     onAddNewItem: ( callback ) => {
                         import { TeamStepper } from '/modules/models/Teams';
+                        let facility = Session.getSelectedFacility();
                         Modal.show( {
                             content: <TeamStepper
                                 facility = { facility }
                                 showFilter={true}
                                 onChange = {
                                     ( supplier ) => {
-                                        let facility = Session.getSelectedFacility();
                                         facility.addSupplier( supplier );
                                         //Meteor.call("Facilities.addSupplier", facility, supplier );
                                         callback( supplier );
