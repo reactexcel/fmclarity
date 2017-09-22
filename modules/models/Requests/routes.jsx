@@ -10,7 +10,7 @@ import RequestsPageAllContainer from './imports/containers/RequestsPageAllContai
 import RequestsPageIndexContainer from './imports/containers/RequestsPageIndexContainer.jsx';
 import PrintRequestContainer from './imports/containers/PrintRequestContainer.jsx';
 
-AccessGroups.loggedIn.add( {
+/*AccessGroups.loggedIn.add( {
 	name: 'all-requests',
 	path: '/all-requests',
 	label: "All requests",
@@ -20,7 +20,7 @@ AccessGroups.loggedIn.add( {
 			content: <RequestsPageAllContainer />
 		} );
 	}
-} );
+} );*/
 
 AccessGroups.loggedIn.add( {
 	name: 'jobs',
