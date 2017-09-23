@@ -451,12 +451,13 @@ PPM_Schedulers.methods( {
                           unit : "years"
                         }
                       };
-                if ( request.frequency.unit == "custom" ) {
-                    unit = request.frequency.period;
-                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
-                        unit = "weeks";
+                console.log(request.dueDate);
+                console.log(dueDate);
+                if ( request.frequency.unit === "custom" ) {
+                    unit = request.frequency.unit === "fortnightly" || request.frequency.unit === "fortnights" ?
+                      'weeks' : request.frequency.period;
                     period[ unit ] = parseInt( request.frequency.number );
-                    repeats = parseInt( request.frequency.number );
+                    repeats = parseInt(request.frequency.number);
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
                         unit = freq[ request.frequency.unit ];
@@ -464,18 +465,18 @@ PPM_Schedulers.methods( {
                     } else {
                         unit = request.frequency.unit;
                     }
-                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
+                    if ( request.frequency.unit === "fortnightly" || request.frequency.unit === "fortnights" )
                         unit = "weeks";
                         if(_.isEmpty(unit)){
                             unit = "days";
                         }
-                    period[ unit ] = parseInt( time[unit].number );
+                    period[unit] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
                 for ( var i = 0; i <= repeats; i++ ) {
-
+                  console.log(period);
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
                     }
@@ -598,7 +599,7 @@ PPM_Schedulers.methods( {
             let query = {
               "facility._id": facility._id,
               name: request.name,
-              status: { $nin: ['PPM', 'Cancelled'] },
+              status: { $nin: ['PPM', 'Cancelled', 'Deleted'] },
               dueDate: dueDate
             };
             let result = PPM_Schedulers.findOne(query);
@@ -633,7 +634,7 @@ PPM_Schedulers.methods( {
                 let query = {
                   "facility._id": facility._id,
                   name: request.name,
-                  status: { $ne: 'PPM' },
+                  status: { $nin: ['PPM', 'Cancelled', 'Deleted'] },
                   dueDate: nextDate
                 };
                 nextRequest = PPM_Schedulers.findOne(query);
@@ -656,7 +657,7 @@ PPM_Schedulers.methods( {
                 previousRequest = PPM_Schedulers.findOne( {
                     "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PPM' },
+                    status: { $nin: ['PPM', 'Cancelled', 'Deleted'] },
                     dueDate: previousDate
                 } );
             }
