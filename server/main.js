@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import CronJobs from "./cronJobs.js";
-
 //import { FlowRouter } from 'meteor/kadira:flow-router-ssr';
 
 Meteor.startup( function() {
@@ -22,7 +21,7 @@ Meteor.startup( function() {
     SyncedCron.add( {
         name: 'Issue PPM Request',
         schedule: function( parser ) {
-            return parser.text( "at 12:36 pm" );
+            return parser.text( "at 09:00 am" );
         },
         job: CronJobs.issuePPM_Schedulers,
     } );
@@ -44,6 +43,7 @@ Meteor.startup( function() {
     } );
 
     SyncedCron.start();
+    import './scripts';
 } );
 
 FM.inDevelopment = function() {

@@ -235,11 +235,8 @@ export default MonthlyReport = React.createClass( {
 
     if ( user != null ) {
         // Requests.findForUser( Meteor.user() )...???
-        requests = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } );
+			({requests} = user.getRequests( { $and: [ statusFilter, contextFilter ] }, { expandPMP: true } ));
     }
-	if(!Array.isArray(requests)){
-		requests = requests.requests;
-	}
 		return (
 			<div>
 				<div id="toggleButton">

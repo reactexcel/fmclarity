@@ -292,4 +292,142 @@ export default ServiceDefaults = [ {
 	}, {
 		name: "Other",
 	} ]
-} ];
+},
+// New Services added on 13th september 2017
+/*{
+	name: "Access Control",
+	propType: ["Base building","Corporate occupier","Residential strata"],
+	children: [ {
+		name: "Base Building",
+		propType: ["Corporate occupier"]
+	}, {
+		name: "Cards & Keys",
+		propType: ["Base building"]
+	}, {
+		name: "Locks & Keys",
+		propType: []
+	}, {
+		name: "System Maintenance",
+		propType: ["Base building"]
+	}, {
+		name: "Tenancy",
+		propType: ["Base building"]
+	} ]
+}, {
+	name: "Air Conditioning (HVAC)",
+	propType: ["Base building","Corporate occupier","Residential strata"],
+	children: [ {
+		name: "Air Handling Plant",
+		propType: ["Base building"]
+	}, {
+		name: "Air Pressurisation Systems",
+		propType: ["Base building"]
+	}, {
+		name: "Base Building",
+		propType: ["Base building","Corporate occupier"]
+	}, {
+		name: "Boilers",
+		propType: ["Base building"]
+	}, {
+		name: "Car Park Carbon Monoxide Sensors",
+		propType: ["Base building"]
+	}, {
+		name: "Chillers",
+		propType: ["Base building"]
+	}, {
+		name: "Computer Room A/C",
+		propType: ["Base building","Corporate occupier"]
+	}, {
+		name: "Condensate Pumps",
+		propType: ["Base building"]
+	}, {
+		name: "Controls",
+		propType: ["Base building"]
+	}, {
+		name: "Cooling Tower Systems",
+		propType: ["Base building"]
+	}, {
+		name: "Fans Axial",
+		propType: ["Base building"]
+	}, {
+		name: "Fans Centrifugal",
+		propType: ["Base building"]
+	}, {
+		name: "Filters",
+		propType: ["Base building"]
+	}, {
+		name: "Fire Dampers",
+		propType: ["Base building"]
+	}, {
+		name: "Gas Regulators",
+		propType: ["Base building"]
+	}, {
+		name: "Kitchen Exhuasts",
+		propType: []
+	}, {
+		name: "Mech Services Switchboard",
+		propType: ["Base building"]
+	}, {
+		name: "Outdoor Intakes",
+		propType: ["Base building"]
+	}, {
+		name: "Packaged A/C - Split system",
+		propType: ["Base building"]
+	}, {
+		name: "Piping Systems",
+		propType: ["Base building"]
+	}, {
+		name: "Pressure Vessels",
+		propType: []
+	}, {
+		name: "Pumps",
+		propType: ["Base building"]
+	}, {
+		name: "SA/RA Fans",
+		propType: ["Base building"]
+	}, {
+		name: "Smoke Spill Fans/Ventilation",
+		propType: ["Base building"]
+	}, {
+		name: "Stat Valves",
+		propType: ["Base building"]
+	}, {
+		name: "Terminal Units",
+		propType: ["Base building"]
+	} ]
+}, {
+	name: "Building & Fitout Works",
+	propType: ["Base building","Corporate occupier","Residential strata"],
+	children: [ {
+		name: "Blinds",
+		propType: ["Base building","Corporate occupier"]
+	}, {
+		name: "Carpet",
+		propType: ["Base building","Corporate occupier"]
+	}, {
+		name: "Ceiling Tiles",
+		propType: ["Base building","Corporate occupier"]
+	}, {
+		name: "Tenancy",
+		propType: ["Base building"]
+	} ]
+}, {
+	name: "Building Maintenance Unit",
+	propType: ["Base building"]
+}, {
+	name: "Car park",
+	propType: ["Base building","Corporate occupier","Residential strata"],
+	children: [ {
+		name: "Base Building",
+		propType: ["Corporate occupier"]
+	}, {
+		name: "Gate Maintenance",
+		propType: ["Base building","Residential strata"]
+	}, {
+		name: "Line Marking",
+		propType: ["Base building"]
+	}, {
+		name: "Tenancy",
+		propType: ["Base building"]
+	} ]
+}*/ ];

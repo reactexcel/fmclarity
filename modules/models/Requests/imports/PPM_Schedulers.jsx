@@ -13,6 +13,7 @@ import { Members } from '/modules/mixins/Members';
 import { DocMessages } from '/modules/models/Messages';
 
 import { Documents } from '/modules/models/Documents';
+import Requests from '/modules/models/Requests/imports/Requests';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Teams } from '/modules/models/Teams';
@@ -90,7 +91,7 @@ const PPM_Schedulers = new Model( {
 } )
 
 PPM_Schedulers.save.before( ( request ) => {
-    if ( request.type == "Schedular" ) {
+    if ( request.type == "Schedular" || request.type === "Scheduler"  ) {
         request.status = "PPM";
         request.priority = "Scheduled";
     } else if ( request.type == "Booking" ) {
@@ -234,7 +235,6 @@ PPM_Schedulers.methods( {
     create: {
         authentication: true,
         method: function( request ) {
-
             let status = 'New';
 
             // The description field simply carries the value to be sent to the notification or comment.
@@ -247,7 +247,7 @@ PPM_Schedulers.methods( {
                 request.costThreshold = 0;
             }
 
-            if ( request.type == 'Schedular' ) {
+            if ( request.type == 'Schedular' || request.type === "Scheduler" || request.type == 'Preventative' ) {
                 status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
@@ -451,12 +451,13 @@ PPM_Schedulers.methods( {
                           unit : "years"
                         }
                       };
-                if ( request.frequency.unit == "custom" ) {
-                    unit = request.frequency.period;
-                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
-                        unit = "weeks";
+                console.log(request.dueDate);
+                console.log(dueDate);
+                if ( request.frequency.unit === "custom" ) {
+                    unit = request.frequency.unit === "fortnightly" || request.frequency.unit === "fortnights" ?
+                      'weeks' : request.frequency.period;
                     period[ unit ] = parseInt( request.frequency.number );
-                    repeats = parseInt( request.frequency.number );
+                    repeats = parseInt(request.frequency.number);
                 } else {
                     if ( _.contains( Object.keys( freq ), request.frequency.unit ) ) {
                         unit = freq[ request.frequency.unit ];
@@ -464,15 +465,18 @@ PPM_Schedulers.methods( {
                     } else {
                         unit = request.frequency.unit;
                     }
-                    if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
+                    if ( request.frequency.unit === "fortnightly" || request.frequency.unit === "fortnights" )
                         unit = "weeks";
-                    period[ unit ] = parseInt( time[unit].number );
+                        if(_.isEmpty(unit)){
+                            unit = "days";
+                        }
+                    period[unit] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
                     period[ unit ] *= 2;
                 }
                 for ( var i = 0; i <= repeats; i++ ) {
-
+                  console.log(period);
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
                     }
@@ -564,6 +568,9 @@ PPM_Schedulers.methods( {
                     }
                     if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" )
                         unit = "weeks";
+                        if(_.isEmpty(unit)){
+                            unit = "days"
+                        }
                     period[ unit ] = parseInt( time[unit].number );
                 }
                 if ( request.frequency.unit == "fortnightly" || request.frequency.unit == "fortnights" ) {
@@ -589,12 +596,17 @@ PPM_Schedulers.methods( {
         authentication: true,
         helper: ( request, dueDate ) => {
             let facility = request.getFacility();
-            return PPM_Schedulers.findOne( {
-                "facility._id": facility._id,
-                name: request.name,
-                status: { $ne: 'PPM' },
-                dueDate: dueDate
-            } );
+            let query = {
+              "facility._id": facility._id,
+              name: request.name,
+              status: { $nin: ['PPM', 'Cancelled', 'Deleted'] },
+              dueDate: dueDate
+            };
+            let result = PPM_Schedulers.findOne(query);
+            if (!result) {
+              result = Requests.findOne(query);
+            }
+            return result;
         }
     },
 
@@ -619,12 +631,16 @@ PPM_Schedulers.methods( {
 
             if ( nextDate ) {
                 let facility = request.getFacility();
-                nextRequest = PPM_Schedulers.findOne( {
-                    "facility._id": facility._id,
-                    name: request.name,
-                    status: { $ne: 'PPM' },
-                    dueDate: nextDate
-                } );
+                let query = {
+                  "facility._id": facility._id,
+                  name: request.name,
+                  status: { $nin: ['PPM', 'Cancelled', 'Deleted'] },
+                  dueDate: nextDate
+                };
+                nextRequest = PPM_Schedulers.findOne(query);
+                if (!nextRequest) {
+                  nextRequest = Requests.findOne(query);
+                }
             }
             return nextRequest;
         }
@@ -641,7 +657,7 @@ PPM_Schedulers.methods( {
                 previousRequest = PPM_Schedulers.findOne( {
                     "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PPM' },
+                    status: { $nin: ['PPM', 'Cancelled', 'Deleted'] },
                     dueDate: previousDate
                 } );
             }
@@ -805,7 +821,7 @@ function checkIssuePermissions( role, user, request ) {
     let hasSupplier = request.supplier && request.supplier._id,
         userCanIssue = false;
 
-    if ( request.type != 'Schedular' && hasSupplier ) {
+    if ( (request.type != 'Schedular' || request.type != 'Scheduler') && hasSupplier ) {
         let team = Teams.findOne( request.team._id ),
             role = team.getMemberRole( user ),
             requestIsInvoice = request.invoiceDetails && request.invoiceDetails.details;
@@ -1180,5 +1196,7 @@ function actionSendReminder( requests ) {
         }
     } )
 }
+
+
 
 export default PPM_Schedulers;

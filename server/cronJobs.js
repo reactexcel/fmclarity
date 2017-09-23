@@ -48,7 +48,7 @@ const CronJobs = {
         import { Teams } from '/modules/models/Teams';
         let request_collection = Requests.collection,
             schedulers_collection = PPM_Schedulers.collection,
-            requestsCursor = schedulers_collection.find( { type: "Schedular" } ),
+            requestsCursor = schedulers_collection.find( { type: "Scheduler" } ),
             requests = requestsCursor.fetch();
 
         requests.forEach( ( request, i ) => {
@@ -90,6 +90,7 @@ const CronJobs = {
                 coopyRequest.dueDate = nextDueDate;
                 coopyRequest.status = "Issued";
                 coopyRequest.code = code;
+                coopyRequest.createdAt = new Date();
                 coopyRequest.issuedAt = new Date();
                 coopyRequest.type = 'Preventative';
 

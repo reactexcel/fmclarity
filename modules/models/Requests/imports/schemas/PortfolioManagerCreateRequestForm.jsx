@@ -76,7 +76,7 @@ const PortfolioManagerCreateRequestForm = {
 
 	type: {
 		label: "Request type",
-		description: "The work request type (ie Ad-hoc, Schedular)",
+		description: "The work request type (ie Ad-hoc, Scheduler)",
 		type: "string",
 		required: true,
 		defaultValue: () => {
@@ -101,7 +101,7 @@ const PortfolioManagerCreateRequestForm = {
 			}
 
 			if( teamType == 'contractor' ) {
-				return { items:[ 'Base Building', 'Schedular', 'Defect' ]};
+				return { items:[ 'Base Building', 'Scheduler', 'Defect' ]};
 			}
 			else {
 				if( _.contains(["staff",'resident'], role) ) {
@@ -121,7 +121,7 @@ const PortfolioManagerCreateRequestForm = {
 		defaultValue: "Standard",
 		required: true,
 		condition: ( request ) => {
-			if ( request.type == "Schedular" || request.type == 'Booking' ) {
+			if ( request.type == "Scheduler" || request.type == "Schedular" || request.type == 'Booking' ) {
 				return false;
 			}
 			return true;
@@ -152,7 +152,7 @@ const PortfolioManagerCreateRequestForm = {
 	frequency: {
 		/*label: "Frequency",
 		description: "The frequency with which this job should occur",*/
-		condition: "Schedular",
+		condition: "Scheduler",
 		subschema: RequestFrequencySchema,
 		required: true,
 		type: "object",
@@ -497,7 +497,7 @@ const PortfolioManagerCreateRequestForm = {
 		defaultValue: '500',
 		input: Currency,
 		condition: ( request ) => {
-			if( _.contains( [ "Defect", "Schedular" ], request.type )  ) {
+			if( _.contains( [ "Defect", "Schedular", "Scheduler" ], request.type )  ) {
 				return false;
 			}
 			let role = Meteor.user().getRole();
@@ -727,7 +727,6 @@ const PortfolioManagerCreateRequestForm = {
 		type: 'string',
 		size: 12,
 		input(props) {
-			console.log(props.item.members);
 			return(
 				<div className="row">
 					<div className="col-xs-12">

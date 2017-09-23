@@ -138,13 +138,14 @@ Actions.addAccessRule( {
     alert: true
 } );
 
-Actions.addAccessRule( {
+
+/*Actions.addAccessRule( {
     action: [
         'create team',
     ],
     role: [ 'portfolio manager', 'manager' ],
     alert: true
-} );
+} );*/
 
 // Team rules
 //  If an item is inextricably linked to a team and the team roles are the most relevant in evaluating permissions then
@@ -204,7 +205,6 @@ Actions.addAccessRule( {
         return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
     },
     action: [
-        'edit team',
         'delete team',
         'view team',
         'view team member',
@@ -222,6 +222,23 @@ Actions.addAccessRule( {
         'owner',
         'property manager',
         'caretaker'*/
+    ],
+} )
+
+Actions.addAccessRule( {
+    condition: ( team, request ) => {
+        let user = Meteor.user(),
+            role = team.getMemberRole( user );
+
+        return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+    },
+    action: [
+        'edit team'
+    ],
+    role: [
+        'fmc support',
+        'portfolio manager',
+        //'manager'
     ],
 } )
 
@@ -378,7 +395,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Schedular'  && request.supplier && request.supplier._id ) {
+        if ( (request.type == 'Scheduler' || request.type == 'Schedular') && request.supplier && request.supplier._id ) {
             import { PPM_Schedulers } from '/modules/models/Requests';
             request = PPM_Schedulers.collection._transform( request );
             let nextRequest = request.getNextRequest();
@@ -474,11 +491,12 @@ Actions.addAccessRule( {
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
                 if(request.status == 'Issued'){
-                    if(user.getRole() && user.getRole() == 'fmc support'){
+                    return false;
+                    /*if(user.getRole() && user.getRole() == 'fmc support'){
                         return true;
                     }else{
                         return false;
-                    }
+                    }*/
                 }else{
                     return true;
                 }
@@ -495,11 +513,12 @@ Actions.addAccessRule( {
                     facilityRole = facility.getMemberRole( user );
                 }
                 if(request.status == 'Issued'){
-                    if(facilityRole == 'fmc support'){
+                    return false;
+                    /*if(facilityRole == 'fmc support'){
                         return true;
                     }else{
                         return false;
-                    }
+                    }*/
                 }
                 if ( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
                     return true;
