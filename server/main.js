@@ -22,7 +22,7 @@ Meteor.startup( function() {
     SyncedCron.add( {
         name: 'Issue PPM Request',
         schedule: function( parser ) {
-            return parser.text( "at 09:00 am" );
+            return parser.text( "at 12:36 pm" );
         },
         job: CronJobs.issuePPM_Schedulers,
     } );

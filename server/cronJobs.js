@@ -95,8 +95,8 @@ const CronJobs = {
 
 
                 console.log( "Issued WO#", coopyRequest.code, ": id -> ", request._id );
-                let ab = request_collection.insert( coopyRequest );
-                let xyx = schedulers_collection.update( { "_id": request._id }, { $set: { "lastIssedRequest": nextDueDate } } )
+                request_collection.insert( coopyRequest );
+                schedulers_collection.update( { "_id": request._id }, { $set: { "lastIssedRequest": nextDueDate } } )
             }
         } );
     },
