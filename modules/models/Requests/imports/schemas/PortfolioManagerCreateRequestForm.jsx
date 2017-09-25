@@ -108,7 +108,7 @@ const PortfolioManagerCreateRequestForm = {
 					return {items:[ 'Ad-hoc', 'Booking', 'Tenancy' ]};
 				}
 				else {
-					return {items:[ 'Ad-hoc', 'Booking', 'Schedular', 'Defect' ]};
+					return {items:[ 'Ad-hoc', 'Booking', 'Scheduler', 'Defect' ]};
 				}
 			}
 		}
@@ -804,7 +804,7 @@ const PortfolioManagerCreateRequestForm = {
 		description: "The individual who has been allocated to this job",
 		condition: ( request ) => {
 			let role = Meteor.user().getRole();
-			if( request.type == 'Schedular' || role == "caretaker" || role == "staff" || role == "resident") {
+			if( request.type == 'Schedular' || request.type == 'Scheduler' || role == "caretaker" || role == "staff" || role == "resident") {
 				return false;
 			}
 			let team = Session.getSelectedTeam();
