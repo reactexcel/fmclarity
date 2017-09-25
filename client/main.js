@@ -395,7 +395,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Schedular'  && request.supplier && request.supplier._id ) {
+        if ( (request.type == 'Scheduler' || request.type == 'Schedular') && request.supplier && request.supplier._id ) {
             import { PPM_Schedulers } from '/modules/models/Requests';
             request = PPM_Schedulers.collection._transform( request );
             let nextRequest = request.getNextRequest();

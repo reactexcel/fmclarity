@@ -244,7 +244,7 @@ Users.actions({
 
         if (options.expandPMP) {
           query.push({
-            type: "Schedular"
+            type: "Scheduler"
           });
 
           var PMPRequests = PPM_Schedulers.find({
@@ -359,7 +359,6 @@ Users.actions({
                     } else {
                       copy = PPM_Schedulers.collection._transform(copy);
                       requests.push(copy);
-                      additionalEntries++;
                     }
                   }
                 } else {

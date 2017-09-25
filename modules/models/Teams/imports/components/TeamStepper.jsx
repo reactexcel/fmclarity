@@ -232,11 +232,17 @@ const TeamStepper = React.createClass( {
         var teamType = this.state.teamType;
         var component = this;
         var showFilter = this.props.showFilter;
+
         if ( !viewingTeam ) {
             if (showFilter == true) {
                 return (
                     <SearchSuppliersWithinNetwork facility={this.data.group || Session.getSelectedFacility()} onSaveSupplier = {(supplier)=>{
+
+                      this.setState({
+                        item:supplier
+                      })
                         if(this.props.onChange){
+
                             this.props.onChange(supplier)
                         }
                     }}/>
@@ -385,6 +391,9 @@ const TeamStepper = React.createClass( {
                                                     //quick fix to manually add supplier to a team. better solution needed
                                                     Session.getSelectedFacility().addSupplier(item);
                                                 }
+                                                if(this.props.onChange){
+                                                  this.props.onChange(item)
+                                                }
 
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
                                                     var defaultRole = "manager";
@@ -410,6 +419,7 @@ const TeamStepper = React.createClass( {
                                                       }
                                                     }
                                                    );
+
                                                    if (role == "property manager") {
                                                        this.props.onChange && this.props.onChange( item );
                                                    }

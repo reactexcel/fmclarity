@@ -33,8 +33,9 @@ export default RequestPanel = React.createClass( {
             facility = null,
             realEstateAgency = null,
             owner = null,
-            defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0;
+            defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0 ,
             date_diff = null ;
+
 
 
         if ( this.props.item && this.props.item._id ) {
@@ -43,12 +44,11 @@ export default RequestPanel = React.createClass( {
             if(request === undefined){
             request = PPM_Schedulers.findOne( { _id: this.props.item._id } );
           }
-          console.log(this.props.item);
+
             if ( request ) {
               if(this.props.item.hasOwnProperty("start")){
                 date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
               }
-
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 facility = request.getFacility();
@@ -61,7 +61,7 @@ export default RequestPanel = React.createClass( {
                 contact = request.getContact();
                 supplier = request.getSupplier();
                 // console.log(request);
-                if ( request.type == 'Schedular') {
+                if ( request.type == 'Schedular' || request.type == "Scheduler") {
                     nextDate = request.getNextDate();
                     previousDate = request.getPreviousDate();
                     nextRequest = request.findCloneAt( nextDate );
@@ -76,17 +76,15 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
+
         let callback = this.props.callback
 
         return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback }
-
     },
 
     componentWillMount() {
         //Perf.start();
-
-        // this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
-
+        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {
@@ -157,7 +155,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         requestIsInvoice = true;
     }
 
-    if ( request.type == 'Schedular' ) {
+    if ( request.type == 'Schedular' || request.type == "Scheduler" ) {
         title = 'PPM';
         if ( nextDate ) {
             nextDateString = moment( nextDate ).format( 'ddd Do MMM YYYY' );
@@ -214,6 +212,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
     role = supplier.getMemberRole( Meteor.user() );
     console.log(role,"role");*/
     var invLength = request.invoiceDetails && request.invoiceDetails.invoiceNumber && request.invoiceDetails.invoiceNumber.length;
+
     return (
         <div className="request-panel" style={{background:"#eee"}}>
 

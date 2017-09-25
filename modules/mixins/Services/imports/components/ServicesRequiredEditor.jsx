@@ -109,9 +109,20 @@ const ServicesRequiredEditor = React.createClass( {
 			services[ idx ] = newValue;
 		}
 		this.setState( {
-			services: services
-		} )
-		this.save();
+				services: services
+			} )
+		if (services[ idx ] && services[ idx ].name && services[ idx ].name.trim() !="") {
+			this.save();
+		}
+		else{
+			Bert.alert({
+		  				title: '',
+		  				message: 'Name is required and be 2 or more characters',
+		  				type: 'danger',
+		  				style: 'growl-bottom-right',
+		  				icon: 'fa-ban'
+					});
+		}
 	},
 
 	updateSubService( idx, subIdx, newValue ) {
@@ -126,7 +137,19 @@ const ServicesRequiredEditor = React.createClass( {
 		this.setState( {
 			services: services
 		} )
-		this.save();
+		if (service.children[subIdx] && service.children[subIdx].name && service.children[subIdx].name.trim() !="") {
+			this.save();
+		}
+		else{
+			Bert.alert({
+		  				title: '',
+		  				message: 'Name is required and be 2 or more characters',
+		  				type: 'danger',
+		  				style: 'growl-bottom-right',
+		  				icon: 'fa-ban'
+					});
+		}
+		
 	},
 
 	addService() {
@@ -144,7 +167,7 @@ const ServicesRequiredEditor = React.createClass( {
                 $("input#service-" + (services.length -1 )).click();
                 $("input#service-" + (services.length -1 )).focus();
             } )
-			this.save();
+			// this.save();
 		}
 	},
 
@@ -165,7 +188,7 @@ const ServicesRequiredEditor = React.createClass( {
                 $("input#subservice-" + (services[idx].children.length -1 )).click();
                 $("input#subservice-" + (services[idx].children.length -1 )).focus();
             } )
-			this.save();
+			// this.save();
 		}
 	},
 

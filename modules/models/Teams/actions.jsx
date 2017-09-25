@@ -140,7 +140,7 @@ const createRequest = new Action( {
                         name: owner.profile ? owner.profile.name : owner.name
                     };
                     let request;
-                    if(newRequest.type == "Preventative" || newRequest.type == 'Schedular'){
+                    if(newRequest.type == "Preventative" || newRequest.type == 'Schedular' || newRequest.type == 'Scheduler'){
                       Meteor.call( 'PPM_Schedulers.create', newRequest );
                       request = PPM_Schedulers.findOne( { _id: newRequest._id } );
                     }else{
@@ -190,7 +190,7 @@ const createPPM_Schedulers = new Action( {
             item = options
         }
         newItem = PPM_Schedulers.create( item );
-        newItem.type = "Schedular";
+        newItem.type = "Scheduler";
         Modal.show( {
             content: <AutoForm
             title = "Please tell us a little bit more about the scheduled task"

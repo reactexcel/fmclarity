@@ -135,7 +135,8 @@ export default TeamGlobalSupplierPage = React.createClass( {
 										<span style={{'float':'right','marginRight':'1%'}}>
 										<button
 											title={"Click to save supplier in your team."}
-											className="btn btn-flat btn-primary" onClick={() => {
+											className="btn btn-flat btn-primary"
+											onClick={() => {
 												this.handleInvite( supplier )
 											}}
 											disabled={_.contains(idList, supplier._id) == true?true:false}
