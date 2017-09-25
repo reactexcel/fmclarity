@@ -29,7 +29,7 @@ const Users = new Model({
     Owners,
     DocMessages, [Thumbs, {repo: Files, defaultThumb: "/img/ProfilePlaceholderSuit.png"}]
   ]
-})
+});
 
 Users.collection.allow({
   update: () => {
@@ -38,7 +38,7 @@ Users.collection.allow({
   remove: function () {
     return true
   }
-})
+});
 
 if (Meteor.isServer) {
   Meteor.publish('Users', () => {
@@ -59,13 +59,12 @@ Users.methods({
       Users.remove(team._id);
     }
   }
-})
+});
+
 Users.actions({
   getTeam: {
     authentication: true,
     helper: function () {
-      var team = Session.getSelectedTeam();
-      return team;
       return Session.getSelectedTeam();
     }
   },
@@ -174,215 +173,12 @@ Users.actions({
 
     // as this function is same as publication is there a way to DRY it?
     helper: function (user, filter, options = {expandPMP: false}) {
-      let query = [],
-        team = Session.getSelectedTeam(),
-        teamId = null;
-
-      if (team) {
-        teamId = team._id;
-        query.push({
-          $or: [
-            {'team._id': teamId},
-            {'supplier._id': teamId},
-            {'realEstateAgency._id': teamId}
-          ]
-        });
-      }
-
-      //if filter passed to function then add that to the query
-      if (filter) {
-        query.push(filter);
-      }
-
-      //perform query
-      let currentPage = options.skip ? options.skip : 0;
-      // query option needed to determine current page number and number of documents per collection
-      let queryOptions = {};
-      let usePager = currentPage > -1 && options.limit;
-      if (usePager) {
-        queryOptions = {
-          limit: options.limit,
-          skip: currentPage * options.limit,
-          sort: {createdDate: -1}
-        };
-      } else {
-        queryOptions = {sort: {createdDate: -1}};
-      }
-
-      let totalCollection = Requests.find({$and: query});
-      let currentCollection = Requests.find({$and: query}, queryOptions);
-
-      let totalCollectionCount = totalCollection ? totalCollection.count() : 0;
-      let currentCollectionCount = currentCollection ? currentCollection.count() : 0;
-      let requests = currentCollection ? currentCollection.fetch() : [];
-
-      let skip = currentPage > -1 && options.limit;
-
-      if (usePager && skip) {
-        if (( (options.limit * currentPage) + options.limit) >= totalCollectionCount) {
-          skip = false;
-        }
-      }
-
-      // skips the addition of PPMs into the requests collection if it's on the requests component
-      // only determines if it's on the requests component by checking if there's a pagination option
-      if (!skip) {
-        let PPMIssued = PPM_Schedulers.find({
-          $and: query
-        })
-          .fetch({
-            sort: {
-              createdAt: -1
-            }
-          });
-
-        if (PPMIssued.length > 0) {
-          PPMIssued.map((val) => {
-            requests.push(val);
-          })
-        }
-
-        if (options.expandPMP) {
-          query.push({
-            type: "Scheduler"
-          });
-
-          var PMPRequests = PPM_Schedulers.find({
-            $and: query
-          })
-            .fetch({
-              sort: {
-                createdAt: 1
-              }
-            });
-          let time = {
-            days: {
-              endDate: "",
-              number: 1,
-              period: "days",
-              repeats: 30,
-              unit: "days"
-            },
-            weeks: {
-              endDate: "",
-              number: 1,
-              period: "weeks",
-              repeats: 10,
-              unit: "weeks"
-            },
-            fortnights: {
-              endDate: "",
-              number: 2,
-              period: "weeks",
-              repeats: 10,
-              unit: "fortnights"
-            },
-            months: {
-              endDate: "",
-              number: 1,
-              period: "months",
-              repeats: 10,
-              unit: "months"
-            },
-            monthly: {
-              endDate: "",
-              number: 1,
-              period: "months",
-              repeats: 10,
-              unit: "months"
-            },
-            quarters: {
-              endDate: "",
-              number: 3,
-              period: "months",
-              repeats: 10,
-              unit: "quarters"
-            },
-            years: {
-              endDate: "",
-              number: 1,
-              period: "years",
-              repeats: 10,
-              unit: "years"
-            },
-          }
-          PMPRequests.map((r) => {
-            // console.log(r);
-            if (r.hasOwnProperty('frequency') && r.frequency.hasOwnProperty("repeats")) {
-              if (r.frequency.unit === "custom") {
-                let temp = r.frequency;
-                r.frequency = time[r.frequency.period];
-                r.frequency.number = temp.number;
-                r.frequency.endDate = temp.endDate;
-                var date = moment(r.dueDate);
-                var repeats = parseInt(r.frequency.repeats);
-                var period = {};
-                period[r.frequency.unit] = parseInt(r.frequency.number);
-                // console.log(period);
-                if (r.frequency.endDate != "") {
-                  for (var i = 0; i < repeats; i++) {
-                    var copy = Object.assign({}, r); //_.omit(r,'_id');
-                    copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
-                    const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
-                    // console.log(diff_in_dates_in_days);
-                    if (diff_in_dates_in_days > 0) {
-                      return
-                    } else {
-                      copy = PPM_Schedulers.collection._transform(copy);
-                      requests.push(copy);
-                    }
-                  }
-                } else {
-                  for (var i = 0; i < repeats; i++) {
-                    var copy = Object.assign({}, r); //_.omit(r,'_id');
-                    copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
-                    copy = PPM_Schedulers.collection._transform(copy);
-                    requests.push(copy);
-                  }
-                }
-              } else {
-                // console.log(r);
-                r.frequency = time[r.frequency.unit];
-                var date = moment(r.dueDate);
-                var repeats = parseInt(r.frequency.repeats);
-                var period = {};
-                period[r.frequency.unit] = parseInt(r.frequency.number);
-                // console.log(period);
-                if (r.frequency.endDate != "") {
-                  for (var i = 0; i < repeats; i++) {
-                    var copy = Object.assign({}, r); //_.omit(r,'_id');
-                    copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
-                    const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
-                    // console.log(diff_in_dates_in_days);
-                    if (diff_in_dates_in_days > 0) {
-                      return
-                    } else {
-                      copy = PPM_Schedulers.collection._transform(copy);
-                      requests.push(copy);
-                    }
-                  }
-                } else {
-                  for (var i = 0; i < repeats; i++) {
-                    var copy = Object.assign({}, r); //_.omit(r,'_id');
-                    copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
-                    copy = PPM_Schedulers.collection._transform(copy);
-                    requests.push(copy);
-                  }
-                }
-              }
-            }
-          });
-        }
-      }
-
-      return {
-        requests: requests,
-        totalCollectionCount: totalCollectionCount,
-        currentPage: currentPage
-      };
+      // moved logic to requests model
+      return Requests.findForUser(user, filter, options);
     }
   }
 });
+
 
 function createUser(item, password) {
   if (Meteor.isServer) {

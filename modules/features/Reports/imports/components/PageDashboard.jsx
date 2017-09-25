@@ -20,7 +20,7 @@ import RequestBreakdownChart from '../reports/RequestBreakdownChart.jsx';
  */
 function PageDashboard( props ) {
 	let canGetMessages = false;
-	let { team, facilities, facility, requests } = props;
+	let { team, facilities, facility, user } = props;
 	if( !team ) {
 		/*Perf.start();*/
 		return <div/>
@@ -36,7 +36,7 @@ function PageDashboard( props ) {
 	            <div className="col-sm-6" style={{paddingRight:"0px"}}>
 		            <div className="ibox">
 		            	<div className="ibox-content" style={{padding:"7px"}}>
-			            	<Calendar requests = { requests } />
+			            	<Calendar user={user} />
 			            </div>
 		            </div>
 		            <div className="ibox">

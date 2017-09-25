@@ -18,6 +18,7 @@ import { LoginService } from '/modules/core/Authentication';
 import { Teams } from '/modules/models/Teams';
 import { Files } from '/modules/models/Files';
 import { Users } from '/modules/models/Users';
+import { PPM_Schedulers } from '/modules/models/Requests';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
@@ -26,7 +27,7 @@ import moment from 'moment';
 /**
  * @memberOf        module:models/Requests
  */
-const Requests = new Model( {
+const Requests = new Model({
     schema: RequestSchema,
     collection: "Issues",
     mixins: [
@@ -89,7 +90,7 @@ const Requests = new Model( {
         } ],
         [ Members ]
     ]
-} )
+});
 
 Requests.save.before( ( request ) => {
     if ( request.type == "Schedular" || request.type == "Scheduler" ) {
@@ -162,7 +163,7 @@ var accessForTeamMembersWithElevatedAccessForManagers = function( role, user, re
 //maybe actions it better terminology?
 Requests.methods( {
 
-    /* funtionality should be encapsulated in members */
+    /* functionality should be encapsulated in members */
     updateSupplierManagers: {
         authentication: true,
         helper: function( request ) {
@@ -744,7 +745,7 @@ Requests.methods( {
         method: actionSendReminder
     }
 
-} )
+});
 
 Requests.helpers( {
     // this sent to schema config
@@ -1231,6 +1232,151 @@ function actionSendReminder( requests ) {
             } )
         }
     } )
+}
+
+
+Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = { start: null, end: null }) => {
+  let query = [],
+    team = Session.getSelectedTeam(),
+    teamId = null;
+
+  if (team) {
+    teamId = team._id;
+    query.push({
+      $or: [
+        {'team._id': teamId},
+        {'supplier._id': teamId},
+        {'realEstateAgency._id': teamId}
+      ]
+    });
+  }
+
+  //if filter passed to function then add that to the query
+  if (filter) {
+    query.push(filter);
+  }
+
+  // clone PPM query the date limit should only apply to requests. Scheduled PPM objects are generated at runtime and
+  // does not use up a lot of memory
+  let PPMQuery = JSON.parse(JSON.stringify(query));
+  if (dateLimit.start && dateLimit.end) {
+    query.push({ dueDate: {
+      $gte: dateLimit.start,
+      $lt: dateLimit.end
+    }});
+  }
+
+  //perform query
+  let currentPage = options.skip ? options.skip : 0;
+  // query option needed to determine current page number and number of documents per collection
+  let queryOptions = {};
+  let usePager = currentPage > -1 && options.limit;
+  if (usePager) {
+    queryOptions = {
+      limit: options.limit,
+      skip: currentPage * options.limit,
+      sort: {createdDate: -1}
+    };
+  } else {
+    queryOptions = {sort: {createdDate: -1}};
+  }
+
+  let totalCollection = Requests.find({$and: query});
+  let currentCollection = Requests.find({$and: query}, queryOptions);
+
+  let totalCollectionCount = totalCollection ? totalCollection.count() : 0;
+  let requests = currentCollection ? currentCollection.fetch() : [];
+
+  if (options.expandPMP) {
+    PPMQuery.push({
+      type: "Scheduler"
+    });
+
+    let PPMRequests = PPM_Schedulers.find({
+      $and: PPMQuery
+    }).fetch({ sort: { createdAt: 1 } });
+    PPMRequests.map((r) => {
+      requests = expandPPM(r, requests);
+    });
+  }
+
+  return {
+    requests: requests,
+    totalCollectionCount: totalCollectionCount,
+    currentPage: currentPage
+  };
+};
+
+
+const time = {
+  days: { endDate: "", number: 1, period: "days", repeats: 30, unit: "days" },
+  weeks: { endDate: "", number: 1, period: "weeks", repeats: 10, unit: "weeks" },
+  fortnights: { endDate: "", number: 2, period: "weeks", repeats: 10, unit: "fortnights" },
+  months: { endDate: "", number: 1, period: "months", repeats: 10, unit: "months" },
+  monthly: { endDate: "", number: 1, period: "months", repeats: 10, unit: "months" },
+  quarters: { endDate: "", number: 3, period: "months", repeats: 10, unit: "quarters" },
+  years: { endDate: "", number: 1, period: "years", repeats: 10, unit: "years" }
+};
+
+function expandPPM(r, requests) {
+  if (r.hasOwnProperty('frequency') && r.frequency.hasOwnProperty("repeats")) {
+    if (r.frequency.unit === "custom") {
+      let temp = r.frequency;
+      r.frequency = time[r.frequency.period];
+      r.frequency.number = temp.number;
+      r.frequency.endDate = temp.endDate;
+      let date = moment(r.dueDate);
+      let repeats = parseInt(r.frequency.repeats);
+      let period = {};
+      period[r.frequency.unit] = parseInt(r.frequency.number);
+
+      if (r.frequency.endDate !== "") {
+        for (let i = 0; i < repeats; i++) {
+          let copy = Object.assign({}, r);
+          copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
+          const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
+          if (diff_in_dates_in_days > 0) {
+            return;
+          } else {
+            requests.push(PPM_Schedulers.collection._transform(copy));
+          }
+        }
+      } else {
+        for (let i = 0; i < repeats; i++) {
+          let copy = Object.assign({}, r); //_.omit(r,'_id');
+          copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
+          requests.push(PPM_Schedulers.collection._transform(copy));
+        }
+      }
+    } else {
+      r.frequency = time[r.frequency.unit];
+      let date = moment(r.dueDate);
+      let repeats = parseInt(r.frequency.repeats);
+      let period = {};
+      period[r.frequency.unit] = parseInt(r.frequency.number);
+
+      if (r.frequency.endDate !== "") {
+        for (let i = 0; i < repeats; i++) {
+          let copy = Object.assign({}, r); //_.omit(r,'_id');
+          copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
+          const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
+          if (diff_in_dates_in_days > 0) {
+            return;
+          } else {
+            requests.push(PPM_Schedulers.collection._transform(copy));
+          }
+        }
+      } else {
+        for (let i = 0; i < repeats; i++) {
+          let copy = Object.assign({}, r); //_.omit(r,'_id');
+          copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
+          requests.push(PPM_Schedulers.collection._transform(copy));
+        }
+      }
+    }
+  }
+
+  return requests;
 }
 
 export default Requests;
