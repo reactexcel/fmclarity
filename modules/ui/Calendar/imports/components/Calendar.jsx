@@ -6,6 +6,7 @@
 import React from "react";
 import {RequestActions} from '/modules/models/Requests';
 import Requests from '/modules/models/Requests/imports/Requests';
+import moment from 'moment';
 
 /**
  * An ui component that renders a calendar with requests appearing as events.
@@ -57,7 +58,7 @@ class Calendar extends React.Component {
       {expandPMP: true},
       {start: this.state.monthFilter.start, end: this.state.monthFilter.end}
     );
-    console.log(requests);
+
     return requests;
   }
 
