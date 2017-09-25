@@ -232,11 +232,17 @@ const TeamStepper = React.createClass( {
         var teamType = this.state.teamType;
         var component = this;
         var showFilter = this.props.showFilter;
+
         if ( !viewingTeam ) {
             if (showFilter == true) {
                 return (
                     <SearchSuppliersWithinNetwork facility={this.data.group || Session.getSelectedFacility()} onSaveSupplier = {(supplier)=>{
+
+                      this.setState({
+                        item:supplier
+                      })
                         if(this.props.onChange){
+
                             this.props.onChange(supplier)
                         }
                     }}/>
@@ -385,6 +391,9 @@ const TeamStepper = React.createClass( {
                                                     //quick fix to manually add supplier to a team. better solution needed
                                                     Session.getSelectedFacility().addSupplier(item);
                                                 }
+                                                if(this.props.onChange){
+                                                  this.props.onChange(item)
+                                                }
 
                                                 if ( team.email && team.inviteMember && ( !team.members || !team.members.length ) ) {
                                                     var defaultRole = "manager";
@@ -410,6 +419,7 @@ const TeamStepper = React.createClass( {
                                                       }
                                                     }
                                                    );
+
                                                    if (role == "property manager") {
                                                        this.props.onChange && this.props.onChange( item );
                                                    }
@@ -440,7 +450,7 @@ const TeamStepper = React.createClass( {
                         content:    <ContactList
                                         team        = { viewingTeam }
                                         group       = { viewingTeam }
-                                        filter      = { {role: {$in: ['staff', 'manager', 'caretaker', 'portfolio manager', 'property manager'] } } }
+                                        filter      = { {role: {$in: ['staff', 'manager', 'caretaker', 'fmc support', 'portfolio manager', 'property manager', 'resident', 'support', 'tenant' ] } } }
                                         defaultRole = "staff"
                                     />,
                         guide:      <div>In this section invite members to your team. Be sure to give them the relevant role in your organisation so that their access permissions are accurate.</div>

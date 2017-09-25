@@ -10,17 +10,16 @@ export default class RequestPagination extends Component {
 
   constructor(props){
     super(props);
-
     this.state = {
       totalCollectionCount: props.totalCollectionCount,
       itemsPerPage: props.itemsPerPage,
       currentPage: props.currentPage,
       paginationItems: [],
       nextPage: props.currentPage + 1,
-      previousPage: null
+      previousPage: null,
+      onPageChange: props.onPageChange
     };
     this.state.paginationItems = this.propagatePaginationItems();
-
   }
 
   componentWillReceiveProps( props ){
@@ -35,9 +34,17 @@ export default class RequestPagination extends Component {
     });
   }
 
+  onPageChange = (pageNumber) => {
+    this.setState({
+      currentPage: pageNumber
+    });
+    if (this.state.onPageChange) {
+      this.state.onPageChange(pageNumber);
+    }
+    this.propagatePaginationItems();
+  };
 
   propagatePaginationItems() {
-
     let numberOfPages = Math.ceil(this.state.totalCollectionCount / this.state.itemsPerPage);
     let paginationItems = [];
     let currentPage = this.state.currentPage;
@@ -48,10 +55,7 @@ export default class RequestPagination extends Component {
         label: 1,
         clickable: true,
         click: () => {
-          Session.set('currentRequestPageNumber', 0);
-          this.setState({
-            currentPage: 0
-          })
+          this.onPageChange(0);
         }
       });
       paginationItems.push({
@@ -60,7 +64,6 @@ export default class RequestPagination extends Component {
     }
 
     for (let x = 0; x < numberOfPages; x++) {
-
       if (x > currentPage + 2) {
         continue;
       }
@@ -76,10 +79,7 @@ export default class RequestPagination extends Component {
           if (currentPage === x) {
             return null;
           }
-          Session.set('currentRequestPageNumber', x);
-          this.setState({
-            currentPage: x
-          })
+          this.onPageChange(x);
         }
       });
     }
@@ -93,10 +93,7 @@ export default class RequestPagination extends Component {
         label: numberOfPages,
         clickable: true,
         click: () => {
-          Session.set('currentRequestPageNumber', numberOfPages - 1);
-          this.setState({
-            currentPage: numberOfPages - 1
-          })
+          this.onPageChange(numberOfPages - 1);
         }
       });
     }
@@ -110,7 +107,7 @@ export default class RequestPagination extends Component {
         <FlatButton label={ item.label }
                     key={ index }
                     backgroundColor={ item.pageNumber === this.state.currentPage ? '#0152b5' : null }
-                    onClick={ () => { item.click() } }
+                    onClick={ item.click }
                     style={{
                       color: item.pageNumber === this.state.currentPage ? '#FFF' : '#000',
                       minWidth: 40,
@@ -136,5 +133,4 @@ export default class RequestPagination extends Component {
       </div>
     )
   };
-
 }

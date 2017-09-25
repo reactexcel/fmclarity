@@ -26,16 +26,16 @@ const PMPListTile = React.createClass( {
     },
 
     render() {
-
-        let { request, supplier, nextDate, previousDate, nextRequest, previousRequest } = this.data,
-            nextDateString = null,
-            frequency = request.frequency || {},
-            previousDateString = null;
+        let { request, supplier, nextDate, previousDate, nextRequest, previousRequest } = this.data;
+        let nextDateString = null;
+        let frequency = request.frequency || {};
+        let previousDateString = null;
+        console.log(nextDate, previousDate);
         if( nextDate ) {
-            nextDateString = moment( nextDate ).format('ddd Do MMM');
+            nextDateString = moment(nextDate).format('ddd Do MMM');
         }
         if( previousDate ) {
-            previousDateString = moment( previousDate ).format('ddd Do MMM');
+            previousDateString = moment(previousDate).format('ddd Do MMM');
         }
 
 
@@ -64,7 +64,7 @@ const PMPListTile = React.createClass( {
             <div className = "issue-summary-col" style = {{width:"20%"}}>
                 { nextDateString && nextRequest ?
                     <span onClick = { () => {
-                        nextRequest ? RequestActions.view.run( nextRequest, ()=>{} ) : RequestActions.view.run( request,  ()=>{} )
+                        nextRequest ? RequestActions.view.run( nextRequest,()=>{} ) : RequestActions.view.run( request )
                     } } >
                         <span>next due <b>{ nextDateString }</b> </span>
                         { nextRequest ?

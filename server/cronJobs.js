@@ -44,19 +44,23 @@ const CronJobs = {
     },
 
     issuePPM_Schedulers() {
-        import { PPM_Schedulers } from '/modules/models/Requests';
+        import { PPM_Schedulers, Requests } from '/modules/models/Requests';
         import { Teams } from '/modules/models/Teams';
-        let collection = Requests.collection,
-            requestsCursor = collection.find( { type: "Preventative" } ),
+        let request_collection = Requests.collection,
+            schedulers_collection = PPM_Schedulers.collection,
+            requestsCursor = schedulers_collection.find( { type: "Scheduler" } ),
             requests = requestsCursor.fetch();
 
         requests.forEach( ( request, i ) => {
+          let Team = (request.team && request.team.hasOwnProperty("_id")) ? request.team._id : false
+          if(!Team){
+            return
+          }
             let team = Teams.collection.findOne( { _id: request.team._id } ),
                 coopyRequest = Object.assign( {}, request )
             code = null,
                 nextDueDate = null;
             if ( request.frequency ) {
-
                 let dueDate = moment( request.dueDate ),
                     repeats = parseInt( request.frequency.repeats ),
                     period = {};
@@ -78,7 +82,6 @@ const CronJobs = {
             if ( !request.lastIssedRequest ||
                 ( moment( nextDueDate ).format( "YYYY-MM-DD" ) === moment().add( 7, 'd' ).format( "YYYY-MM-DD" ) &&
                     moment( nextDueDate ).isAfter( request.lastIssedRequest ) ) ) {
-
                 if ( team ) {
                     code = team.getNextWOCode();
                 }
@@ -87,11 +90,14 @@ const CronJobs = {
                 coopyRequest.dueDate = nextDueDate;
                 coopyRequest.status = "Issued";
                 coopyRequest.code = code;
+                coopyRequest.createdAt = new Date();
+                coopyRequest.issuedAt = new Date();
                 coopyRequest.type = 'Preventative';
 
+
                 console.log( "Issued WO#", coopyRequest.code, ": id -> ", request._id );
-                collection.insert( coopyRequest );
-                collection.update( { "_id": request._id }, { $set: { "lastIssedRequest": nextDueDate } } )
+                request_collection.insert( coopyRequest );
+                schedulers_collection.update( { "_id": request._id }, { $set: { "lastIssedRequest": nextDueDate } } )
             }
         } );
     },

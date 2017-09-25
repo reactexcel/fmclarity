@@ -37,7 +37,7 @@ export default EmailDigestView = React.createClass( {
                         <div key = { idx }>
                             <p>The following requests have been { verb }:</p>
                             { messages.map( ( message, idy ) => {
-                                return <EmailDigestRow key = {idy} message = { message }/>
+                                return <EmailDigestRow key = {idy} message = { message } recipient = { user }/>
                             } ) }
                         </div>
                     )

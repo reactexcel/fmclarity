@@ -18,21 +18,20 @@ export default ReportsNavWidget = React.createClass( {
 	render() {
 		// <a  style={{color:"#111"}} href={"/report/"+id+"/"}>{report.name}</a>
 		var reports = Reports.getAll();
-		var reportIds = Object.keys( reports ).filter((val) => val == "requests-status" || val == "request-breakdown-chart" || val == "request-activity-chart");
+		var reportIds = Object.keys( reports ).filter((val) => val == "requests-status" || val == "request-breakdown-chart" || val == "request-activity-chart" || val == "work-order-report");
 		var facility = Session.getSelectedFacility();
 		if(facility){
 			// console.log(facility);
 			let docs = Documents.find({"facility._id": facility["_id"],"type":"Report","reportType": "Monthly Report"}).fetch();
-			// console.log(docs);
 			reportIds = Object.keys( reports )
 			if(docs.length > 0){
 				reportIds = Object.keys( reports ).filter((val)=> val != "monthly-report")
 			}
 		}
 		let xyz = _.map(reportIds, (id) => {
-			report = reports[id];
+			let report = reports[id];
 			return (
-				<div onClick={()=>this.navigateToReport(id)} className="grid-item" style={{padding:"15px", cursor:"pointer"}} key={id}>
+				<div id="report-link" onClick={ () => this.navigateToReport(id) } className="grid-item" style={{padding:"15px", cursor:"pointer", textDecoration:'underline'}} key={id}>
 					{report.name}
 				</div>
 			)
@@ -41,7 +40,7 @@ export default ReportsNavWidget = React.createClass( {
 			<div>
 		        {/*<ActionsMenu items={this.getMenu()} icon="eye" />*/}
 		        <div className="ibox-title">
-		        	<h2>Available Reports</h2>
+		        	<h2 style = {{testTransform:'uppercase',fontWeight:'400'}}>Available Reports</h2>
 		        </div>
 		        <div className="ibox-content" style={{padding:"0px"}}>
 					<div className="row">

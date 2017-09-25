@@ -70,13 +70,11 @@ class NavigationDrawer extends React.Component {
 
 	render() {
 		import { Routes } from '/modules/core/Actions'; // moved here because of circular dependency
-		let { userRole, routes, team } = this.props,
+		let { userRole, routes, team, facility } = this.props,
 			{ selectedRouteName } = this.state;
-
 		if ( !team || routes == null || routes.length <= 1 ) {
 			return <div/>
 		}
-
 		let routeNames = Object.keys( routes.actions ),
 			validRoutes = Routes.filter( routeNames, team ),
 			validRouteNames = Object.keys( validRoutes );
