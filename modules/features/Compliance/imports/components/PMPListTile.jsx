@@ -26,15 +26,16 @@ const PMPListTile = React.createClass( {
     },
 
     render() {
-        let { request, supplier, nextDate, previousDate, nextRequest, previousRequest } = this.data,
-            nextDateString = null,
-            frequency = request.frequency || {},
-            previousDateString = null;
+        let { request, supplier, nextDate, previousDate, nextRequest, previousRequest } = this.data;
+        let nextDateString = null;
+        let frequency = request.frequency || {};
+        let previousDateString = null;
+        console.log(nextDate, previousDate);
         if( nextDate ) {
-            nextDateString = moment( nextDate ).format('ddd Do MMM');
+            nextDateString = moment(nextDate).format('ddd Do MMM');
         }
         if( previousDate ) {
-            previousDateString = moment( previousDate ).format('ddd Do MMM');
+            previousDateString = moment(previousDate).format('ddd Do MMM');
         }
 
 

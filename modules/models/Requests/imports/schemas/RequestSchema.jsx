@@ -110,7 +110,7 @@ const RequestSchema = {
                         items: [ 'Base Building', 'Defect', 'Reminder', 'Incident' ],
                         afterChange: ( request ) => {
                             // prefill value with zero for defect
-                            if (_.contains( [ "Defect", "Incident", "Schedular", "Reminder" ], request.type )) {
+                            if (_.contains( [ "Defect", "Incident", "Schedular", "Scheduler", "Reminder" ], request.type )) {
                                 request.costThreshold= '0';
                             }
                             if (request.type == 'Incident') {
@@ -160,7 +160,7 @@ const RequestSchema = {
                                 afterChange: ( request ) => {
 
                                     // prefill value with zero for defect
-                                    if (_.contains( [ 'Defect', 'Schedular' ], request.type )) {
+                                    if (_.contains( [ 'Defect', 'Schedular', 'Scheduler' ], request.type )) {
                                         request.costThreshold= '0';
                                         /*request.frequency = {
                                             number: (request.type == 'Preventative' ? 1 : ""),
@@ -170,11 +170,11 @@ const RequestSchema = {
                                             unit: (request.type == 'Preventative' ? "years" : "")
                                         };*/
                                         request.frequency = {
-                                            number: (request.type == 'Schedular' ? 1 : ""),
-                                            repeats: (request.type == 'Schedular' ? 10 : ""),
+                                            number: (request.type == 'Schedular' || request.type == 'Scheduler' ? 1 : ""),
+                                            repeats: (request.type == 'Schedular' || request.type == 'Scheduler' ? 10 : ""),
                                             period: "",
                                             endDate: "",
-                                            unit: (request.type == 'Schedular' ? "years" : "")
+                                            unit: (request.type == 'Schedular' || request.type == 'Scheduler' ? "years" : "")
                                         }
                                     }
                                     if (request.type == 'Reminder') {
@@ -260,7 +260,7 @@ const RequestSchema = {
                 );
             },
             condition: (request)=>{
-                if(request.type == "Schedular"){
+                if(request.type == "Schedular" || request.type == 'Scheduler'){
                     return true;
                 }else{
                     return false
@@ -739,14 +739,17 @@ const RequestSchema = {
                         onChange={( value ) => {
                             let team = Session.getSelectedTeam();
                             let costAbleToIssue = true;
+                            let actualCost;
                             if(team.defaultCostThreshold){
-                                let actualCost = props.item.hasOwnProperty("costThreshold") ?
-                                  typeof props.item.costThreshold === 'string' ?
-                                    props.item.costThreshold.replace(/,/g, ""):
-                                    props.item.costThreshold
-                                : "";
-                                    actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost);
-                                costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
+                              if (props.item.hasOwnProperty("costThreshold")) {
+                                if (typeof props.item.costThreshold === 'string') {
+                                  actualCost = props.item.costThreshold.replace(/,/g, "");
+                                  actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost);
+                                } else {
+                                  actualCost = parseFloat(props.item.costThreshold);
+                                }
+                                costAbleToIssue = actualCost <= team.defaultCostThreshold;
+                              }
                             }
                             onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
                             props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
@@ -1204,7 +1207,7 @@ const RequestSchema = {
             description: "Latest date that the work can be completed",
             //input: DateTime,
             input: (props)=>{
-                return props.item.type == "Schedular" || props.item.status == "Issued" ? <DateInput
+                return props.item.type == "Schedular" || props.item.type == 'Scheduler' || props.item.status == "Issued" ? <DateInput
                     {...props}
                     onChange ={(val)=>{
                         props.onChange(val)
@@ -1664,21 +1667,27 @@ const RequestSchema = {
                     return team;
                 }
             },
-            input:( props ) => {
-                return <Select {...props}
-                    onChange={( value ) => {
-                        let team = Session.getSelectedTeam();
-                        let costAbleToIssue = true;
-                        if(team.defaultCostThreshold){
-                            costAbleToIssue = false;
-                            let actualCost = props.item.hasOwnProperty("costThreshold") ? props.item.costThreshold.replace(/,/g, "") : "";
-                                actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost)
-                            costAbleToIssue = actualCost <= team.defaultCostThreshold ? true : false;
-                        }
-                        onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
-                        props.onChange(value);
-                    }}/>
-            } ,
+            input: (props) => {
+              return <Select {...props}
+                             onChange={(value) => {
+                               let team = Session.getSelectedTeam();
+                               let costAbleToIssue = true;
+                               let actualCost;
+                               if (team.defaultCostThreshold) {
+                                 if (props.item.hasOwnProperty("costThreshold")) {
+                                   if (typeof props.item.costThreshold === 'string') {
+                                     actualCost = props.item.costThreshold.replace(/,/g, "");
+                                     actualCost = _.isEmpty(actualCost) ? 0 : parseFloat(actualCost);
+                                   } else {
+                                     actualCost = parseFloat(props.item.costThreshold);
+                                   }
+                                   costAbleToIssue = actualCost <= team.defaultCostThreshold;
+                                 }
+                               }
+                               onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                               props.onChange(value);
+                             }}/>
+            },
             options: ( item ) => {
                 let facility = null,
                     supplier = null,
@@ -2058,7 +2067,7 @@ const RequestSchema = {
                         </div>
                     );
                 },
-                condition: "Schedular",
+                condition: "Scheduler",
             }
 
         }
