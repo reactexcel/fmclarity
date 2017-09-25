@@ -40,6 +40,11 @@ class Calendar extends React.Component {
         end: moment().startOf('month').toDate()
       }
     };
+
+    let user = props.user ? props.user : Meteor.user();
+    if (user) {
+      this.state.requests = this.getRequests()
+    }
   };
 
   componentWillReceiveProps(props) {
