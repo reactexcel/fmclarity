@@ -337,7 +337,7 @@ ComplianceEvaluationService = new function() {
                     let newRequest = PPM_Schedulers.create( {
                         facility: preSelectedFacility,
                         team: team,
-                        type: 'Schedular',
+                        type: 'Scheduler',
                         priority: 'Scheduled',
                         status: 'PPM',
                         name: rule.event,
@@ -551,9 +551,9 @@ ComplianceEvaluationService = new function() {
                         let newRequest = PPM_Schedulers.create( {
                             facility: preSelectedFacility,
                             team: team,
-                            type: 'Schedular',
+                            type: 'Scheduler',
                             priority: 'Scheduled',
-                            status: 'PMP',
+                            status: 'PPM',
                             name: rule.event.hasOwnProperty("name") ? rule.event.name : rule.event,
                             frequency: frequency?frequency:{
                                 number: rule && rule.frequency && rule.frequency.number ? rule.frequency.number : 0,

@@ -71,7 +71,7 @@ class Calendar extends React.Component {
             } else{
                 if ( request.dueDate ) {
                     let title = null;
-                    if ( request.type == 'Schedular' ) {
+                    if ( request.type == 'Scheduler' ) {
                         title = request.name;
                     } else if ( request.code ) {
                         title = `#${request.code} ${request.name}`
