@@ -173,7 +173,7 @@ class Calendar extends React.Component {
     let calendarView = this.calendar.fullCalendar('getView');
     let allDays = !_.contains(['agendaWeek', 'agendaDay'], calendarView.name);
 
-    if (requests === null) {
+    if (!requests) {
       return;
     }
 
