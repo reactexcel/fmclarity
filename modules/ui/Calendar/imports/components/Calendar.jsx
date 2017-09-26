@@ -27,36 +27,43 @@ class Calendar extends React.Component {
   constructor(props) {
     super(props);
 
-    if (props.facility && props.facility._id) {
-      this.contextFilter['facility._id'] = props.facility._id;
-    } else if (props.team && props.team._id) {
-      this.contextFilter['team._id'] = props.team._id;
-    }
-
     this.state = {
       requests: [],
       monthFilter: {
         start: moment().startOf('month').toDate(),
         end: moment().startOf('month').toDate()
-      }
+      },
+      facility: null,
+      team: null
     };
-
-    let user = props.user ? props.user : Meteor.user();
-    if (user) {
-      this.state.requests = this.getRequests()
-    }
   };
 
   componentWillReceiveProps(props) {
-    let user = props.user ? props.user : Meteor.user();
-    if (user) {
+
+    this.setState({
+      user: props.user,
+      facility: props.facility,
+      team: props.team
+    }, () => {
+      this.contextFilter = {};
+      if (this.state.facility && this.state.facility._id) {
+        this.contextFilter['facility._id'] = this.state.facility._id;
+      } else if (this.state.team && this.state.team._id) {
+        this.contextFilter['team._id'] = this.state.team._id;
+      }
+
       this.setState({
         requests: this.getRequests()
+      }, () => {
+        this._addEvents(this.state);
+        this.calendar.fullCalendar('refetchEvents');
       });
-    }
+    });
+
   }
 
   getRequests() {
+
     let { requests } = Requests.findForUser(
       this.props.user,
       {$and: [this.statusFilter, this.contextFilter]},
@@ -108,26 +115,26 @@ class Calendar extends React.Component {
         $(this).css('z-index', 0);
         $('.calendar-tooltip').remove();
       },
-      viewRender: function (view) {
-        //let event = $("#calendar").fullCalendar('clientEvents');
-        let calendarDate = self.calendar.fullCalendar('getDate');
-        let start = calendarDate.startOf('month').toDate();
-        let end = calendarDate.endOf('month').toDate();
-        if (!moment(start).isSame(self.state.monthFilter.start) || !moment(end).isSame(self.state.monthFilter.end)) {
-
+      event: function(start, end, timezone, callback) {
+        let startOfMonth = start.startOf('month').toDate();
+        let endOfMonth = end.endOf('month').toDate();
+        if (!moment(startOfMonth).isSame(self.state.monthFilter.start) ||
+          !moment(endOfMonth).isSame(self.state.monthFilter.end)) {
           self.setState({
             monthFilter: {
-              start: start,
-              end: end
+              start: startOfMonth,
+              end: endOfMonth
             }
           });
           self.setState({
             requests: self.getRequests()
           }, () => {
-            self._addEvents(self.state);
-            self.calendar.fullCalendar('refetchEvents');
+            callback(self._addEvents(self.state, true));
           });
         }
+      },
+      viewRender: function (view) {
+        //let event = $("#calendar").fullCalendar('clientEvents');
         let event = self.eventt;
         if (event && event.length > 0) {
           event.map((evt, id) => {
@@ -162,7 +169,7 @@ class Calendar extends React.Component {
    * @memberOf    module:ui/Calendar.Calendar
    * @private
    */
-  _addEvents({requests}) {
+  _addEvents({requests}, returnData = false) {
     let calendarView = this.calendar.fullCalendar('getView');
     let allDays = !_.contains(['agendaWeek', 'agendaDay'], calendarView.name);
 
@@ -231,6 +238,11 @@ class Calendar extends React.Component {
         }
       }
     });
+
+    if (returnData) {
+      return events;
+    }
+
     this.eventt = events;
     this.calendar.fullCalendar('removeEventSource', events);
     this.calendar.fullCalendar('addEventSource', events);
