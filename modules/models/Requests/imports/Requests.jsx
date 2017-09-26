@@ -1296,6 +1296,7 @@ Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = 
       $and: PPMQuery
     }).fetch({ sort: { createdAt: 1 } });
     PPMRequests.map((r) => {
+      console.log(requests)
       requests = expandPPM(r, requests);
     });
   }
@@ -1336,7 +1337,7 @@ function expandPPM(r, requests) {
           copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
           const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
           if (diff_in_dates_in_days > 0) {
-            return;
+            return requests;
           } else {
             requests.push(PPM_Schedulers.collection._transform(copy));
           }
@@ -1361,7 +1362,7 @@ function expandPPM(r, requests) {
           copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
           const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
           if (diff_in_dates_in_days > 0) {
-            return;
+            return requests;
           } else {
             requests.push(PPM_Schedulers.collection._transform(copy));
           }
