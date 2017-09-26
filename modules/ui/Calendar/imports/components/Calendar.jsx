@@ -14,8 +14,6 @@ import moment from 'moment';
  * @memberOf        module:ui/Calendar
  * @param           {object} props
  * @param           {string} props.example
- * @todo            Create "event source" function for events as in http://fullcalendar.io/docs/event_data/events_function/
-
  */
 
 class Calendar extends React.Component {
