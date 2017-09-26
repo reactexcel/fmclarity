@@ -1296,7 +1296,6 @@ Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = 
       $and: PPMQuery
     }).fetch({ sort: { createdAt: 1 } });
     PPMRequests.map((r) => {
-      console.log(requests)
       requests = expandPPM(r, requests);
     });
   }
