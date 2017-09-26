@@ -78,8 +78,11 @@ const RequestsStatusReport = React.createClass( {
 			if ( this.state.endDate ) {
 				q.issuedAt.$lte = this.state.endDate;
 			}
+			console.log(11111)
 			if ( team ) {
+        console.log(2222)
 				let { requests } = user.getRequests( q );
+        console.log(requests)
 				data.requests = requests;
 			}
 		}
@@ -326,10 +329,9 @@ const RequestsStatusReport = React.createClass( {
 							/>
 						</div>
 					</div>
-
 				</div>
 				<div className = "ibox" ref="printable">
-					<DataTable items={data.requests} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+					<DataTable items={data} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
 				</div>
 			</div>
 		)
