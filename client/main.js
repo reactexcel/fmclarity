@@ -178,11 +178,7 @@ Actions.addAccessRule( {
     ],
     role: [
         '*',
-    ],
-    condition: ( team, request ) => {
-        console.log(team,"check condition");
-        return true;
-    }
+    ]
 } )
 
 Actions.addAccessRule( {
