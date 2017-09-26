@@ -21,37 +21,30 @@ import moment from 'moment';
 class Calendar extends React.Component {
   eventt = [];
   statusFilter = {"status": {$nin: ["Cancelled", "Deleted", "Closed", "Reversed"]}};
-  contextFilter = {};
   calendar = {};
 
   constructor(props) {
     super(props);
 
     this.state = {
+      user: props.user,
+      facility: props.facility,
+      team: props.team,
       requests: [],
       monthFilter: {
         start: moment().startOf('month').toDate(),
         end: moment().startOf('month').toDate()
       },
-      facility: null,
-      team: null
     };
+    this.state.requests = this.getRequests();
   };
 
   componentWillReceiveProps(props) {
-
     this.setState({
       user: props.user,
       facility: props.facility,
       team: props.team
     }, () => {
-      this.contextFilter = {};
-      if (this.state.facility && this.state.facility._id) {
-        this.contextFilter['facility._id'] = this.state.facility._id;
-      } else if (this.state.team && this.state.team._id) {
-        this.contextFilter['team._id'] = this.state.team._id;
-      }
-
       this.setState({
         requests: this.getRequests()
       }, () => {
@@ -59,14 +52,18 @@ class Calendar extends React.Component {
         this.calendar.fullCalendar('refetchEvents');
       });
     });
-
   }
 
   getRequests() {
-
+    let contextFilter = {};
+    if (this.state.facility && this.state.facility._id) {
+      contextFilter['facility._id'] = this.state.facility._id;
+    } else if (this.state.team && this.state.team._id) {
+      contextFilter['team._id'] = this.state.team._id;
+    }
     let { requests } = Requests.findForUser(
       this.props.user,
-      {$and: [this.statusFilter, this.contextFilter]},
+      {$and: [this.statusFilter, contextFilter]},
       {expandPMP: true},
       {start: this.state.monthFilter.start, end: this.state.monthFilter.end}
     );
