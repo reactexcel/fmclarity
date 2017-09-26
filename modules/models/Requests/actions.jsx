@@ -12,6 +12,8 @@ import RequestPanel from './imports/components/RequestPanel.jsx';
 import { Teams } from '/modules/models/Teams';
 import { Files } from '/modules/models/Files';
 
+import { getDefaultDueDate } from '/modules/models/Requests/imports/schemas/PPMSchema'
+
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 
 
@@ -33,9 +35,9 @@ const view = new Action( {
             content: //<DropFileContainer request={request} model={Requests}>
                 <RequestPanel item = { request } callback={callback}/>
                 //</DropFileContainer>
-        } )
+        })
         callback( request );
-        if(request.type === "Schedular" || request.type === "Preventative"){
+        if(isRequestPPM(request)){
           request = PPM_Schedulers.collection._transform( request );
         }else{
           request = Requests.collection._transform( request );
@@ -51,18 +53,16 @@ const edit = new Action( {
     action: ( preRequest, callback ) => {
         let previousRequest = Object.assign( {}, preRequest );
         let oldRequest = Object.assign( {}, preRequest );
-        let newCollection = false ;
-        if(preRequest.type === "Schedular" || preRequest.type === "Preventative"){
-          newCollection = true
-        }
+        let isPPM = isRequestPPM(preRequest);
+
         Modal.show( {
             content:
                 <AutoForm
             title = "Edit Request"
             edit = {true}
-            model = {newCollection ? PPM_Schedulers : Requests }
+            model = { isPPM ? PPM_Schedulers : Requests }
             item = { previousRequest }
-            form = {newCollection ? CreatePPMRequestForm : CreateRequestForm }
+            form = { isPPM ? CreatePPMRequestForm : CreateRequestForm }
             onSubmit = {
                 ( request ) => {
                     // this should really be in a Request action called 'update' or something
@@ -74,18 +74,14 @@ const edit = new Action( {
                     request.description = null;
 
                     request.costThreshold = request.costThreshold == '' ? 0 : request.costThreshold;
-                    if(newCollection){
-                      PPM_Schedulers.save.call( request );
-                    }else{
-                      Requests.save.call( request );
+                    if (isPPM) {
+                        PPM_Schedulers.save.call(request);
+                        request = PPM_Schedulers.collection._transform(request);
+                    } else {
+                        Requests.save.call(request);
+                        request = Requests.collection._transform(request);
                     }
-
                     Modal.hide();
-                    if(newCollection){
-                    request = PPM_Schedulers.collection._transform( request );
-                    }else{
-                    request = Requests.collection._transform( request );
-                    }
 
                     let notificationBody = "",
                         keys = [ 'costThreshold', 'priority', 'type', 'name' ];
@@ -145,10 +141,8 @@ const deleteFunction = new Action( {
     shouldConfirm: true,
     verb: 'deleted request',
     action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
+        let isPPM = isRequestPPM(request);
+
         if(request.status == "Booking"){
             let facility = Facilities.findOne({'_id':request.facility._id})
             let areas = facility.areas;
@@ -187,20 +181,14 @@ const deleteFunction = new Action( {
                 }
                 Facilities.update( { _id: facility._id }, { $set: { "areas": areas } } );
         }
-        if(newCollection){
-          if(request.status == "PPM"){
+        if (isPPM) {
             PPM_Schedulers.update( request._id, { $set: { status: 'Deleted' } } );
-          }else{
-            PPM_Schedulers.remove( request._id );
-          }
-        }else{
-        Requests.update( request._id, { $set: { status: 'Deleted' } } );
+            request = PPM_Schedulers.collection._transform( request );
+        } else {
+            Requests.update( request._id, { $set: { status: 'Deleted' } } );
+            request = Requests.collection._transform( request );
         }
         Modal.hide();
-        request = Requests.collection._transform( request );
-        if(newCollection){
-        request = PPM_Schedulers.collection._transform( request );
-        }
         request.distributeMessage( {
             message: {
                 verb: "deleted",
@@ -218,29 +206,27 @@ const cancel = new Action( {
     verb: "cancelled a work order",
     label: "Cancel",
     action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
+        let isPPM = isRequestPPM(request);
+
         Modal.show( {
             content: <AutoForm
-            model = {newCollection ? PPM_Schedulers :  Requests }
+            model = { isPPM ? PPM_Schedulers : Requests }
             item = { request }
             form = {
                 [ 'rejectComment' ]
             }
             onSubmit = {
                 ( request ) => {
-                  if(newCollection){
-                    PPM_Schedulers.update( request._id, { $set: { status: 'Cancelled' } } );
-                  }else{
-                    Requests.update( request._id, { $set: { status: 'Cancelled' } } );
-                  }
-                    Modal.hide();
-                    request = Requests.collection._transform( request );
-                    if(newCollection){
-                    request = PPM_Schedulers.collection._transform( request );
+                    if (isPPM) {
+                        PPM_Schedulers.update( request._id, { $set: { status: 'Cancelled' } } );
+                        request = PPM_Schedulers.collection._transform( request );
+                    } else {
+                        Requests.update( request._id, { $set: { status: 'Cancelled' } } );
+                        request = Requests.collection._transform( request );
                     }
+
+                    Modal.hide();
+
                     request.distributeMessage( {
                         message: {
                             verb: "cancelled",
@@ -263,21 +249,18 @@ const issue = new Action( {
     verb: "issued a work order",
     label: "Issue",
     action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
         // I think this is quite a good model for how these actions should be structured
         // we might even reach a point where it can be action: 'Issues.issue'?
-        if(newCollection){
-        Meteor.call( 'PPM_Schedulers.issue', request );
-        }else{
-        Meteor.call( 'Issues.issue', request );
+        let isPPM = isRequestPPM(request);
+        if (isPPM) {
+            Meteor.call( 'PPM_Schedulers.issue', request );
+        } else {
+            Meteor.call( 'Issues.issue', request );
         }
         callback( request );
         request.markAsUnread();
     }
-} )
+});
 
 // issues an invoice
 const issueInvoice = new Action( {
@@ -286,16 +269,12 @@ const issueInvoice = new Action( {
     verb: "issued an invoice",
     label: "Issue",
     action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
         // I think this is quite a good model for how these actions should be structured
         // we might even reach a point where it can be action: 'Issues.issue'?
-        if(newCollection){
-        Meteor.call( 'PPM_Schedulers.issue', request );
-        }else{
-        Meteor.call( 'Issues.issue', request );
+        if (isRequestPPM(request)) {
+            Meteor.call( 'PPM_Schedulers.issue', request );
+        } else {
+            Meteor.call( 'Issues.issue', request );
         }
         callback( request );
         request.markAsUnread();
@@ -309,21 +288,17 @@ const reissueInvoice = new Action( {
     verb: "reissued an invoice",
     label: "ReIssue",
     action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
         // I think this is quite a good model for how these actions should be structured
         // we might even reach a point where it can be action: 'Issues.issue'?
-        if(newCollection){
-        Meteor.call( 'PPM_Schedulers.issue', request );
-        }else{
-        Meteor.call( 'Issues.issue', request );
+        if (isRequestPPM(request)) {
+            Meteor.call( 'Issues.issue', request );
+        } else {
+            Meteor.call( 'PPM_Schedulers.issue', request );
         }
-        callback( request );
+        callback(request);
         request.markAsUnread();
     }
-} )
+})
 
 const accept = new Action( {
     name: "accept request",
@@ -331,14 +306,11 @@ const accept = new Action( {
     verb: "accepted a work order",
     label: "Assign",
     action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
+        let isPPM = isRequestPPM(request);
         Modal.show( {
             content: <AutoForm
             title = "Please provide eta and, if appropriate, an assignee."
-            model = {newCollection ? PPM_Schedulers : Requests }
+            model = { isPPM ? PPM_Schedulers : Requests }
             item = { request }
             form = {
                 ['eta','assignee','acceptComment']
@@ -346,26 +318,22 @@ const accept = new Action( {
             onSubmit = {
                 ( request ) => {
                     //Requests.update( request._id, { $set: { status: 'In Progress' } } );
-                    if(newCollection){
-                      PPM_Schedulers.update( request._id, {
-                          $set: {
-                              eta: request.eta,
-                              acceptComment: request.acceptComment
-                          }
-                      } );
-                    }else{
-                      Requests.update( request._id, {
-                        $set: {
-                          eta: request.eta,
-                          acceptComment: request.acceptComment
-                        }
-                      } );
+                    let updateModifier = {
+                      $set: {
+                        eta: request.eta,
+                        acceptComment: request.acceptComment
+                      }
+                    };
+                    if (isPPM) {
+                        PPM_Schedulers.update(request._id, updateModifier);
+                        request = PPM_Schedulers.collection._transform(request);
+                    } else {
+                        Requests.update(request._id, updateModifier);
+                        request = Requests.collection._transform(request);
                     }
+
                     Modal.hide();
-                    request = Requests.collection._transform( request );
-                    if(newCollection){
-                      request = PPM_Schedulers.collection._transform( request );
-                    }
+
                     request.setAssignee( request.assignee );
                     request.distributeMessage( {
                         message: {
@@ -390,60 +358,55 @@ const reject = new Action( {
     verb: "rejected a work order",
     label: "Reject",
     action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
+        let isPPM = isRequestPPM(request);
         Modal.show( {
             content: <AutoForm
-            title = "What is your reason for rejecting this request?"
-            model = {newCollection ? PPM_Schedulers : Requests }
-            item = { request }
-            form = {
-                [ 'rejectComment' ]
-            }
-            onSubmit = {
-                ( request ) => {
-                  if(newCollection){
-                    PPM_Schedulers.update( request._id, { $set: { status: 'Rejected' } } );
-                  }else{
-                    Requests.update( request._id, { $set: { status: 'Rejected' } } );
+              title="What is your reason for rejecting this request?"
+              model={ isPPM ? PPM_Schedulers : Requests }
+              item={ request }
+              form={
+                ['rejectComment']
+              }
+              onSubmit={
+                (request) => {
+                  let updateModifier = {$set: {status: 'Rejected'}};
+
+                  if (isPPM) {
+                    PPM_Schedulers.update(request._id, updateModifier);
+                    request = PPM_Schedulers.collection._transform(request);
+                  } else {
+                    Requests.update(request._id, updateModifier);
+                    request = Requests.collection._transform(request);
                   }
-                    Modal.hide();
-                    request = Requests.collection._transform( request );
-                    if(newCollection){
-                      request = PPM_Schedulers.collection._transform( request );
+                  Modal.hide();
+
+                  request.distributeMessage({
+                    message: {
+                      verb: "rejected",
+                      subject: `Work order ${request.code} has been rejected`,
+                      body: request.rejectComment
                     }
-                    request.distributeMessage( {
-                        message: {
-                            verb: "rejected",
-                            subject: `Work order ${request.code} has been rejected`,
-                            body: request.rejectComment
-                        }
-                    } );
-                    request.markAsUnread();
-                    callback( request );
+                  });
+                  request.markAsUnread();
+                  callback(request);
                 }
-            }
+              }
             />
         } )
     }
-} )
+});
 
 const getQuote = new Action( {
     name: "get request quote",
     type: 'request',
     label: "Get quote",
     action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
+        let isPPM = isRequestPPM(request);
         Modal.show( {
             content: <AutoForm
-            model = {newCollection ? PPM_Schedulers : Requests }
+            model = { isPPM ? PPM_Schedulers : Requests }
             item = { request }
-            form = {newCollection ? CreatePPMRequestForm : CreateRequestForm }
+            form = { isPPM ? CreatePPMRequestForm : CreateRequestForm }
             onSubmit = {
                 ( request ) => {
                     //Requests.update( request._id, { $set: { status: 'In Progress' } } );
@@ -461,15 +424,12 @@ const sendQuote = new Action( {
     type: 'request',
     label: "Quote",
     action: ( request ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
+        let isPPM = isRequestPPM(request);
         Modal.show( {
             content: <AutoForm
-            model = {newCollection ? PPM_Schedulers : Requests }
+            model = { isPPM ? PPM_Schedulers : Requests }
             item = { request }
-            form = {newCollection ? CreatePPMRequestForm : CreateRequestForm }
+            form = { isPPM ? CreatePPMRequestForm : CreateRequestForm}
             onSubmit = {
                 ( request ) => {
                     //Requests.update( request._id, { $set: { status: 'In Progress' } } );
@@ -491,14 +451,12 @@ const complete = new Action( {
             var callback = request.callback;
             request = _.omit(request,'callback');
         }
-        let newCollection = false ;
-        if(request.type === "Schedular" || request.type === "Preventative"){
-          newCollection = true
-        }
+        let isPPM = isRequestPPM(request);
+
         Modal.show( {
             content: <AutoForm
             title = "All done? Great! We just need a few details to finalise the job."
-            model = {newCollection ? PPM_Schedulers : Requests }
+            model = { isPPM ? PPM_Schedulers : Requests }
             item = { request }
             form = {
                 [ 'closeDetails' ]
@@ -506,11 +464,11 @@ const complete = new Action( {
             onSubmit = {
                 ( request ) => {
                     Modal.hide();
-                    if(newCollection){
-                    Meteor.call( 'PPM_Schedulers.complete', request );
-                  }else{
-                    Meteor.call( 'Issues.complete', request );
-                  }
+                    if (isPPM) {
+                      Meteor.call( 'PPM_Schedulers.complete', request );
+                    } else {
+                      Meteor.call( 'Issues.complete', request );
+                    }
                     if(callback){
                         callback( request );
                     }
@@ -532,10 +490,9 @@ const invoice = new Action( {
             var callback = request.callback;
             request = _.omit(request,'callback');
         }
-        let newCollection = false ;
-        if(request.type === "Schedular" || request.type === "Preventative"){
-          newCollection = true
-        }
+
+        let isPPM = isRequestPPM(request);
+
         var invoiceNumber = "";
         request.invoiceDetails = {};
         request.invoiceDetails.details = request.name ? request.name : "";
@@ -550,7 +507,7 @@ const invoice = new Action( {
         Modal.show( {
             content: <AutoForm
             title = "Create an Invoice for the completed work order."
-            model = {newCollection ? PPM_Schedulers : Requests }
+            model = { isPPM ? PPM_Schedulers : Requests }
             item = { request }
             form = {
                 [ 'invoiceDetails' ]
@@ -558,11 +515,11 @@ const invoice = new Action( {
             onSubmit = {
                 ( request ) => {
                     Modal.hide();
-                    if(newCollection){
-                    Meteor.call( 'PPM_Schedulers.invoice', request );
-                  }else{
-                    Meteor.call( 'Issues.invoice', request );
-                  }
+                    if (isPPM) {
+                        Meteor.call( 'PPM_Schedulers.invoice', request );
+                    } else {
+                        Meteor.call( 'Issues.invoice', request );
+                    }
                     if(callback){
                         callback( request );
                     }
@@ -642,158 +599,154 @@ const deleteInvoice = new Action( {
     }
 } )
 
-const close = new Action( {
-    name: "close request",
-    type: 'request',
-    verb: "closed a work order",
-    label: "close",
-    action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
-        Modal.show( {
-            content: <AutoForm
-            title = "Please leave a comment about the work for the suppliers record"
-            model = {newCollection ? PPM_Schedulers : Requests }
-            item = { request }
-            form = {
-                [ 'closeComment' ]
+const close = new Action({
+  name: "close request",
+  type: 'request',
+  verb: "closed a work order",
+  label: "close",
+  action: (request, callback) => {
+    let isPPM = isRequestPPM(request);
+    Modal.show({
+      content: <AutoForm
+        title="Please leave a comment about the work for the suppliers record"
+        model={ isPPM ? PPM_Schedulers : Requests }
+        item={ request }
+        form={
+          ['closeComment']
+        }
+        onSubmit={
+          (request) => {
+            if (isPPM) {
+              PPM_Schedulers.update( request._id, { $set: { status: 'Closed' } } );
+              request = PPM_Schedulers.collection._transform( request );
+            } else {
+              Requests.update(request._id, {$set: {status: 'Closed'}});
+              request = Requests.collection._transform(request);
             }
-            onSubmit = {
-                ( request ) => {
-                  if(newCollection){
-                    PPM_Schedulers.update( request._id, { $set: { status: 'Closed' } } );
-                    request = PPM_Schedulers.collection._transform( request );
-                  }else{
-                    Requests.update( request._id, { $set: { status: 'Closed' } } );
-                    request = Requests.collection._transform( request );
-                  }
-                  request.distributeMessage( {
-                        message: {
-                            verb: "closed",
-                            subject: `Work order ${request.code} has been closed`,
-                            body: request.closeComment
-                        }
-                    } );
-                    request.markAsUnread();
-                    Modal.hide();
-                    callback( request );
-                }
-            }
-            />
-        } )
-    }
-} )
+            request.distributeMessage({
+              message: {
+                verb: "closed",
+                subject: `Work order ${request.code} has been closed`,
+                body: request.closeComment
+              }
+            });
+            request.markAsUnread();
+            Modal.hide();
+            callback(request);
+          }
+        }
+      />
+    })
+  }
+})
 
-const reopen = new Action( {
-    name: "reopen request",
-    type: 'request',
-    label: "Reopen",
-    action: ( request, callback ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
-        Modal.show( {
-            content: <AutoForm
-            model = {newCollection ? PPM_Schedulers : Requests }
-            item = { request }
-            form = {
-                [ 'reopenComment' ]
+const reopen = new Action({
+  name: "reopen request",
+  type: 'request',
+  label: "Reopen",
+  action: (request, callback) => {
+    let isPPM = isRequestPPM(request);
+    Modal.show({
+      content: <AutoForm
+        model={ isPPM ? PPM_Schedulers : Requests }
+        item={ request }
+        form={
+          ['reopenComment']
+        }
+        onSubmit={
+          (request) => {
+            if (isPPM) {
+              PPM_Schedulers.update(request._id, {$set: {status: 'Issued'}});
+              request = PPM_Schedulers.collection._transform(request);
+            } else {
+              Requests.update(request._id, {$set: {status: 'Issued'}});
+              request = Requests.collection._transform(request);
             }
-            onSubmit = {
-                ( request ) => {
-                  if(newCollection){
-                    PPM_Schedulers.update( request._id, { $set: { status: 'Issued' } } )
-                    Modal.hide();
-                    request = PPM_Schedulers.collection._transform( request );
-                  }else{
-                    Requests.update( request._id, { $set: { status: 'Issued' } } )
-                    Modal.hide();
-                    request = Requests.collection._transform( request );
-                  }
-                    request.distributeMessage( {
-                        message: {
-                            verb: "reopened",
-                            subject: `Work order ${request.code} has been reopened`,
-                            body: request.reopenComment
-                        }
-                    } );
-                    request.markAsUnread();
-                    callback( request );
-                }
-            }
-            />
-        } )
-    }
-} )
+            Modal.hide();
+
+            request.distributeMessage({
+              message: {
+                verb: "reopened",
+                subject: `Work order ${request.code} has been reopened`,
+                body: request.reopenComment
+              }
+            });
+            request.markAsUnread();
+            callback(request);
+          }
+        }
+      />
+    })
+  }
+})
 
 const reverse = new Action( {
     name: "reverse request",
     type: 'request',
     label: "Reverse",
     action: ( request ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
+        let isPPM = isRequestPPM(request);
         Modal.show( {
             content: <AutoForm
-            model = {newCollection ? PPM_Schedulers : Requests }
+            model = { isPPM ? PPM_Schedulers : Requests }
             item = { request }
             form = {
                 [ 'reverseComment' ]
             }
             onSubmit = {
                 ( request ) => {
-                  if(newCollection){
-                    PPM_Schedulers.update( request._id, { $set: { status: 'Reversed' } } )
-                  }else{
-                    Requests.update( request._id, { $set: { status: 'Reversed' } } )
-                  }
+                    if (isPPM) {
+                      PPM_Schedulers.update( request._id, { $set: { status: 'Reversed' } } )
+                    } else {
+                      Requests.update( request._id, { $set: { status: 'Reversed' } } )
+                    }
                     Modal.hide();
                 }
             }
             />
         } )
     }
-} )
+});
 
-const clone = new Action( {
-    name: "clone request",
-    type: 'request',
-    label: "Issue",
-    action: ( request ) => {
-      let newCollection = false ;
-      if(request.type === "Schedular" || request.type === "Preventative"){
-        newCollection = true
-      }
-        request = Requests.collection._transform( request );
-        if(newCollection){
-          request = PPM_Schedulers.collection._transform( request );
-        }
-        let dueDate = request.getNextDate();
-
-        let newRequest = Object.assign( {}, request, {
-            _id: Random.id(),
-            dueDate: dueDate,
-            status: 'Issued',
-            type: 'Preventative'
-        } );
-
-        Modal.replace( {
-            content: //<DropFileContainer request={newRequest} model={Requests}>
-                <RequestPanel item = { newRequest } />
-                //</DropFileContainer>
-        } );
-        if(newCollection){
-        Meteor.call( 'PPM_Schedulers.issue', newRequest );
-      }else{
-        Meteor.call( 'Issues.issue', newRequest );
-      }
+const clone = new Action({
+  name: "clone request",
+  type: 'request',
+  label: "Issue",
+  action: (request) => {
+    request = Requests.collection._transform(request);
+    if (request.code) {
+      let team = Teams.findOne( {
+        _id: request.team._id
+      });
+      request.code = team.getNextWOCode();
     }
-} )
+    let dueDate = request.getNextDate();
+    let newRequest = Object.assign({}, request, {
+      _id: Random.id(),
+      incidenceDate: getDefaultDueDate(request),
+      createdAt: new Date(),
+      dueDate: dueDate,
+      status: 'Issued',
+      type: 'Preventative'
+    });
+
+    Modal.replace({
+      content: //<DropFileContainer request={newRequest} model={Requests}>
+        <RequestPanel item={ newRequest }/>
+      //</DropFileContainer>
+    });
+    Meteor.call('Issues.issue', newRequest);
+  }
+});
+
+function isRequestPPM(request) {
+    return [
+        'Schedular',
+        'Scheduler',
+        // 'Preventative' // Preventative is a WO and not a PPM Scheduler
+    ].indexOf(request.type) > -1
+}
+
 
 export {
     view,

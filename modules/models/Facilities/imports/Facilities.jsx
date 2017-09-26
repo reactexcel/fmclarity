@@ -734,7 +734,7 @@ Facilities.actions( {
 
     setDefaultSupplier: {
         authentication: true,
-        method: ( facility, supplier, service ) => {
+        method: ( facility, supplier, service, selectedTeam ) => {
             let services = facility.servicesRequired,
                 index = null;
             for ( let i in services ) {
@@ -763,6 +763,25 @@ Facilities.actions( {
                                 }];
 
                             }
+                            let flag = true;
+                            let selectedTeamSuppliers = selectedTeam.suppliers || [];
+                            if(selectedTeamSuppliers.length) {
+                              if(_.find(selectedTeamSuppliers, function(obj){ return obj._id === supplier._id; })){
+                                flag = false;
+                              }
+                            }
+                            if(flag) {
+                              selectedTeamSuppliers.push({
+                                name: supplier.name,
+                                _id: supplier._id
+                              })
+                              Teams.update( selectedTeam._id, {
+                                      $set: {
+                                          suppliers: selectedTeamSuppliers,
+                                      }
+                                  }
+                              )
+                            }
                         }
                     }
                     index = i;
@@ -780,7 +799,7 @@ Facilities.actions( {
                 index,
                 service: services[index],
                 supplier,
-            }
+            };
         }
     },
 

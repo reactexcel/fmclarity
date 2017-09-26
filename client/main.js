@@ -395,7 +395,7 @@ Actions.addAccessRule( {
 
 Actions.addAccessRule( {
     condition: ( request ) => {
-        if ( request.type == 'Schedular'  && request.supplier && request.supplier._id ) {
+        if ( (request.type == 'Scheduler' || request.type == 'Schedular') && request.supplier && request.supplier._id ) {
             import { PPM_Schedulers } from '/modules/models/Requests';
             request = PPM_Schedulers.collection._transform( request );
             let nextRequest = request.getNextRequest();
@@ -491,11 +491,12 @@ Actions.addAccessRule( {
             if ( teamRole == 'fmc support' ) {
                 /* Allow action for this role regardless of requests status */
                 if(request.status == 'Issued'){
-                    if(user.getRole() && user.getRole() == 'fmc support'){
+                    return false;
+                    /*if(user.getRole() && user.getRole() == 'fmc support'){
                         return true;
                     }else{
                         return false;
-                    }
+                    }*/
                 }else{
                     return true;
                 }
@@ -512,11 +513,12 @@ Actions.addAccessRule( {
                     facilityRole = facility.getMemberRole( user );
                 }
                 if(request.status == 'Issued'){
-                    if(facilityRole == 'fmc support'){
+                    return false;
+                    /*if(facilityRole == 'fmc support'){
                         return true;
                     }else{
                         return false;
-                    }
+                    }*/
                 }
                 if ( requestRole == 'owner' || teamRole == 'portfolio manager' || facilityRole == 'manager' || facilityRole == 'property manager' ) {
                     return true;

@@ -16,13 +16,14 @@ const NavigationDrawerContainer = createContainer( ( { params } ) => {
 
 	let user = Meteor.user(),
 		team = Session.getSelectedTeam(),
+		facility = Session.getSelectedFacility(),
 		role = null;
 
 	if ( user && team ) {
 		role = user.getRole( team );
 	}
 
-	return { user, team, userRole: role, routes: NavigationDrawerRoutes }
+	return { user, team, facility, userRole: role, routes: NavigationDrawerRoutes }
 }, NavigationDrawer );
 
 export default NavigationDrawerContainer;

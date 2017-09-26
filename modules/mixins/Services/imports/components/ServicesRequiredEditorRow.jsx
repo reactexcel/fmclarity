@@ -83,9 +83,22 @@ const ServicesRequiredEditorRow = React.createClass( {
 		var service = this.data.service;
 		var newValue = event?event.target.value:this.data.service.name;
 		service.name = newValue;
-		if ( this.props.onChange ) {
-			this.props.onChange( service );
+		if (!service.name || (service.name && service.name.trim()=="")) {
+			Bert.alert({
+		  				title: '',
+		  				message: 'Name is required. Must be 2/more characters',
+		  				type: 'danger',
+		  				style: 'growl-bottom-right',
+		  				icon: 'fa-ban'
+					});
+			event.target.focus();
 		}
+		else{
+			if ( this.props.onChange ) {
+				this.props.onChange( service );
+			}
+		}
+		
 	},
 
 	showSupplierModal( supplier ) {
@@ -97,8 +110,8 @@ const ServicesRequiredEditorRow = React.createClass( {
 	removeService(){
 		if(this.props.onChange){
 			this.props.onChange(null);
-				Modal.hide();
-			}
+			Modal.hide();
+		}
 	},
 
 	render() {
@@ -122,14 +135,30 @@ const ServicesRequiredEditorRow = React.createClass( {
 						onKeyDown={ (evt) => {
 							this.props.onKeyDown(evt) }}
 						id={this.props.id}
-						onBlur={()=>{
-							if(this.props.sortService){
-								this.props.sortService()
+						onBlur={(evt)=>{
+							if ($('#'+this.props.id).val().trim()=="") {
+								var confirmExit = confirm("Exiting editor. Service will be removed.");
+								if ( confirmExit == true ) {
+									this.removeService();
+									if(this.props.sortService){
+										this.props.sortService()
+									}
+								}
+								else {
+									return false;
+								}
 							}
+							else {
+								if(this.props.sortService){
+									this.props.sortService()
+								}
+							}
+							
 						}}
 					/>
 						{!readOnly?<span className="services-editor-delete-icon"
 							onClick = {
+
 								() => {
 									localStorage.removeItem('defaultService');
 									localStorage.setItem('defaultService', JSON.stringify(this.data.service));

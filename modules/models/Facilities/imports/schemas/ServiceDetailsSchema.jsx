@@ -101,9 +101,8 @@ export default ServiceDetailsSchema = {
         size: 12,
         input: Select,
         options(item){
-            let facility = Session.getSelectedFacility();
             return {
-                items: facility && facility.getSuppliers() ? facility.getSuppliers() : [],
+                items: getSuppliersByTeam(),
                 view: ( props ) => {
                     return (<div style={ { cursor: "default", height: "inherit", } }>
                                             <ContactCard {...props} />
@@ -115,13 +114,13 @@ export default ServiceDetailsSchema = {
                     label: "Create New",
                     onAddNewItem: ( callback ) => {
                         import { TeamStepper } from '/modules/models/Teams';
+                        let facility = Session.getSelectedFacility();
                         Modal.show( {
                             content: <TeamStepper
                                 facility = { facility }
                                 showFilter={true}
                                 onChange = {
                                     ( supplier ) => {
-                                        let facility = Session.getSelectedFacility();
                                         facility.addSupplier( supplier );
                                         //Meteor.call("Facilities.addSupplier", facility, supplier );
                                         callback( supplier );
@@ -220,4 +219,15 @@ export default ServiceDetailsSchema = {
             }
         }
     },
+}
+
+function getSuppliersByTeam (suppliersIds) {
+  import { Teams } from '/modules/models/Teams';
+  let selectedTeam = Session.getSelectedTeam();
+  let suppliersInTeam = selectedTeam ? selectedTeam.suppliers : [];
+  let ids = [];
+  suppliersInTeam && suppliersInTeam.map((supplier)=>{
+    ids.push(supplier._id);
+  })
+  return Teams.find({_id:{$in: ids}}).fetch();
 }

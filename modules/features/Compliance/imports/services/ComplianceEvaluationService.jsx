@@ -337,7 +337,7 @@ ComplianceEvaluationService = new function() {
                     let newRequest = PPM_Schedulers.create( {
                         facility: preSelectedFacility,
                         team: team,
-                        type: 'Schedular',
+                        type: 'Scheduler',
                         priority: 'Scheduled',
                         status: 'PPM',
                         name: rule.event,
@@ -551,16 +551,16 @@ ComplianceEvaluationService = new function() {
                         let newRequest = PPM_Schedulers.create( {
                             facility: preSelectedFacility,
                             team: team,
-                            type: 'Schedular',
+                            type: 'Scheduler',
                             priority: 'Scheduled',
-                            status: 'PMP',
+                            status: 'PPM',
                             name: rule.event.hasOwnProperty("name") ? rule.event.name : rule.event,
                             frequency: frequency?frequency:{
-                                number: 1,
-                                repeats: 10,
+                                number: rule && rule.frequency && rule.frequency.number ? rule.frequency.number : 0,
+                                repeats: rule && rule.frequency && rule.frequency.repeats ? rule.frequency.repeats : 0,
                                 period: "",
                                 endDate: "",
-                                unit: "years"
+                                unit: rule && rule.frequency && rule.frequency.unit ? rule.frequency.unit : ""
                             },
                             service: serviceReq[0],
                             subservice: rule.subservice || {},
