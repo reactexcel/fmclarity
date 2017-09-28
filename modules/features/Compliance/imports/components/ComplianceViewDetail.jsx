@@ -3,7 +3,7 @@ import ReactDom from "react-dom";
 import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import ComplianceList from './ComplianceList.jsx';
+import { ComplianceGroup } from './ComplianceList.jsx';
 import { Documents } from '/modules/models/Documents';
 import ComplianceActions from '../../actions.jsx';
 
@@ -115,9 +115,9 @@ export default ComplianceViewDetail = React.createClass( {
         facility.removeComplianceRule(servicePosition, rulePosition, serviceName, subservicePosition);
     },
     componentDidUpdate(){
-        this.handelCollaps( this.currentSetviceTabToShow != 0 ? this.currentSetviceTabToShow: null );
+        this.handleCollapse( this.currentSetviceTabToShow != 0 ? this.currentSetviceTabToShow: null );
     },
-    handelCollaps(  idx ) {
+    handleCollapse(  idx ) {
         $("div.serviceTabHeader").each( function() {
             if ( idx == null ) {
                 // if ( $(this).attr("id") == 0 ) {
@@ -140,6 +140,7 @@ export default ComplianceViewDetail = React.createClass( {
     },
     render() {
         var facility = this.data.facility;
+
         if ( !facility )
             return <div/>
 
@@ -238,7 +239,7 @@ export default ComplianceViewDetail = React.createClass( {
                                                 <span className="subservice-list-header-icon">
                                                     <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"0px",top:"-3px"}}>
                                                         <button className="btn btn-flat" style={{height: "23px"}} id={idy} onClick={( event ) => {
-                                                            this.handelCollaps(idx+"-"+idy)
+                                                            this.handleCollapse(idx+"-"+idy)
                                                         }}>
                                                             <i className={`fa fa-expand`} aria-hidden="true"/>
                                                         </button>
@@ -259,7 +260,7 @@ export default ComplianceViewDetail = React.createClass( {
                                 </span>
                                 <span style={{fontSize:"16px",cursor:"pointer",opacity:"0.4",position:"absolute",right:"40px",top:"0px"}}>
                                     <button className="btn btn-flat" id={idx} onClick={( event ) => {
-                                        this.handelCollaps(idx)
+                                        this.handleCollapse(idx)
                                     }}>
                                         <i className={`fa fa-expand`} aria-hidden="true"/>
                                     </button>

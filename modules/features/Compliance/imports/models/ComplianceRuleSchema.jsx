@@ -176,7 +176,7 @@ export default ComplianceRuleSchema = {
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
             //let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
-            let lastWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
+            let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
             let status  = lastWO.length && lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ].status;
                 //console.log(lastWO[lastWO.length - 1]);
             let team = Session.getSelectedTeam();
@@ -184,7 +184,7 @@ export default ComplianceRuleSchema = {
                 lastWO.length ? ( <div>
                     <span>
                         <a className="link" href={"javascript:void(0);"} onClick={() => {
-                                RequestActions.view.bind(lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ]).run()
+                                RequestActions.view.run(lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ], () => {})
                             }}>
                             Previous work order link
                         </a>
@@ -205,17 +205,18 @@ export default ComplianceRuleSchema = {
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
             //let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
-            let nextWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
+            let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } );
                 //console.log(nextWO[nextWO.length - 2],"asc");
             let team = Session.getSelectedTeam();
             //let status = nextWO.length && nextWO[nextWO.length - 1].status;
             let status  = nextWO.length && nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ].status;
+
             return (
                 nextWO.length ? ( <div>
             <span>
               <a className="link" href={"javascript:void(0);"} onClick={() => {
                    //RequestActions.view.bind(nextWO[nextWO.length - 1]).run()
-                   RequestActions.view.bind(nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ]).run()
+                   RequestActions.view.run(nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ], () => {})
                 }
                }> Next work order link </a>
             </span>

@@ -120,6 +120,7 @@ export default ComplianceListTile = React.createClass( {
     var results = this.data.results;
     var info = this.data.info;
     // var loader = this.data.loader;
+
     return (
       <div className={"issue-summary"}>
         <div className="issue-summary-col" style={{width:"23%"}}>
@@ -130,7 +131,6 @@ export default ComplianceListTile = React.createClass( {
         </div>
         <div className="issue-summary-col" style={{width:"43%"}}>
           {
-
             (results.passed?
               <div style={{color:"green", width: "100%", height: "100%"}}>
                 <b><i className="fa fa-check"/> {message.summary||"passed"}</b>
