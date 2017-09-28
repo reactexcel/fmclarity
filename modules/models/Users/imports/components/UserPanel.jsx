@@ -88,7 +88,6 @@ class UserPanel extends React.Component {
 			userRole = Meteor.user().getRole(),
 			//hideMenu = this.props.hideMenu;
             hideMenu = !_.contains(['fmc support','portfolio manager'],userRole)
-			console.log(Meteor.user().getRole(),"user role");
 		if ( !contact ) {
 			return <div/>
 		}
@@ -125,9 +124,9 @@ class UserPanel extends React.Component {
 													<span><b>WO Issue Threshold</b> {relation.threshold}<br/></span>
 													 : null}*/}
 
-						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.issueThresholdValue && 
-							/*temp fix to hide for old non-manager users who have threshold value(that should not be existing) still set on their profile. this should later be removed--*/ 
-							_.contains(['manager', 'caretaker'], relation.role)) ? 
+						{( _.contains(['fmc support', 'portfolio manager'], Meteor.user().getRole()) && relation && relation.issueThresholdValue &&
+							/*temp fix to hide for old non-manager users who have threshold value(that should not be existing) still set on their profile. this should later be removed--*/
+							_.contains(['manager', 'caretaker'], relation.role)) ?
 
 							<span><b>WO Issue Threshold Value</b> {relation.issueThresholdValue}<br/></span>
 							 : null}
