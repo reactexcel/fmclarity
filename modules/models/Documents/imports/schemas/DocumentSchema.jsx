@@ -268,8 +268,8 @@ export default DocumentSchema = {
 
 			if ( teamType == 'fm' && item.facility ) {
 				items = item.facility.servicesRequired;
-			} else if ( teamType == 'contractor' && team.getAvailableServices ) {
-				items = team.getAvailableServices();
+			} else if ( teamType == 'contractor' && selectedTeam.getAvailableServices ) {
+				items = selectedTeam.getAvailableServices();
 			}
 
 			return {
