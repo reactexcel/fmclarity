@@ -46,7 +46,7 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 	}
 	let logedUser = Meteor.user();
 	if(logedUser){
-		if(!_.contains(['fmc support','portfolio manager'],logedUser.getRole())){
+		if(!_.contains(['fmc support','portfolio manager'],logedUser.getRole()) && !_.contains(['contractor'],team.type)){
 	        let newFacilityList = Roles.getAssociateFacility( logedUser );
 	        facilities = newFacilityList
 	    }
