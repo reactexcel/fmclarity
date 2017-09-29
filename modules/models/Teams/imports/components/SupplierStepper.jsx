@@ -118,6 +118,7 @@ const SupplierStepper = React.createClass( {
             item: this.props.item,
             teamType: this.props.teamType || null,
             viewingTeam:{
+                name: this.props.value || '',
                 type:'contractor',
                 owner:{
                     name:Session.getSelectedTeam().name,
@@ -256,6 +257,7 @@ const SupplierStepper = React.createClass( {
                                             form = { ["name","type","abn","email","phone","phone2","website","address"] }
                                             onNext = { this.onNext }
                                             hideSubmit = { true }
+                                            teamType = {teamType}
                                             onChange =  { ( newItem ) => {
                                                 this.setState({
                                                     viewingTeam: newItem.item

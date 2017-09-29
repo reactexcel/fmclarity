@@ -586,7 +586,6 @@ Facilities.actions( {
     addSupplier: {
         authentication: true,
         method: function( facility, supplier ) {
-            //console.log("addSupplier");
             if ( supplier && supplier._id ) {
                 let suppliers = facility.suppliers;
                 if (!suppliers || !_.isArray(suppliers)) {
