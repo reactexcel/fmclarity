@@ -20,8 +20,6 @@ if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
     'copies.master.size': { $gte: 0 }
   };
 
-  console.log(JSON.stringify(query));
-
   let files = Files.find(query).fetch();
 
   // store all streams into the streams array
