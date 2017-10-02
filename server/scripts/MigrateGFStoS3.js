@@ -14,10 +14,14 @@ if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
       importDate: {type: Date, default: Date.now()}
     };
 
+  let s3Condition = s3Config.migrate.gridfs.all ? { $gt: -1 } : { $lte: 1 };
   let query = {
-    'copies.s3Images.size': { $gt: s3Config.migrate.gridfs.all ? -1: 0 },
-    'copies.master.size': { $gt: 0 }
+    // 'copies.s3Images.size': s3Condition,
+    'copies.master.size': { $gte: 0 }
   };
+
+  console.log(JSON.stringify(query));
+
   let files = Files.find(query).fetch();
 
   // store all streams into the streams array
@@ -43,6 +47,7 @@ if (Meteor.isServer && s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
 
   function pipeStreamsRecursive(streams, index) {
     if (!streams[index]) {
+      console.log('Migration complete, please stop current Meteor instance and disable migration from ENV then restart app');
       return false;
     }
 

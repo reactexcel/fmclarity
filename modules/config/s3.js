@@ -1,9 +1,15 @@
 const s3Config = {
   enabled: function () {
-    let enabled = process.env.S3_ENABLED || false;
+    let enabled = process.env.S3_ENABLED === 'true';
+
     if (enabled) {
-      return this.account.accessKeyId && this.account.secretAccessKey &&
-        this.bucket.name && this.bucket.folder && this.bucket.endpoint;
+      return (Boolean(enabled) &&
+        !_.isEmpty(this.account.accessKeyId) &&
+        !_.isEmpty(this.account.secretAccessKey) &&
+        !_.isEmpty(this.bucket.name) &&
+        !_.isEmpty(this.bucket.folder) &&
+        !_.isEmpty(this.bucket.endpoint)
+      );
     }
     return enabled;
   },
@@ -18,8 +24,8 @@ const s3Config = {
   },
   migrate: {
     gridfs: {
-      enabled: process.env.S3_MIGRATE_GRIDFS || false,
-      all: process.env.S3_MIGRATE_GRIDFS_ALL || false
+      enabled: process.env.S3_MIGRATE_GRIDFS === 'true',
+      all: process.env.S3_MIGRATE_GRIDFS_ALL === 'true'
     }
   },
 };

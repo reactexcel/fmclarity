@@ -9,21 +9,25 @@
 
 import s3Config from '/modules/config/s3';
 let stores = [];
-if (s3Config.enabled()) {
-  const s3Store = new FS.Store.S3("s3Images", {
-    accessKeyId: s3Config.account.accessKeyId,
-    secretAccessKey: s3Config.account.secretAccessKey,
-    bucket: s3Config.bucket.name,
-    folder: s3Config.bucket.folder,
-    endpoint: s3Config.bucket.endpoint
-  });
-  stores.push(s3Store);
-} else {
-  stores.push(new FS.Store.GridFS("master"));
-}
+let s3Options = {
+  accessKeyId: s3Config.account.accessKeyId,
+  secretAccessKey: s3Config.account.secretAccessKey,
+  bucket: s3Config.bucket.name,
+  folder: s3Config.bucket.folder,
+  endpoint: s3Config.bucket.endpoint
+};
 
-if (s3Config.migrate.gridfs.enabled && s3Config.enabled()) {
-  stores.push(new FS.Store.GridFS("master"));
+if (s3Config.enabled()) {
+  if (!s3Config.migrate.gridfs.enabled) {
+    stores.push(new FS.Store.S3("s3Images", s3Options));
+  } else if (s3Config.migrate.gridfs.enabled) {
+    stores.push(new FS.Store.S3("s3Images", s3Options));
+    stores.push(new FS.Store.GridFS("master"));
+  }
+} else {
+  stores.push(new FS.Store.FileSystem("fsImages", {
+    path: process.env.PWD + '/uploads'
+  }));
 }
 
 const Files = new FS.Collection("File", {
