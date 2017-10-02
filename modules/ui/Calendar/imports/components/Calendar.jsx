@@ -31,7 +31,7 @@ class Calendar extends React.Component {
       requests: [],
       monthFilter: {
         start: moment().startOf('month').toDate(),
-        end: moment().startOf('month').toDate()
+        end: moment().endOf('month').toDate()
       },
     };
     this.state.requests = this.getRequests();
@@ -65,6 +65,22 @@ class Calendar extends React.Component {
       {expandPMP: true},
       {start: this.state.monthFilter.start, end: this.state.monthFilter.end}
     );
+
+    if (Meteor.isClient) {
+      window.calendarEvents = () => {
+        let wos = [];
+        let ppms = [];
+        for (let request of requests) {
+          if (request.type === 'Scheduler') {
+            ppms.push(request);
+          } else {
+            wos.push(request);
+          }
+        }
+
+        return {WorkOrders: wos, PPMs: ppms };
+      };
+    }
 
     return requests;
   }
@@ -110,11 +126,14 @@ class Calendar extends React.Component {
         $(this).css('z-index', 0);
         $('.calendar-tooltip').remove();
       },
-      event: function(start, end, timezone, callback) {
-        let startOfMonth = start.startOf('month').toDate();
-        let endOfMonth = end.endOf('month').toDate();
+      viewRender: function (view) {
+        //let event = $("#calendar").fullCalendar('clientEvents');
+        let startOfMonth = self.calendar.fullCalendar('getDate').startOf('month').toDate();
+        let endOfMonth = self.calendar.fullCalendar('getDate').endOf('month').toDate();
+        //
         if (!moment(startOfMonth).isSame(self.state.monthFilter.start) ||
           !moment(endOfMonth).isSame(self.state.monthFilter.end)) {
+
           self.setState({
             monthFilter: {
               start: startOfMonth,
@@ -124,20 +143,19 @@ class Calendar extends React.Component {
           self.setState({
             requests: self.getRequests()
           }, () => {
-            callback(self._addEvents(self.state, true));
+            self._addEvents(self.state);
+            self.calendar.fullCalendar('refetchEvents');
           });
-        }
-      },
-      viewRender: function (view) {
-        //let event = $("#calendar").fullCalendar('clientEvents');
-        let event = self.eventt;
-        if (event && event.length > 0) {
-          event.map((evt, id) => {
-            event[id].allDay = !(view.name == "agendaWeek" || view.name == "agendaDay");
-          });
-          self.eventt = event;
-          self._addEvents(self.state);
-          self.calendar.fullCalendar('refetchEvents');
+        } else {
+          let event = self.eventt;
+          if (event && event.length > 0) {
+            event.map((evt, id) => {
+              event[id].allDay = !(view.name == "agendaWeek" || view.name == "agendaDay");
+            });
+            self.eventt = event;
+            self._addEvents(self.state);
+            self.calendar.fullCalendar('refetchEvents');
+          }
         }
       },
       eventRender: function (event, element) {
@@ -156,7 +174,9 @@ class Calendar extends React.Component {
         }, 10);
       }
     });
+
     this._addEvents(this.state);
+    self.calendar.fullCalendar('refetchEvents');
   };
 
   /**
@@ -233,10 +253,6 @@ class Calendar extends React.Component {
         }
       }
     });
-
-    if (returnData) {
-      return events;
-    }
 
     this.eventt = events;
     this.calendar.fullCalendar('removeEventSource', events);
