@@ -248,7 +248,7 @@ Requests.methods( {
                 request.costThreshold = 0;
             }
 
-            if ( request.type == 'Schedular' ) {
+            if ( request.type == 'Schedular' || request.type == 'Scheduler' ) {
                 status = 'PPM';
             } else if ( request.type == 'Booking' ) {
                 status = 'Booking';
@@ -595,7 +595,7 @@ Requests.methods( {
             return Requests.findOne( {
                 "facility._id": facility._id,
                 name: request.name,
-                status: { $nin: ['PPM', 'Cancelled'] },
+                status: { $nin: ['PPM', 'Cancelled', 'Deleted'] },
                 dueDate: dueDate
             } );
         }
@@ -625,7 +625,7 @@ Requests.methods( {
                 nextRequest = Requests.findOne( {
                     "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PPM' },
+                    status: { $nin: ['PPM', 'Cancelled', 'Deleted'] },
                     dueDate: nextDate
                 } );
             }
@@ -644,7 +644,7 @@ Requests.methods( {
                 previousRequest = Requests.findOne( {
                     "facility._id": facility._id,
                     name: request.name,
-                    status: { $ne: 'PPM' },
+                    status: { $nin: ['PPM', 'Cancelled', 'Deleted'] },
                     dueDate: previousDate
                 } );
             }

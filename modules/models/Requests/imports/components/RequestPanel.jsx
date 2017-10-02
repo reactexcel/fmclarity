@@ -33,8 +33,9 @@ export default RequestPanel = React.createClass( {
             facility = null,
             realEstateAgency = null,
             owner = null,
-            defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0;
+            defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0 ,
             date_diff = null ;
+
 
 
         if ( this.props.item && this.props.item._id ) {
@@ -48,7 +49,6 @@ export default RequestPanel = React.createClass( {
               if(this.props.item.hasOwnProperty("start")){
                 date_diff = moment(this.props.item.start).diff(request.dueDate,"days")
               }
-
                 Meteor.subscribe( 'Inbox: Messages', request._id );
                 owner = request.getOwner();
                 facility = request.getFacility();
@@ -76,17 +76,15 @@ export default RequestPanel = React.createClass( {
                 }
             }
         }
+
         let callback = this.props.callback
 
         return { request, nextDate, previousDate, nextRequest, previousRequest, facility, contact, realEstateAgency, owner,defaultIndex, callback }
-
     },
 
     componentWillMount() {
         //Perf.start();
-
-        // this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
-
+        //this.data.nextRequest ? RequestActions.view.run( this.data.nextRequest ) : (this.data.previousRequest ? RequestActions.view.run( this.data.previousRequest ): null)
     },
 
     componentDidMount() {

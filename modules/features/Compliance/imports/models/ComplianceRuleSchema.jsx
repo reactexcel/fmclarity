@@ -144,9 +144,9 @@ export default ComplianceRuleSchema = {
                         let newRequest = PPM_Schedulers.create( {
                             facility: Session.getSelectedFacility(),
                             team: team,
-                            type: 'Schedular',
+                            type: 'Scheduler',
                             priority: 'Standard',
-                            status: 'PMP',
+                            status: 'PPM',
                             name: '',
                             service: item.service,
                             subservice: item.subservice || {},

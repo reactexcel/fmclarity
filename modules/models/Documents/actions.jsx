@@ -123,7 +123,7 @@ const createUpdateRequest = new Action( {
                     let hasSupplier = newRequest.supplier && newRequest.supplier._id,
                         method = 'Issues.create';
 
-                    if ( newRequest.type != 'Schedular' && hasSupplier ) {
+                    if ( newRequest.type != 'Scheduler' && hasSupplier ) {
 
                         let team = Teams.findOne( newRequest.team._id ),
                             role = Meteor.user().getRole( team ),
