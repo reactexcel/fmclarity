@@ -244,7 +244,6 @@ Facilities.actions({
   setServicesRequired: {
     authentication: AuthHelpers.managerOfRelatedTeam,
     method: function (facility, servicesRequired, updatedService) {
-      console.log(updatedService);
       updatePPMServiceNames(facility, updatedService);
 
       Facilities.update(facility._id, {
