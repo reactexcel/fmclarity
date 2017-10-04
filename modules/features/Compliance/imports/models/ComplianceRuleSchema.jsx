@@ -185,17 +185,19 @@ export default ComplianceRuleSchema = {
                 previousDate = request.getPreviousDate();
                 previousRequest = request.findCloneAt( previousDate );
             }
+            if( previousDate ) {
+                previousDateString = moment(previousDate).format('ddd Do MMM');
+            }
             return (
-                previousRequest ? ( <div>
-                    <span>
-                      <a className="link" href={"javascript:void(0);"} onClick={() => {
-                          RequestActions.view.run( previousRequest )
-                        }}>
-                        Previous work order link
+                previousRequest ? (
+                    <span onClick={() => { RequestActions.view.run( previousRequest )}}>
+                      <a className="link" href={"javascript:void(0);"}>
+                        <span>previous <b>{ previousDateString }</b> </span>
                       </a>
-                    </span>
-                    <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${previousRequest.status}`}>{previousRequest.status}</span></span>
-                </div> ) : <span style={{color:'gray'}}>No previous</span>
+                      <span style={{marginLeft:"5px"}}>
+                        <span className = {`label label-${previousRequest.status}`}>{previousRequest.status}</span>
+                      </span>
+                    </span>) : <span style={{color:'gray'}}>No previous</span>
             );
         },
         condition: item => item.event
@@ -217,13 +219,19 @@ export default ComplianceRuleSchema = {
                 nextDate = request.getNextDate();
                 nextRequest = request.findCloneAt( nextDate );
             }
+            if( nextDate ) {
+                nextDateString = moment(nextDate).format('ddd Do MMM');
+            }
             return (
-                nextRequest ? ( <div>
-            <span>
-              <a className="link" href={"javascript:void(0);"} onClick={() => { RequestActions.view.run( nextRequest )}}> Next work order link </a>
-            </span>
-            <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${nextRequest.status}`}>{nextRequest.status}</span></span>
-          </div> ) : <span style={{color:'gray'}}>No next</span>
+                nextRequest ? (
+                <span onClick={() => { RequestActions.view.run( nextRequest )}}>
+                  <a className="link" href={"javascript:void(0);"} >
+                    <span>next due <b>{ nextDateString }</b> </span>
+                  </a>
+                  <span style={{marginLeft:"5px"}}>
+                    <span className = {`label label-${nextRequest.status}`}>{nextRequest.status}</span>
+                  </span>
+                </span> ) : <span style={{color:'gray'}}>No next</span>
             );
         },
         condition: item => item.event
