@@ -1,7 +1,6 @@
 const s3Config = {
   enabled: function () {
     let enabled = process.env.S3_ENABLED === 'true';
-
     if (enabled) {
       return (Boolean(enabled) &&
         !_.isEmpty(this.account.accessKeyId) &&

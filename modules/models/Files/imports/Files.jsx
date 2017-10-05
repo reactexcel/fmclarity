@@ -9,6 +9,7 @@
 
 import s3Config from '/modules/config/s3';
 let stores = [];
+
 let s3Options = {
   accessKeyId: s3Config.account.accessKeyId,
   secretAccessKey: s3Config.account.secretAccessKey,
@@ -17,17 +18,19 @@ let s3Options = {
   endpoint: s3Config.bucket.endpoint
 };
 
-if (s3Config.enabled()) {
-  if (!s3Config.migrate.gridfs.enabled) {
-    stores.push(new FS.Store.S3("s3Images", s3Options));
-  } else if (s3Config.migrate.gridfs.enabled) {
-    stores.push(new FS.Store.S3("s3Images", s3Options));
-    stores.push(new FS.Store.GridFS("master"));
+if (Meteor.isServer) {
+  if (s3Config.enabled()) {
+    if (!s3Config.migrate.gridfs.enabled) {
+      stores.push(new FS.Store.S3("s3Images", s3Options));
+    } else if (s3Config.migrate.gridfs.enabled) {
+      stores.push(new FS.Store.S3("s3Images", s3Options));
+      stores.push(new FS.Store.GridFS("master"));
+    }
   }
-} else {
-  stores.push(new FS.Store.FileSystem("fsImages", {
-    path: process.env.PWD + '/uploads'
-  }));
+}
+
+if (Meteor.isClient) {
+  stores.push(new FS.Store.S3("s3Images"));
 }
 
 const Files = new FS.Collection("File", {
