@@ -180,12 +180,13 @@ export default ComplianceRuleSchema = {
             let request = lastWO[lastWO.length>1 ? lastWO.length - 2: 0 ],
                 dueDate = null,
                 previousDate = null,
-                previousRequest = null;
+                previousRequest = null,
+                previousDateString = null;
             if ( !_.isEmpty(request) ) {
                 previousDate = request.getPreviousDate();
-                previousRequest = request.findCloneAt( previousDate );
             }
             if( previousDate ) {
+                previousRequest = request.findCloneAt( previousDate );
                 previousDateString = moment(previousDate).format('ddd Do MMM');
             }
             return (
@@ -214,12 +215,13 @@ export default ComplianceRuleSchema = {
             let team = Session.getSelectedTeam();
             let request = nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ],
                 nextDate = null,
-                nextRequest = null;
+                nextRequest = null,
+                nextDateString = null;
             if ( !_.isEmpty(request) ) {
                 nextDate = request.getNextDate();
-                nextRequest = request.findCloneAt( nextDate );
             }
             if( nextDate ) {
+                nextRequest = request.findCloneAt( nextDate );
                 nextDateString = moment(nextDate).format('ddd Do MMM');
             }
             return (
