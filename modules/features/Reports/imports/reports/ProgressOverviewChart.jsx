@@ -9,9 +9,9 @@ import moment from 'moment';
 export default ProgressOverviewChart = React.createClass( {
 
         startComputation() {
-
+            let count = 0;
             this.computation = Tracker.autorun( () => {
-
+              console.log('Tracker running ' + moment().toDate());
                 let startDate = moment().subtract( 2, 'months' ).startOf( 'month' ),
                     endDate = moment().endOf( 'month' ),
                     period = { number: 3, unit: 'month' };
@@ -24,7 +24,7 @@ export default ProgressOverviewChart = React.createClass( {
         },
 
         componentDidMount() {
-
+            this.updateStats = _.debounce(this.updateStats, 1000);
             let startDate = moment().subtract( 2, 'months' ).startOf( 'month' ),
                 endDate = moment().endOf( 'month' ),
                 period = { number: 3, unit: 'month' };
@@ -46,7 +46,7 @@ export default ProgressOverviewChart = React.createClass( {
         },
 
         updateStats( { startDate, endDate, period, facilityQuery, teamQuery } ) {
-
+            console.log('calling update stats ' + moment().toDate());
             //console.log( 'updating stats' );
 
             Meteor.call( 'getProgressOverviewStats', {
