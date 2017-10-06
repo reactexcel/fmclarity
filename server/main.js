@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import CronJobs from "./cronJobs.js";
+import CheckCronsAccessability from '/modules/config/CheckCronsAccessability.js';
 //import { FlowRouter } from 'meteor/kadira:flow-router-ssr';
 
 Meteor.startup( function() {
-
     let smtpUsername = "AKIAIPJKWHGNFC75EL3Q",
         smtpPassword = "AjuszCYXste2nI8Y8SrH+3vpo0+4lCJ0KA4HtBUAgd0m";
 
@@ -34,13 +34,15 @@ Meteor.startup( function() {
         job: CronJobs.sendEmailDigests,
     } );
 
-    SyncedCron.add( {
-        name: 'Complete Booking Request',
-        schedule: function( parser ) {
-            return parser.text('every 5 minute');
-        },
-        job: CronJobs.completeBookingRequest,
-    } );
+    if(CheckCronsAccessability.complete_booking_request_checks.enabled){
+        SyncedCron.add( {
+            name: 'Complete Booking Request',
+            schedule: function( parser ) {
+                return parser.text('every 5 minute');
+            },
+            job: CronJobs.completeBookingRequest,
+        } );
+    }
 
     SyncedCron.start();
     import './scripts/MigrateGFStoS3';
