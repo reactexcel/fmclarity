@@ -526,6 +526,7 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
                                     hideMenu    = { _.contains( [ 'staff', 'resident', 'tenant' ], Meteor.user().getRole() ) }
                                     group       = { request }
                                     readOnly    = { true }
+                                    team        = { Session.get( 'selectedTeam' ) }
                                 />
                 }
             ]} />
