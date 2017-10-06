@@ -53,12 +53,18 @@ const WorkOrderReport = React.createClass( {
 			facility = this.state.facility;
 			service = this.state.service;
 			supplier = this.state.supplier;
-      status = this.state.status;
+      		status = this.state.status;
 			if ( facility ) {
 				q[ "facility._id" ] = facility._id;
 			}
 			if ( status ) {
-				q.status = status;
+				let statusArray = []
+				if(status == 'Open'){
+					statusArray.push('New','Issued')
+				} else {
+					statusArray.push(status)
+				}
+				q.status = { $in: statusArray };
 			}
       if ( service ) {
 				q[ "service.name" ] = service.name;
@@ -115,7 +121,6 @@ const WorkOrderReport = React.createClass( {
 			pdfTitle:pdfTitle,
 			pdfName: pdfName.replace('.','')
 		}
-		// console.log('this.steta......', this.state);
 		return (
 			<div>
 				<div style = { {padding:"5px 15px 20px 15px"} } className = "ibox search-box report-details">
@@ -133,7 +138,9 @@ const WorkOrderReport = React.createClass( {
 								onChange    = { ( facility ) => {
 									let stateToSet = {
 										facility: facility,
-										showFacilityName: false
+										showFacilityName: false,
+										service: null,
+										supplier: null
 									}
 									if(_.isEmpty(facility)){
 										stateToSet.showFacilityName = (facility && facility.name ? false : true);
@@ -163,7 +170,9 @@ const WorkOrderReport = React.createClass( {
 								value       = { this.state.status }
 								items       = { this.status }
 								onChange    = { ( status ) => {
-									this.setState( { status } )
+									this.setState( {
+										status: status
+									} )
 								} }
 							/>
 
@@ -205,7 +214,6 @@ const WorkOrderReport = React.createClass( {
 
 				</div>
 				<div className = "ibox" ref="printable">
-					{console.log('datadatadata', data)}
           <WoTable WoReport data={data} reload={this.getWorkOrderData}/>
 				</div>
 			</div>
