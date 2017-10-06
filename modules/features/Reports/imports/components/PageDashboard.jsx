@@ -55,10 +55,10 @@ function PageDashboard(props) {
             <ProgressOverviewChart />
           </div>
           <div className="ibox">
-            <RequestActivityChart minimal={ true }/>
+            {/*<RequestActivityChart minimal={ true }/>*/}
           </div>
           <div className="ibox">
-            <RequestBreakdownChart minimal={ true }/>
+            {/*<RequestBreakdownChart minimal={ true }/>*/}
           </div>
         </div>
       </div>

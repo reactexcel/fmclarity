@@ -22,41 +22,22 @@ export default class ProgressOverviewChart extends React.Component {
     };
   }
 
-
-  startComputation() {
-    this.computation = Tracker.autorun(() => {
-      this.runComputation();
-    });
-  }
-
-  runComputation = () => {
-      console.log('Tracker running ' + moment().toDate());
-
-      let startDate = moment().subtract(2, 'months').startOf('month');
-      let endDate = moment().endOf('month');
-      let period = {number: 3, unit: 'month'};
-
-      let facilityQuery = Session.get('selectedFacility');
-      let teamQuery = Session.get('selectedTeam');
-      this.updateStats({startDate, endDate, period, facilityQuery, teamQuery});
-  };
-
   componentDidMount() {
-    this.runComputation = _.debounce(this.runComputation, 500);
+    this._mounted = true;
 
     let startDate = moment().subtract(2, 'months').startOf('month');
     let endDate = moment().endOf('month');
     let period = {number: 3, unit: 'month'};
 
-    this._mounted = true;
+    let facilityQuery = Session.get('selectedFacility');
+    let teamQuery = Session.get('selectedTeam');
 
     this.setState({
       title: startDate.format("[since] MMMM YYYY")
     });
 
-    setTimeout(() => {
-      this.startComputation()
-    }, 0);
+    let data = {startDate, endDate, period, facilityQuery, teamQuery};
+    this.updateStats(data);
   }
 
   componentWillUnmount() {
@@ -66,8 +47,8 @@ export default class ProgressOverviewChart extends React.Component {
     }
   }
 
-  updateStats({startDate, endDate, period, facilityQuery, teamQuery}) {
-    console.log('calling update stats ' + moment().toDate());
+  updateStats(params) {
+    let {startDate, endDate, period, facilityQuery, teamQuery} = params;
 
     let data = {
       startDate: startDate.toDate(),
@@ -76,8 +57,11 @@ export default class ProgressOverviewChart extends React.Component {
       facilityQuery: facilityQuery || Session.get('selectedFacility'),
       teamQuery: teamQuery || Session.get('selectedTeam')
     };
+    
+    console.log(data);
 
     Meteor.call('getProgressOverviewStats', data, (error, results) => {
+      console.log(error, this._mounted, results);
       if (!error && this._mounted) {
         this.setState({
           results

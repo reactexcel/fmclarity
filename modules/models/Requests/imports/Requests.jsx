@@ -1270,6 +1270,7 @@ Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = 
   let currentPage = options.skip ? options.skip : 0;
   // query option needed to determine current page number and number of documents per collection
   let queryOptions = {};
+  let totalCollectionCount = 0;
   let usePager = currentPage > -1 && options.limit;
   if (usePager) {
     queryOptions = {
@@ -1277,14 +1278,13 @@ Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = 
       skip: currentPage * options.limit,
       sort: {createdDate: -1}
     };
+    let totalCollection = Requests.find({$and: query});
+    totalCollectionCount = totalCollection ? totalCollection.count() : 0;
   } else {
     queryOptions = {sort: {createdDate: -1}};
   }
 
-  let totalCollection = Requests.find({$and: query});
   let currentCollection = Requests.find({$and: query}, queryOptions);
-
-  let totalCollectionCount = totalCollection ? totalCollection.count() : 0;
   let requests = currentCollection ? currentCollection.fetch() : [];
 
   if (options.expandPMP) {
