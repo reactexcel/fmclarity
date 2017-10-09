@@ -2,7 +2,8 @@ import React from "react";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import {Requests} from '/modules/models/Requests';
-import {Menu} from '/modules/ui/MaterialNavigation';
+import { Menu } from '/modules/ui/MaterialNavigation';
+import ProgressArc from '../components/ProgressArc';
 
 import moment from 'moment';
 
@@ -166,8 +167,7 @@ export default class ProgressOverviewChart extends React.Component {
       <div>
         <Menu items={this.getMenu()}/>
         <div className="ibox-title">
-          <h2>
-            Overview {this.state.title} {facility && facility.name ? " for " + facility.name : " for all facilities"}</h2>
+          <h2>Overview {this.state.title} {facility && facility.name ? " for " + facility.name : " for all facilities"}</h2>
         </div>
         <div className="ibox-content" style={{padding: "0px 20px 30px 20px"}}>
           <div style={{textAlign: "center", clear: "both"}}>

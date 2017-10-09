@@ -4,54 +4,57 @@ import moment from 'moment';
 
 Meteor.methods( {
     getProgressOverviewStats({startDate, endDate, period, facilityQuery, teamQuery}) {
-      this.unblock();
+      if (Meteor.isServer) {
+        this.unblock();
 
-      let baseQuery = {
-        'team._id': teamQuery._id
-      };
-      let queries = {
-        New: {thisPeriod: 0, lastPeriod: 0},
-        Issued: {thisPeriod: 0, lastPeriod: 0},
-        Complete: {thisPeriod: 0, lastPeriod: 0},
-      };
+        let baseQuery = {
+          'team._id': teamQuery._id
+        };
+        let queries = {
+          New: {thisPeriod: 0, lastPeriod: 0},
+          Issued: {thisPeriod: 0, lastPeriod: 0},
+          Complete: {thisPeriod: 0, lastPeriod: 0},
+        };
 
-      let dateFields = {
-        New: 'createdAt',
-        Issued: 'issuedAt',
-        Complete: 'closeDetails.completionDate'
-      };
+        let dateFields = {
+          New: 'createdAt',
+          Issued: 'issuedAt',
+          Complete: 'closeDetails.completionDate'
+        };
 
-      if (startDate) {
-        startDate = moment(startDate);
-      }
-      if (endDate) {
-        endDate = moment(endDate);
-      }
-      if (facilityQuery) {
-        baseQuery["facility._id"] = facilityQuery._id;
-      }
-      if (teamQuery) {
-        baseQuery["team._id"] = teamQuery._id;
-        let lastStartDate = startDate.clone().subtract(period.number, period.unit + 's');
-        let lastEndDate = endDate.clone().subtract(period.number, period.unit + 's');
-        for (let status in queries) {
-          let qThisMonth = _.extend({}, baseQuery, {
-            [dateFields[status]]: {
-              $gte: startDate.toDate(),
-              $lte: endDate.toDate()
-            }
-          });
-          let qLastMonth = _.extend({}, baseQuery, {
-            [dateFields[status]]: {
-              $gte: lastStartDate.toDate(),
-              $lte: lastEndDate.toDate()
-            }
-          });
-          queries[status].thisPeriod = Requests.find(qThisMonth).count();
-          queries[status].lastPeriod = Requests.find(qLastMonth).count();
+        if (startDate) {
+          startDate = moment(startDate);
         }
+        if (endDate) {
+          endDate = moment(endDate);
+        }
+        if (facilityQuery) {
+          baseQuery["facility._id"] = facilityQuery._id;
+        }
+        if (teamQuery) {
+          baseQuery["team._id"] = teamQuery._id;
+          let lastStartDate = startDate.clone().subtract(period.number, period.unit + 's');
+          let lastEndDate = endDate.clone().subtract(period.number, period.unit + 's');
+          for (let status in queries) {
+            let qThisMonth = _.extend({}, baseQuery, {
+              [dateFields[status]]: {
+                $gte: startDate.toDate(),
+                $lte: endDate.toDate()
+              }
+            });
+            let qLastMonth = _.extend({}, baseQuery, {
+              [dateFields[status]]: {
+                $gte: lastStartDate.toDate(),
+                $lte: lastEndDate.toDate()
+              }
+            });
+            queries[status].thisPeriod = Requests.find(qThisMonth).count();
+            queries[status].lastPeriod = Requests.find(qLastMonth).count();
+          }
+        }
+        console.log(queries);
+        return queries;
       }
-      return queries;
     },
 
     getRequestActivityStats( { viewConfig, teamQuery, facilityQuery } ) {

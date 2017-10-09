@@ -525,9 +525,11 @@ Teams.helpers( {
         };
 
         Meteor.call('Requests.findFacilityIdsAssociatedOnRequestsForUser', user, team, filter, (error, response) => {
-          response.map((item) => {
-            facilityIds.push(item._id);
-          });
+            if (response) {
+              response.map((item) => {
+                facilityIds.push(item._id);
+              });
+            }
         });
 
         return Facilities.findAll({
@@ -553,9 +555,11 @@ Teams.helpers( {
         let team = Session.getSelectedTeam();
         let facilityIds = [];
         Meteor.call('Requests.findFacilityIdsAssociatedOnRequestsForUser', user, team, {}, (error, response) => {
-            response.map((item) => {
+            if (response) {
+              response.map((item) => {
                 facilityIds.push(item._id);
-            });
+              });
+            }
         });
 
         let q = null,
