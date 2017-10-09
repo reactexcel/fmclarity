@@ -1237,7 +1237,7 @@ function actionSendReminder( requests ) {
 }
 
 Meteor.methods({
-  'Requests.findTeamIdsAssociatedOnRequestsForUser': (user, team, filter) => {
+  'Requests.findFacilityIdsAssociatedOnRequestsForUser': (user, team, filter) => {
       if (Meteor.isServer) {
         let query = [];
         let teamId = null;
@@ -1262,7 +1262,6 @@ Meteor.methods({
           }, {
             $group: {
               _id: '$facility._id',
-
             }
           }];
 

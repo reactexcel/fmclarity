@@ -523,13 +523,12 @@ Teams.helpers( {
               },
             ]
         };
-        Meteor.call('Requests.findTeamIdsAssociatedOnRequestsForUser', user, team, filter, (error, response) => {
+
+        Meteor.call('Requests.findFacilityIdsAssociatedOnRequestsForUser', user, team, filter, (error, response) => {
           response.map((item) => {
             facilityIds.push(item._id);
           });
         });
-
-        console.log(facilityIds);
 
         return Facilities.findAll({
             $or: [
@@ -552,15 +551,12 @@ Teams.helpers( {
             return []
         }
 
-        var facilityIds = [];
-        let {requests} = user.getRequests();
-        if ( requests && requests.length ) {
-            requests.map( function( i ) {
-                if ( i.facility ) {
-                    facilityIds.push( i.facility._id );
-                }
-            } )
-        }
+        let facilityIds = [];
+        Meteor.call('Requests.findFacilityIdsAssociatedOnRequestsForUser', user, team, {}, (error, response) => {
+            response.map((item) => {
+                facilityIds.push(item._id);
+            });
+        });
 
         let q = null,
             facilitiesQuery = {
@@ -572,7 +568,7 @@ Teams.helpers( {
                 }, {
                     _id: { $in: facilityIds }
                 } ]
-            }
+            };
 
         if ( filterQuery ) {
             q = {
@@ -585,12 +581,7 @@ Teams.helpers( {
             q = facilitiesQuery;
         }
 
-        //console.log(facilityIds);
-
-        let facilities = Facilities.findAll( q, { sort: { name: 1 } } );
-
-        //console.log(facilities);
-        return facilities;
+        return Facilities.findAll( q, { sort: { name: 1 } } );
     },
 
     getFacilities( q ) {
