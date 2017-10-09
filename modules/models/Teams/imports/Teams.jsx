@@ -550,7 +550,7 @@ Teams.helpers( {
         if ( !user ) {
             return []
         }
-
+        let team = Session.getSelectedTeam();
         let facilityIds = [];
         Meteor.call('Requests.findFacilityIdsAssociatedOnRequestsForUser', user, team, {}, (error, response) => {
             response.map((item) => {
