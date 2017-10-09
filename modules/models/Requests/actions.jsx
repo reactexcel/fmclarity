@@ -556,7 +556,7 @@ const editInvoice = new Action( {
                               fileExists = false;
                           $.each(request.attachments, function(k, v){
                             let f = Files.findOne({_id:v._id});
-                            fname = f && f.original && f.original.name; 
+                            fname = f && f.original && f.original.name;
                             if (filename == fname) {
                                 fileExists =  true;
                             }
