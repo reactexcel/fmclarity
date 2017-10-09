@@ -22,6 +22,8 @@ import { PPM_Schedulers } from '/modules/models/Requests';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
+import StackTrace from 'stacktrace-js';
+
 import moment from 'moment';
 
 /**
@@ -1234,11 +1236,58 @@ function actionSendReminder( requests ) {
     } )
 }
 
+Meteor.methods({
+  'Requests.findTeamIdsAssociatedOnRequestsForUser': (user, team, filter) => {
+      if (Meteor.isServer) {
+        let query = [];
+        let teamId = null;
+
+        if (team && team._id) {
+          teamId = team._id;
+          query.push({
+            $or: [
+              {'team._id': teamId},
+              {'supplier._id': teamId},
+              {'realEstateAgency._id': teamId}
+            ]
+          });
+        }
+
+        if (filter) {
+          query.push(filter);
+        }
+
+        let pipeline = [{
+            $match: { $and: query }
+          }, {
+            $group: {
+              _id: '$facility._id',
+
+            }
+          }];
+
+        return Requests.collection.aggregate(pipeline);
+      }
+    }
+  }
+);
+
 
 Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = { start: null, end: null }) => {
-  let query = [],
-    team = Session.getSelectedTeam(),
-    teamId = null;
+  // var callback = function(stackframes) {
+  //   var stringifiedStack = stackframes.map(function(sf) {
+  //     return sf.toString();
+  //   }).join('\n');
+  //   console.log(stringifiedStack);
+  // };
+  //
+  // var errback = function(err) { console.log(err.message); };
+  //
+  // StackTrace.get().then(callback).catch(errback);
+
+  let query = [];
+  let team = Session.getSelectedTeam();
+  let teamId = null;
 
   if (team) {
     teamId = team._id;
@@ -1286,6 +1335,9 @@ Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = 
 
   let currentCollection = Requests.find({$and: query}, queryOptions);
   let requests = currentCollection ? currentCollection.fetch() : [];
+
+  console.log(query);
+  console.log(currentCollection.count());
 
   if (options.expandPMP) {
     PPMQuery.push({

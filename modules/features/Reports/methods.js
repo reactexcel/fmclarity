@@ -4,7 +4,7 @@ import moment from 'moment';
 
 Meteor.methods( {
     getProgressOverviewStats({startDate, endDate, period, facilityQuery, teamQuery}) {
-      // this.unblock();
+      this.unblock();
 
       let baseQuery = {
         'team._id': teamQuery._id
