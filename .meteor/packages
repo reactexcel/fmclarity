@@ -88,3 +88,4 @@ themeteorchef:bert
 dynamic-import
 momentjs:moment
 meteorhacks:aggregate
+cfs:s3

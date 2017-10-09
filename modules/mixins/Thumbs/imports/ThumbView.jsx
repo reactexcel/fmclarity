@@ -22,7 +22,7 @@ const ThumbView = React.createClass( {
 	},
 
 	getMeteorData() {
-	    import { Files } from '/modules/models/Files';
+		import { Files } from '/modules/models/Files';
 		var query, file, url, extension, icon;
 		query = this.props.item;
 		file = Files.findOne( query ) || Files.findOne( this.state.query );
@@ -33,9 +33,10 @@ const ThumbView = React.createClass( {
 				icon = "/icons/" + extension + "-icon-128x128.png";
 			}
 		}
+
 		return {
 			file: file,
-			url: file ? file.url() : "/img/default-placeholder.png",
+			url: file ? url : "/img/default-placeholder.png",
 			extension: extension,
 			icon: icon
 		}
