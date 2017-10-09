@@ -105,7 +105,6 @@ const CronJobs = {
     completeBookingRequest(){
         import { Requests } from '/modules/models/Requests';
         import { Teams } from '/modules/models/Teams';
-        console.log("Run cron for Complete Booking Request");
         let collection = Requests.collection,
             requestsCursor = collection.find( { status: "Booking" } ),
             requests = requestsCursor.fetch();
