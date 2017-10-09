@@ -34,7 +34,8 @@
     "react-tap-event-plugin": "^1.0.0"
   },
   "devDependencies": {
-    "react-addons-perf": "^15.3.2"
+    "react-addons-perf": "^15.3.2",
+    "stacktrace-js": "^2.0.0"
   },
   "repository": {
     "type": "git",
