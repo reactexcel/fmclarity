@@ -22,8 +22,6 @@ import { PPM_Schedulers } from '/modules/models/Requests';
 import { SupplierRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
-import StackTrace from 'stacktrace-js';
-
 import moment from 'moment';
 
 /**
@@ -1327,16 +1325,6 @@ Meteor.methods({
 
 
 Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = { start: null, end: null }) => {
-  // var callback = function(stackframes) {
-  //   var stringifiedStack = stackframes.map(function(sf) {
-  //     return sf.toString();
-  //   }).join('\n');
-  //   console.log(stringifiedStack);
-  // };
-  //
-  // var errback = function(err) { console.log(err.message); };
-  //
-  // StackTrace.get().then(callback).catch(errback);
 
   let query = [];
   let team = Session.getSelectedTeam();
