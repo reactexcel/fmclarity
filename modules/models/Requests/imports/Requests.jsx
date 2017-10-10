@@ -1267,9 +1267,63 @@ Meteor.methods({
 
         return Requests.collection.aggregate(pipeline);
       }
+    },
+    'Requests.getRequestCountPerMonth': (user, filter, config) => {
+      // aaa
+      if (Meteor.isServer) {
+
+        let query = [];
+
+        if (filter) {
+          query.push(filter);
+        }
+
+        let start = config.start ? moment(config.start) : moment().subtract(5, 'months').startOf('month');
+        let end = config.end ? moment(config.end) : moment();
+
+        query.push({ createdAt: {
+          $gte: new Date(start.toDate()),
+          $lt: new Date(end.toDate())
+        }});
+
+        let groupId = { month: { $month: "$createdAt" }, year: { $year: "$createdAt" }};
+        if (config.groupBy) {
+          switch (config.groupBy) {
+            case 'hour':
+              groupId['week'] = { $week: '$createdAt' };
+              groupId['day'] = { $dayOfMonth: '$createdAt'};
+              groupId['hour'] = { $hour: '$createdAt'};
+              break;
+            case 'day':
+              groupId['week'] = { $week: '$createdAt' };
+              groupId['day'] = { $dayOfMonth: '$createdAt' };
+              break;
+            case 'week':
+              groupId['week'] = { $week: '$createdAt' };
+              break;
+            default: break;
+          }
+        }
+
+        let pipeline = [
+          { $match: { $and: query }},
+          { $group: {
+            _id : groupId,
+            count: { $sum: 1 },
+          }},
+          { $project: {
+            count: '$count',
+            createdAt: '$_id'
+          }}
+        ];
+
+        return Requests.collection.aggregate(pipeline);
+      }
     }
   }
 );
+
+
 
 
 Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = { start: null, end: null }) => {
@@ -1309,8 +1363,8 @@ Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = 
   let PPMQuery = JSON.parse(JSON.stringify(query));
   if (dateLimit.start && dateLimit.end) {
     query.push({ dueDate: {
-      $gte: dateLimit.start,
-      $lt: dateLimit.end
+      $gte: new Date(dateLimit.start),
+      $lt: new Date(dateLimit.end)
     }});
   }
 
@@ -1335,8 +1389,8 @@ Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = 
   let currentCollection = Requests.find({$and: query}, queryOptions);
   let requests = currentCollection ? currentCollection.fetch() : [];
 
-  console.log(query);
-  console.log(currentCollection.count());
+  // console.log(query);
+  // console.log(currentCollection.count());
 
   if (options.expandPMP) {
     PPMQuery.push({

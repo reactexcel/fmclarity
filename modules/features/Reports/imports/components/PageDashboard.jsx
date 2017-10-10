@@ -10,7 +10,7 @@ import {InboxWidget} from '/modules/models/Messages';
 import {FacilityFilter} from '/modules/models/Facilities';
 
 import ProgressOverviewChart from '../reports/ProgressOverviewChart.jsx';
-import RequestActivityChart from '../reports/RequestActivityChart.jsx';
+import RequestActivityChart from '../reports/RequestActivityChart';
 import RequestBreakdownChart from '../reports/RequestBreakdownChart.jsx';
 
 /**
@@ -25,13 +25,14 @@ function PageDashboard(props) {
     /*Perf.start();*/
     return <div/>
   }
+
   /*
    Perf.stop();
    Perf.printInclusive();
    */
   return (
     <div className="dashboard-page animated fadeIn">
-      <FacilityFilter items={ facilities } selectedItem={ facility }/>
+      <FacilityFilter items={ facilities } selectedItem={ facility } />
       <div className="row" style={{paddingTop: "50px"}}>
         <div className="col-sm-6" style={{paddingRight: "0px"}}>
           <div className="ibox">
@@ -52,10 +53,11 @@ function PageDashboard(props) {
         </div>
         <div className="col-sm-6" style={{paddingRight: "0px"}}>
           <div className="ibox">
-            <ProgressOverviewChart />
+            <ProgressOverviewChart facility={facility} />
           </div>
           <div className="ibox">
-            <RequestActivityChart minimal={ true }/>
+            <RequestActivityChart facility={facility} team={team}
+                                  minimal={ true }/>
           </div>
           <div className="ibox">
             <RequestBreakdownChart minimal={ true }/>

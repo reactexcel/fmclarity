@@ -13,7 +13,15 @@ export default class ProgressOverviewChart extends React.Component {
     super(props);
 
     let startDate = moment().subtract(2, 'months').startOf('month');
+    let endDate = moment().endOf('month');
+    let period = {number: 3, unit: 'month'};
+
     this.state = {
+      team: props.team,
+      facility: props.facility,
+      startDate: startDate,
+      endDate: endDate,
+      period: period,
       title: startDate.format("[since] MMMM YYYY"),
       results: {
         New: {thisPeriod: 0, lastPeriod: 0},
@@ -26,18 +34,20 @@ export default class ProgressOverviewChart extends React.Component {
   componentDidMount() {
     this._mounted = true;
 
-    let startDate = moment().subtract(2, 'months').startOf('month');
-    let endDate = moment().endOf('month');
-    let period = {number: 3, unit: 'month'};
-
-    let facilityQuery = Session.get('selectedFacility');
-    let teamQuery = Session.get('selectedTeam');
+    let facility = this.state.facility;
+    let team = this.state.team;
 
     this.setState({
-      title: startDate.format("[since] MMMM YYYY")
+      title: this.state.startDate.format("[since] MMMM YYYY")
     });
 
-    let data = {startDate, endDate, period, facilityQuery, teamQuery};
+    let data = {
+      startDate: this.state.startDate,
+      endDate: this.state.endDate,
+      period: this.state.period,
+      facility,
+      team
+    };
     this.updateStats(data);
   }
 
@@ -48,21 +58,18 @@ export default class ProgressOverviewChart extends React.Component {
     }
   }
 
-  updateStats(params) {
-    let {startDate, endDate, period, facilityQuery, teamQuery} = params;
+  updateStats() {
+    let {startDate, endDate, period, facility, team} = this.state;
 
     let data = {
       startDate: startDate.toDate(),
       endDate: endDate.toDate(),
       period: period,
-      facilityQuery: facilityQuery || Session.get('selectedFacility'),
-      teamQuery: teamQuery || Session.get('selectedTeam')
+      facilityQuery: facility || Session.get('selectedFacility'),
+      teamQuery: team || Session.get('selectedTeam')
     };
-    
-    console.log(data);
 
     Meteor.call('getProgressOverviewStats', data, (error, results) => {
-      console.log(error, this._mounted, results);
       if (!error && this._mounted) {
         this.setState({
           results
@@ -71,98 +78,120 @@ export default class ProgressOverviewChart extends React.Component {
     })
   }
 
+  componentWillReceiveProps(props) {
+    if (props.facility || props.team) {
+      let update = {};
+      if (props.facility) {
+        update['facility'] = props.facility;
+      }
+      if (props.team) {
+        update['team'] = props.team;
+      }
+
+      this.setState(update, () => {
+        let data = {
+          startDate: this.state.startDate,
+          endDate: this.state.endDate,
+          period: this.state.period,
+          facility: this.state.facility,
+          team: this.state.team,
+        };
+        this.updateStats(data);
+      });
+    }
+  }
+
   getMenu() {
     return [{
       label: ("Day"),
       run: () => {
-
-        let startDate = moment().startOf('day');
-        let endDate = moment().endOf('day');
-        let period = {number: 1, unit: 'day'};
-
         this.setState({
-          title: startDate.format('[for] dddd Do MMMM')
+          startDate: moment().startOf('day'),
+          endDate: moment().endOf('day'),
+          period: {number: 1, unit: 'day'},
+        }, () => {
+          this.setState({
+            title: this.state.startDate.format('[for] dddd Do MMMM')
+          });
+          this.updateStats();
         });
-
-        this.updateStats({startDate, endDate, period});
       }
     }, {
       label: ('Week'),
       run: () => {
-
-        let startDate = moment().startOf('week');
-        let endDate = moment().endOf('week');
-        let period = {number: 1, unit: 'week'};
-
         this.setState({
-          title: startDate.format('[for week starting] Do MMMM')
+          startDate: moment().startOf('week'),
+          endDate: moment().endOf('week'),
+          period: {number: 1, unit: 'week'}
+        }, () => {
+          this.setState({
+            title: this.state.startDate.format('[for week starting] Do MMMM')
+          });
+          this.updateStats();
         });
-
-        this.updateStats({startDate, endDate, period});
       }
     }, {
       label: ('Month'),
       run: () => {
-
-        let startDate = moment().startOf('month');
-        let endDate = moment().endOf('month');
-        let period = {number: 1, unit: 'month'};
-
         this.setState({
-          title: startDate.format('[for] MMMM YYYY')
+          startDate: moment().startOf('month'),
+          endDate: moment().endOf('month'),
+          period: {number: 1, unit: 'month'},
+        }, () => {
+          this.setState({
+            title: this.state.startDate.format('[for] MMMM YYYY')
+          });
+          this.updateStats();
         });
-
-        this.updateStats({startDate, endDate, period});
       }
     }, {
       label: ('3 Months'),
       run: () => {
-
-        let startDate = moment().subtract(2, 'months').startOf('month');
-        let endDate = moment().endOf('month');
-        let period = {number: 3, unit: 'month'};
-
         this.setState({
-          title: startDate.format("[for 3 months since] MMMM YYYY")
+          startDate: moment().subtract(2, 'months').startOf('month'),
+          endDate: moment().endOf('month'),
+          period: {number: 3, unit: 'month'},
+        }, () => {
+          this.setState({
+            title: this.state.startDate.format("[for 3 months since] MMMM YYYY")
+          });
+          this.updateStats();
         });
-
-        this.updateStats({startDate, endDate, period});
-
       }
     }, {
       label: ('6 Months'),
       run: () => {
-
-        let startDate = moment().subtract(5, 'months').startOf('month');
-        let endDate = moment().endOf('month');
-        let period = {number: 6, unit: 'month'};
-
         this.setState({
-          title: startDate.format("[for 6 months since] MMMM YYYY")
+          startDate: moment().subtract(5, 'months').startOf('month'),
+          endDate: moment().endOf('month'),
+          period: {number: 6, unit: 'month'}
+        }, () => {
+          this.setState({
+            title: this.state.startDate.format("[for 6 months since] MMMM YYYY")
+          });
+          this.updateStats();
         });
-
-        this.updateStats({startDate, endDate, period});
-
       }
     }, {
       label: ('Year'),
       run: () => {
-        let startDate = moment().startOf('year');
-        let endDate = moment().endOf('year');
-        let period = {number: 1, unit: 'year'};
-
         this.setState({
-          title: startDate.format("[for] YYYY")
+          startDate: moment().startOf('year'),
+          endDate: moment().endOf('year'),
+          period: {number: 1, unit: 'year'},
+        }, () => {
+          this.setState({
+            title: this.state.startDate.format("[for] YYYY")
+          });
+          this.updateStats();
         });
-
-        this.updateStats({startDate, endDate, period});
       }
     }];
   }
 
   render() {
     let results = this.state.results;
-    let facility = Session.get('selectedFacility');
+    let facility = this.state.facility;
     return (
       <div>
         <Menu items={this.getMenu()}/>
