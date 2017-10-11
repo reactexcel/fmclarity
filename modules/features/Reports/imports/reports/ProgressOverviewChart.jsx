@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
 import {Requests} from '/modules/models/Requests';
@@ -191,12 +192,14 @@ export default class ProgressOverviewChart extends React.Component {
 
   render() {
     let results = this.state.results;
-    let facility = this.state.facility;
+    let facility = this.props.facility;
+    let facilities = this.props.facilities;
+
     return (
       <div>
         <Menu items={this.getMenu()}/>
         <div className="ibox-title">
-          <h2>Overview {this.state.title} {facility && facility.name ? " for " + facility.name : " for all facilities"}</h2>
+          <h2>Overview {this.state.title} {facility&&facility.name?" for "+facility.name: (facilities && facilities.length === 1) ? "for "+ facilities[0].name : " for all facilities"}</h2>
         </div>
         <div className="ibox-content" style={{padding: "0px 20px 30px 20px"}}>
           <div style={{textAlign: "center", clear: "both"}}>
@@ -224,3 +227,9 @@ export default class ProgressOverviewChart extends React.Component {
     )
   }
 }
+
+ProgressOverviewChart.propTypes = {
+  facility: PropTypes.object,
+  facilities: PropTypes.array,
+  team: PropTypes.object.isRequired,
+};

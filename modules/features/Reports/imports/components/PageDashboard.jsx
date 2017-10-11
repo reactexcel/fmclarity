@@ -11,7 +11,8 @@ import {FacilityFilter} from '/modules/models/Facilities';
 
 import ProgressOverviewChart from '../reports/ProgressOverviewChart.jsx';
 import RequestActivityChart from '../reports/RequestActivityChart';
-import RequestBreakdownChart from '../reports/RequestBreakdownChart.jsx';
+import ReportsNavWidget from '../reports/ReportsNavWidget';
+import RequestBreakdownChartContainer from '../reports/RequestBreakdownChartContainer';
 
 /**
  * The main landing page for FMs which is intended to give a broad overview of job status
@@ -22,14 +23,9 @@ function PageDashboard(props) {
   let canGetMessages = false;
   let {team, facilities, facility, user} = props;
   if (!team) {
-    /*Perf.start();*/
     return <div/>
   }
 
-  /*
-   Perf.stop();
-   Perf.printInclusive();
-   */
   return (
     <div className="dashboard-page animated fadeIn">
       <FacilityFilter items={ facilities } selectedItem={ facility } />
@@ -53,14 +49,13 @@ function PageDashboard(props) {
         </div>
         <div className="col-sm-6" style={{paddingRight: "0px"}}>
           <div className="ibox">
-            <ProgressOverviewChart facility={facility} />
+            <ProgressOverviewChart facility={facility} facilities={facilities} team={team}/>
           </div>
           <div className="ibox">
-            <RequestActivityChart facility={facility} team={team}
-                                  minimal={ true }/>
+            <RequestActivityChart facility={facility} facilities={facilities} team={team} minimal={ true }/>
           </div>
           <div className="ibox">
-            {/*<RequestBreakdownChart minimal={ true }/>*/}
+            <RequestBreakdownChartContainer facility={facility} facilities={facilities} team={team} />
           </div>
         </div>
       </div>

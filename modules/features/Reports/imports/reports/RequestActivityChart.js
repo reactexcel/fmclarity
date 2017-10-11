@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { RequestSearch, Requests } from '/modules/models/Requests';
@@ -88,7 +89,7 @@ export default class RequestActivityChart extends PureComponent {
       openQuery,
       closedQuery,
     }
-  }
+  };
 
   getMenu = () => {
     return [ {
@@ -212,6 +213,22 @@ export default class RequestActivityChart extends PureComponent {
     this.getRequestData();
   };
 
+  updateChart = () => {
+    if (this.lineChart) {
+      this.lineChart.data.datasets[0].data = this.state.closedSeries || [];
+      this.lineChart.data.datasets[1].data = this.state.openSeries || [];
+      this.lineChart.data.labels = this.state.labels || [];
+      this.lineChart.update();
+    }
+  };
+
+  resetChart = () => {
+    if (this.lineChart) {
+      this.lineChart.destroy();
+      this.initChart();
+    }
+  };
+
   getRequestData = () => {
     let config = {
       start: this.state.viewConfig.startDate.toDate(),
@@ -302,21 +319,7 @@ export default class RequestActivityChart extends PureComponent {
     return chartItems;
   };
 
-  updateChart = () => {
-    if (this.lineChart) {
-      this.lineChart.data.datasets[0].data = this.state.closedSeries || [];
-      this.lineChart.data.datasets[1].data = this.state.openSeries || [];
-      this.lineChart.data.labels = this.state.labels || [];
-      this.lineChart.update();
-    }
-  };
 
-  resetChart = () => {
-    if (this.lineChart) {
-      this.lineChart.destroy();
-      this.initChart();
-    }
-  };
 
 
   componentDidMount() {
@@ -349,8 +352,8 @@ export default class RequestActivityChart extends PureComponent {
 
   render() {
     let title = this.state.viewConfig.startDate.format(this.state.viewConfig.title);
-    let facility = this.state.facility;
-    let facilities = this.state.facilities;
+    let facility = this.props.facility;
+    let facilities = this.props.facilities;
     let headerTitle = <span>Request activity {title} {facility && facility.name ? " for " + facility.name : (facilities && facilities.length == '1') ? "for " + facilities[0].name : " for all facilities"}</span>
 
     return (
@@ -375,3 +378,9 @@ export default class RequestActivityChart extends PureComponent {
     );
   }
 }
+
+RequestActivityChart.propTypes = {
+  facility: PropTypes.object,
+  facilities: PropTypes.array,
+  team: PropTypes.object.isRequired,
+};

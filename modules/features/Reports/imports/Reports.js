@@ -2,7 +2,7 @@ import moment from 'moment';
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
 import ResidentDetails from './reports/ResidentDetails.jsx';
 import BookingReport from './reports/BookingReport.jsx';
-import RequestBreakdownChart from './reports/RequestBreakdownChart.jsx';
+import RequestBreakdownChart from './reports/RequestBreakdownChart';
 import RequestActivityChart from './reports/RequestActivityChart';
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
 import MBMDefectImages from './reports/MBMDefectImages.jsx';
