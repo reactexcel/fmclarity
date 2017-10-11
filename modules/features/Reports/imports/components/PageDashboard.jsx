@@ -60,7 +60,7 @@ function PageDashboard(props) {
                                   minimal={ true }/>
           </div>
           <div className="ibox">
-            <RequestBreakdownChart minimal={ true }/>
+            {/*<RequestBreakdownChart minimal={ true }/>*/}
           </div>
         </div>
       </div>
