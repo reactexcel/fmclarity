@@ -61,6 +61,8 @@ export default class RequestBreakdownChart extends React.Component {
     let title = startDate.format("[since] MMMM YYYY");
     this.state = {
       startDate: startDate,
+      team: props.team,
+      facility: props.facility,
       title: title,
       expandall: false,
       sets: [],
@@ -68,83 +70,17 @@ export default class RequestBreakdownChart extends React.Component {
     };
   }
 
-  getMeteorData() {
-
-    var startDate = this.state.startDate;
-    var query = {
-      createdAt: {
-        $gte: this.state.startDate.toDate()
-      },
-      status:{$ne:'Deleted'}
-    }
-
-    var facility = Session.get( 'selectedFacility' );
-    if ( facility ) {
-      query[ "facility._id" ] = facility._id;
-    }
-
-    var team = Session.get( 'selectedTeam' );
-    //var team = Teams.findOne({name:"Kaplan Australia Pty Ltd"});
-    if ( team ) {
-      query[ "team._id" ] = team._id;
-    }
-    const handle = Meteor.subscribe('User: Facilities, Requests');
-
-    var requests = Requests.find( query );
-
-    var buckets = {};
-    var costs = {};
-    var labels = [];
-    var counts = [];
-    var set = [];
-    requests.map( function( i ) {
-      var serviceName;
-      if ( i.service && i.service.name ) {
-        serviceName = i.service.name;
-        if ( serviceName.length > 15 ) {
-          serviceName = serviceName.substring( 0, 13 ) + '...';
-        }
-        if ( !costs[ serviceName ] ) {
-          costs[ serviceName ] = 0;
-        }
-        if ( !buckets[ serviceName ] ) {
-          labels.push( serviceName );
-          buckets[ serviceName ] = [];
-        }
-        buckets[ serviceName ].push( i );
-        var newCost = parseInt( i.costThreshold );
-        if ( _.isNaN( newCost ) ) {
-          newCost = 0;
-        }
-        costs[ serviceName ] += newCost;
-      }
-    } );
-    labels.map( function( serviceName, idx ) {
-      counts[ idx ] = buckets[ serviceName ].length;
-      set[ idx ] = costs[ serviceName ];
-    } );
-
-    return {
-      facility: facility,
-      labels: labels,
-      set: set, //costs//counts
-      buckets: buckets,
-      ready: handle.ready()
-    }
-  }
-
-  printChart() {
-    var component = this;
-    component.setState( {
+  printChart = () => {
+    this.setState( {
       expandall: true
-    } );
+    });
 
-    setTimeout(function(){
+    setTimeout(() => {
       window.print();
-      component.setState( {
+      this.setState( {
         expandall: false
-      } );
-    },200);
+      });
+    }, 200);
   }
 
   getMenu() {
@@ -218,8 +154,22 @@ export default class RequestBreakdownChart extends React.Component {
   }
 
   onMenuClick = () => {
-    this.getRequestData();
+    this.clearChart(() => {
+      this.updateChart();
+      this.getRequestData();
+    });
   };
+
+  clearChart = (callback) => {
+    this.setState({
+      sets: []
+    }, () => {
+      if (_.isFunction(callback)) {
+        callback();
+      }
+    });
+  };
+
 
   initChart = () => {
     let ctx = document.getElementById("bar-chart").getContext( "2d" );
@@ -290,23 +240,31 @@ export default class RequestBreakdownChart extends React.Component {
   componentWillReceiveProps(props) {
     if (props.facility || props.team) {
       let update = {};
-      if (props.facility) {
-        update['facility'] = props.facility;
-      }
+      
+      update['facility'] = props.facility;
       if (props.team) {
         update['team'] = props.team;
       }
 
-      if (this.barChart) {
-        this.setState(update, () => {
-          this.resetChart();
+      let doUpdate = (
+        ((this.state.team && props.team) && (props.team._id !== this.state.team._id)) ||
+        Boolean(props.facility) || (Boolean(this.state.facility) && !Boolean(props.facility))
+      );
+
+      doUpdate = !doUpdate ? Boolean(props.facility) : doUpdate;
+
+      if (doUpdate) {
+        this.clearChart(() => {
+          this.setState(update, () => {
+            this.resetChart();
+          });
         });
       }
     }
   }
 
   componentDidUpdate() {
-    this.updateChart();
+    // this.updateChart();
   }
 
   render() {
@@ -314,7 +272,7 @@ export default class RequestBreakdownChart extends React.Component {
     let facilities = this.props.facilities;
     return (
 			<div>
-				<button className="btn btn-flat pull-left noprint"  onClick={this.printChart}>
+				<button className="btn btn-flat pull-left noprint"  onClick={() => { this.printChart() }}>
 					<i className="fa fa-print" aria-hidden="true"></i>
 				</button>
 				<Menu items={this.getMenu()}/>
@@ -329,7 +287,6 @@ export default class RequestBreakdownChart extends React.Component {
 			</div>
     )
   }
-
 };
 
 RequestBreakdownChart.propTypes = {

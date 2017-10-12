@@ -48,11 +48,39 @@ Meteor.methods( {
                 $lte: lastEndDate.toDate()
               }
             });
-            queries[status].thisPeriod = Requests.find(qThisMonth).count();
-            queries[status].lastPeriod = Requests.find(qLastMonth).count();
+
+            
+            let thisMonthPipeline = [
+                { $match: qThisMonth },
+                { $project: { team_id: "$team._id"}},
+                { $group: {
+                    _id : "$team_id",
+                    count: { $sum: 1 },
+                }},
+                { $project: {
+                    count: '$count'
+                }}
+            ];
+            let lastMonthPipeline = [
+                { $match: qLastMonth },
+                { $project: { team_id: "$team._id"}},
+                { $group: {
+                    _id : "$team_id",
+                    count: { $sum: 1 },
+                }},
+                { $project: {
+                    count: '$count'
+                }}
+            ];
+
+            let lastPeriod = Requests.collection.aggregate(lastMonthPipeline);
+            let thisPeriod = Requests.collection.aggregate(thisMonthPipeline);
+
+            queries[status].lastPeriod = lastPeriod.length > 0 ? lastPeriod[0].count: 0;
+            queries[status].thisPeriod = thisPeriod.length > 0 ? thisPeriod[0].count: 0;
           }
         }
-        console.log(queries);
+        
         return queries;
       }
     },

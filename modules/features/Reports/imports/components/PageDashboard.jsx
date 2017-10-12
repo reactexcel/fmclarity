@@ -22,8 +22,9 @@ import RequestBreakdownChartContainer from '../reports/RequestBreakdownChartCont
 function PageDashboard(props) {
   let canGetMessages = false;
   let {team, facilities, facility, user} = props;
+
   if (!team) {
-    return <div/>
+    return null;
   }
 
   return (
@@ -49,7 +50,7 @@ function PageDashboard(props) {
         </div>
         <div className="col-sm-6" style={{paddingRight: "0px"}}>
           <div className="ibox">
-            <ProgressOverviewChart facility={facility} facilities={facilities} team={team}/>
+            <ProgressOverviewChart facility={facility} team={team}/>
           </div>
           <div className="ibox">
             <RequestActivityChart facility={facility} facilities={facilities} team={team} minimal={ true }/>

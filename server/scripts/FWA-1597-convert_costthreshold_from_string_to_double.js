@@ -3,7 +3,6 @@
 
 import Requests from '/modules/models/Requests/imports/Requests';
 import config from './config';
-console.log(config.FWA_1597.enabled)
 if (Meteor.isServer && config.FWA_1597.enabled) {
   let requests = Requests.find({});
   let total = requests.count();

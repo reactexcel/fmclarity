@@ -1234,8 +1234,6 @@ function actionSendReminder( requests ) {
     } )
 }
 
-CostThresholdSummary = new Mongo.Collection('CostThresholdSummary');
-
 Meteor.methods({
   'Requests.findFacilityIdsAssociatedOnRequestsForUser': (user, team, filter) => {
       if (Meteor.isServer) {
@@ -1356,8 +1354,6 @@ Meteor.methods({
     }
   }
 );
-
-
 
 
 Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = { start: null, end: null }) => {

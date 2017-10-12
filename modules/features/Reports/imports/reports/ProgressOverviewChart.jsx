@@ -82,12 +82,18 @@ export default class ProgressOverviewChart extends React.Component {
   componentWillReceiveProps(props) {
     if (props.facility || props.team) {
       let update = {};
-      if (props.facility) {
-        update['facility'] = props.facility;
-      }
+      
+      update['facility'] = props.facility;
       if (props.team) {
         update['team'] = props.team;
       }
+
+      let doUpdate = (
+        ((this.state.team && props.team) && (props.team._id !== this.state.team._id)) ||
+        Boolean(props.facility) || (Boolean(this.state.facility) && !Boolean(props.facility))
+      );
+
+      doUpdate = !doUpdate ? Boolean(props.facility) : doUpdate;
 
       this.setState(update, () => {
         let data = {
@@ -97,7 +103,9 @@ export default class ProgressOverviewChart extends React.Component {
           facility: this.state.facility,
           team: this.state.team,
         };
-        this.updateStats(data);
+        if (doUpdate) {
+          this.updateStats(data);
+        }
       });
     }
   }
@@ -230,6 +238,5 @@ export default class ProgressOverviewChart extends React.Component {
 
 ProgressOverviewChart.propTypes = {
   facility: PropTypes.object,
-  facilities: PropTypes.array,
   team: PropTypes.object.isRequired,
 };

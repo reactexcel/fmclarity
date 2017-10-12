@@ -199,7 +199,21 @@ export default class RequestActivityChart extends PureComponent {
   };
 
   onMenuClick = () => {
-    this.getRequestData();
+    this.clearChart(() => {
+      this.updateChart();
+      this.getRequestData();
+    });
+  };
+
+  clearChart = (callback) => {
+    this.setState({
+      closedSeries: [],
+      openSeries: []
+    }, () => {
+      if (_.isFunction(callback)) {
+        callback();
+      }
+    });
   };
 
   initChart = () => {
@@ -319,9 +333,6 @@ export default class RequestActivityChart extends PureComponent {
     return chartItems;
   };
 
-
-
-
   componentDidMount() {
     this.initChart();
   }
@@ -329,25 +340,32 @@ export default class RequestActivityChart extends PureComponent {
   componentWillReceiveProps(props) {
     if (props.facility || props.team) {
       let update = {};
-      if (props.facility) {
-        update['facility'] = props.facility;
-      }
+
+      update['facility'] = props.facility;
+      
       if (props.team) {
         update['team'] = props.team;
       }
 
-      if (this.lineChart) {
-        this.setState(update, () => {
+      let doUpdate = (
+        ((this.state.team && props.team) && (props.team._id !== this.state.team._id)) ||
+        Boolean(props.facility) || (Boolean(this.state.facility) && !Boolean(props.facility))
+      );
+
+      if (doUpdate) {
+        this.clearChart(() => {
+          this.setState(update, () => {
             this.setState(this.getQueries(), () => {
               this.resetChart();
             });
-        });
+          });
+        });        
       }
     }
   }
 
   componentDidUpdate() {
-    this.updateChart();
+    // this.updateChart();
   }
 
   render() {
