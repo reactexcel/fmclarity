@@ -28,7 +28,7 @@ const FileField = React.createClass( {
 		}
 		return {
 			file: file,
-			url: file ? file.url() : "img/default-placeholder.png",
+			url: file ? url : "img/default-placeholder.png",
 			extension: extension,
 			icon: icon
 		}

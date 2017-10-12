@@ -73,7 +73,9 @@ const FileView = React.createClass( {
 		var message = confirm( 'Are you sure you want to delete this file?' );
 		if ( message == true ) {
 			this.data.file.remove();
-			this.props.onChange( null );
+			if (_.isFunction(this.props.onChange)) {
+        this.props.onChange( null );
+			}
 		}
 	},
 

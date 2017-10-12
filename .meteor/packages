@@ -86,3 +86,4 @@ mdg:validation-error
 percolate:synced-cron
 themeteorchef:bert
 dynamic-import
+cfs:s3
