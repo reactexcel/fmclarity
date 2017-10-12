@@ -33,31 +33,28 @@ export default class ProgressOverviewChart extends React.Component {
   }
 
   componentDidMount() {
-    this._mounted = true;
-
-    let facility = this.state.facility;
-    let team = this.state.team;
+    let facility = this.props.facility;
+    let team = this.props.team;
 
     this.setState({
       title: this.state.startDate.format("[since] MMMM YYYY")
     });
-
-    let data = {
-      startDate: this.state.startDate,
-      endDate: this.state.endDate,
-      period: this.state.period,
-      facility,
-      team
-    };
-    this.updateStats(data);
+    this.updateStats();
   }
 
-  componentWillUnmount() {
-    this._mounted = false;
-    if (this.computation) {
-      this.computation.stop();
-    }
-  }
+  clearStats = (callback) => {
+    this.setState({
+      results: {
+        New: {thisPeriod: 0, lastPeriod: 0},
+        Issued: {thisPeriod: 0, lastPeriod: 0},
+        Complete: {thisPeriod: 0, lastPeriod: 0}
+      }
+    }, () => {
+      if (_.isFunction(callback)) {
+        callback();
+      }
+    });
+  };
 
   updateStats() {
     let {startDate, endDate, period, facility, team} = this.state;
@@ -71,10 +68,8 @@ export default class ProgressOverviewChart extends React.Component {
     };
 
     Meteor.call('getProgressOverviewStats', data, (error, results) => {
-      if (!error && this._mounted) {
-        this.setState({
-          results
-        })
+      if (!error) {
+        this.setState({ results })
       }
     })
   }
@@ -95,16 +90,11 @@ export default class ProgressOverviewChart extends React.Component {
 
       doUpdate = !doUpdate ? Boolean(props.facility) : doUpdate;
 
-      this.setState(update, () => {
-        let data = {
-          startDate: this.state.startDate,
-          endDate: this.state.endDate,
-          period: this.state.period,
-          facility: this.state.facility,
-          team: this.state.team,
-        };
+      this.setState(update, () => {        
         if (doUpdate) {
-          this.updateStats(data);
+          this.clearStats(() => {
+            this.updateStats();
+          });
         }
       });
     }
@@ -122,7 +112,10 @@ export default class ProgressOverviewChart extends React.Component {
           this.setState({
             title: this.state.startDate.format('[for] dddd Do MMMM')
           });
-          this.updateStats();
+          
+          this.clearStats(() => {
+            this.updateStats();
+          });
         });
       }
     }, {
@@ -136,7 +129,9 @@ export default class ProgressOverviewChart extends React.Component {
           this.setState({
             title: this.state.startDate.format('[for week starting] Do MMMM')
           });
-          this.updateStats();
+          this.clearStats(() => {
+            this.updateStats();
+          });
         });
       }
     }, {
@@ -150,7 +145,9 @@ export default class ProgressOverviewChart extends React.Component {
           this.setState({
             title: this.state.startDate.format('[for] MMMM YYYY')
           });
-          this.updateStats();
+          this.clearStats(() => {
+            this.updateStats();
+          });
         });
       }
     }, {
@@ -164,7 +161,9 @@ export default class ProgressOverviewChart extends React.Component {
           this.setState({
             title: this.state.startDate.format("[for 3 months since] MMMM YYYY")
           });
-          this.updateStats();
+          this.clearStats(() => {
+            this.updateStats();
+          });
         });
       }
     }, {
@@ -178,7 +177,9 @@ export default class ProgressOverviewChart extends React.Component {
           this.setState({
             title: this.state.startDate.format("[for 6 months since] MMMM YYYY")
           });
-          this.updateStats();
+          this.clearStats(() => {
+            this.updateStats();
+          });
         });
       }
     }, {
@@ -192,7 +193,9 @@ export default class ProgressOverviewChart extends React.Component {
           this.setState({
             title: this.state.startDate.format("[for] YYYY")
           });
-          this.updateStats();
+          this.clearStats(() => {
+            this.updateStats();
+          });
         });
       }
     }];

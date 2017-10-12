@@ -85,7 +85,7 @@ export default class RequestBreakdownChart extends React.Component {
 
   getMenu() {
     return [ {
-      label: ( "Day" ),
+      label: ("Day"),
       run: () => {
         let startDate = moment().startOf('day');
         this.setState({
@@ -155,7 +155,6 @@ export default class RequestBreakdownChart extends React.Component {
 
   onMenuClick = () => {
     this.clearChart(() => {
-      this.updateChart();
       this.getRequestData();
     });
   };
@@ -164,6 +163,7 @@ export default class RequestBreakdownChart extends React.Component {
     this.setState({
       sets: []
     }, () => {
+      this.updateChart();
       if (_.isFunction(callback)) {
         callback();
       }

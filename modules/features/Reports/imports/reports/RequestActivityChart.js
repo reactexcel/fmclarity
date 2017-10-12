@@ -182,7 +182,7 @@ export default class RequestActivityChart extends PureComponent {
           this.onMenuClick();
         });
       }
-    } ];
+    }];
   };
 
   printChart = () => {
@@ -200,7 +200,6 @@ export default class RequestActivityChart extends PureComponent {
 
   onMenuClick = () => {
     this.clearChart(() => {
-      this.updateChart();
       this.getRequestData();
     });
   };
@@ -210,6 +209,7 @@ export default class RequestActivityChart extends PureComponent {
       closedSeries: [],
       openSeries: []
     }, () => {
+      this.updateChart();
       if (_.isFunction(callback)) {
         callback();
       }
