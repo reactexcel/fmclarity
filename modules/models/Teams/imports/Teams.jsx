@@ -188,7 +188,7 @@ Teams.methods( {
             var user = Meteor.user();
             var teamIds = [];
             let {requests} = user.getRequests();
-            console.log(Requests.findTeamIdsAssociatedOnRequestsForUser(user));
+            
             if ( requests && requests.length ) {
                 requests.map( function( i ) {
                     if ( i.team ) {

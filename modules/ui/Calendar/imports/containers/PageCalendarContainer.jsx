@@ -16,7 +16,6 @@ const PageCalendarContainer = createContainer( ( { params } ) => {
 		team = Session.getSelectedTeam(),
 		user = Meteor.user(),
 		facilities = null;
-	console.log(facility);
 
 	if ( team ) {
 		facilities = Facilities.findAll({ 'team._id': team._id });
