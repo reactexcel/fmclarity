@@ -25,7 +25,8 @@ if (Meteor.isServer && config.FWA_1568.enabled) {
   });
 
   PPM_Schedulers.find({
-    type: 'Schedular', status: 'PPM'
+    type: 'Schedular',
+    // status: 'PPM'
   }).fetch().map((request) => {
     PPM_Schedulers.collection.update(request._id, {
       $set: { type: 'Scheduler' }

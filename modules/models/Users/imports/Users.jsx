@@ -244,7 +244,7 @@ Users.actions({
 
         if (options.expandPMP) {
           query.push({
-            type: "Schedular"
+            type: "Scheduler"
           });
 
           var PMPRequests = PPM_Schedulers.find({
