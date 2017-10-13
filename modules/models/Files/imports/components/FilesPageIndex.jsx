@@ -5,12 +5,18 @@
 
 import React from "react";
 import FileView from './FileView.jsx';
+import { showLoader, hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 /**
  * @class 			FilesPageIndex
  * @memberOf 		module:models/Files
  */
 function FilesPageIndex( props ) {
+	if (props.items.length === 0) {
+    showLoader();
+	} else {
+    hideLoader();
+	}
 
 	return (
 		<div>

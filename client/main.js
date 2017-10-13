@@ -14,7 +14,6 @@ function loadExternalScripts() {
 
     loadGoogleMapApiScript();// load google map api script
     sortableApiScript();
-
 }
 
 function loadGoogleMapApiScript() {

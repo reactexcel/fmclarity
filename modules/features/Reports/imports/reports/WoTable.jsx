@@ -8,6 +8,7 @@ import { TextArea } from '/modules/ui/MaterialInputs';
 import { AutoForm } from '/modules/core/AutoForm';
 import { ContactCard } from '/modules/mixins/Members';
 import { Modal } from '/modules/ui/Modal';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 const WoTable = React.createClass( {
     getInitialState(){
@@ -32,7 +33,7 @@ const WoTable = React.createClass( {
   },
 
   componentDidMount(){
-    	$(".loader").hide();
+    hideLoader();
   },
 
   isHidden(facility, service ){

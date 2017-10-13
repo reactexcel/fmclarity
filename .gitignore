@@ -1,6 +1,8 @@
+package-lock.json
 .idea
 mup.json
 run.sh
+run_s3_enabled.sh
 node_modules/
 .meteor/dev_bundle/
 .docs/

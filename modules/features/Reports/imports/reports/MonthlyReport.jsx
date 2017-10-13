@@ -13,7 +13,7 @@ import MBMDefectImages from '../reports/MBMDefectImages.jsx';
 import MBMReport from '../reports/MBMReport.jsx';
 import MonthlyReportHeader from '../reports/MonthlyReportHeader.jsx';
 import MBMBuildingServiceReport from '../reports/MBMBuildingServiceReport.jsx';
-
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 export default MonthlyReport = React.createClass( {
 
@@ -51,7 +51,6 @@ export default MonthlyReport = React.createClass( {
 	},
 
 	componentWillReceiveProps(props){
-				// $(".loader").hide();
 			this.setState({
 				facility:Session.getSelectedFacility()
 			})
@@ -60,9 +59,9 @@ export default MonthlyReport = React.createClass( {
 		$(".fc-left").hide();
 		$(".fc-right").hide();
 		$(".facility-list-tile").hide()
-		setTimeout(function(){
-			$(".loader").hide();
-		},2000)
+		setTimeout(function() {
+      hideLoader();
+		}, 2000)
 		let update = setInterval(()=>{
 
 				PubSub.subscribe( 'stop', (msg,data) => {

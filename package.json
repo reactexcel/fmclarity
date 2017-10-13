@@ -11,6 +11,7 @@
     "imports": "^1.0.0",
     "jquery": "^2.x",
     "material-ui": "0.15.2",
+    "materialize-css": "^0.100.2",
     "meteor-node-stubs": "^0.2.3",
     "moment": "^2.15.2",
     "prop-types": "^15.5.10",

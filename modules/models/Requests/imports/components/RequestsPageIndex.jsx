@@ -9,6 +9,7 @@ import {RequestActions, RequestsTable} from '/modules/models/Requests';
 
 import {RequestFilter} from '/modules/models/Requests';
 import RequestPagination from './RequestPagination';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 import {Switch} from '/modules/ui/MaterialInputs';
 import moment from 'moment';
