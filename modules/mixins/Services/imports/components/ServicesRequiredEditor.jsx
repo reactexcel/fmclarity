@@ -55,39 +55,6 @@ const ServicesRequiredEditor = React.createClass( {
 
 	componentDidMount() {
 		this.save = _.debounce( this.save, 1000 );
-		/*$("#sortable").sortable({
-			stop: function(event, ui) {
-				console.log( { val: ui.item.val() } );
-				console.log(parseInt(ui.position.top / ui.item.height()) -2 );
-				console.log( ui.position.top  );
-				let startIndex = ui.item.val(),
-					stopIndex = parseInt(ui.position.top / ui.item.height()) -2,
-					temp = null,
-					row = _services;
-					temp = row[startIndex];
-					//sort Top-Dowm
-					if ( startIndex < stopIndex ) {
-						for(var i = startIndex; i <= stopIndex; i++) {
-							row[i] = row[i+1];
-						}
-						row[stopIndex] = temp;
-					}
-					//sort Bottom-UP
-					if ( startIndex > stopIndex ) {
-						for(var i = startIndex + 1; i >= stopIndex; i--) {
-							row[i] = row[i-1];
-						}
-						row[stopIndex] = temp;
-					}
-					_component.setState({
-						services: row,
-					});
-					_component.save();
-			},
-			placeholder: "ui-state-highlight",
-			axis: "y",
-		});
-		$( "#sortable" ).disableSelection();*/
 	},
 
 	save() {
@@ -149,7 +116,7 @@ const ServicesRequiredEditor = React.createClass( {
 		  				icon: 'fa-ban'
 					});
 		}
-		
+
 	},
 
 	addService() {
@@ -200,47 +167,46 @@ const ServicesRequiredEditor = React.createClass( {
 		} )
 	},
 
-  handleKeyDown( event , element, selectorID, row, subRow ){
-    if ( event.keyCode == 13 ) {
-      let len = element.length - 1 ;
-      if ( row == len || subRow == len ) {
-      if( subRow >= 0 ){
-        this.addSubService( row );
-      } else {
-        this.addService();
-      }
-      } else {
-        console.log(((subRow||row)+1),"count",{row,subRow});
-         $("input"+ selectorID +((subRow && subRow >= 0?subRow:row)+1)).click();
-         $("input"+ selectorID +((subRow && subRow >= 0?subRow:row)+1)).focus();
-      }
-    }
-  },
+    handleKeyDown( event , element, selectorID, row, subRow ){
+        if ( event.keyCode == 13 ) {
+            let len = element.length - 1 ;
+            if ( row == len || subRow == len ) {
+                if( subRow >= 0 ){
+                    this.addSubService( row );
+                } else {
+                    this.addService();
+                }
+            } else {
+                $("input"+ selectorID +((subRow && subRow >= 0?subRow:row)+1)).click();
+                $("input"+ selectorID +((subRow && subRow >= 0?subRow:row)+1)).focus();
+            }
+        }
+    },
 
-  sortServices(services){
-      services = _.without(services, null);
-      services = this.sortingFunction(services)
-      services.map((s,i)=>{
-          if(services[i].children && !_.isEmpty(services[i].children)){
-              services[i].children = _.without(services[i].children, null);
-              services[i].children = this.sortingFunction(services[i].children)
-          }
-      })
-      return services;
-  },
+    sortServices(services){
+        services = _.without(services, null);
+        services = this.sortingFunction(services)
+        services.map((s,i)=>{
+            if(services[i].children && !_.isEmpty(services[i].children)){
+                services[i].children = _.without(services[i].children, null);
+                services[i].children = this.sortingFunction(services[i].children)
+            }
+        })
+        return services;
+    },
 
-  sortingFunction(arr) {
-      let sortedList = arr.sort( (a, b) => {
-          if( a && a.name && b && b.name ) {
-              var textA = a.name.toUpperCase();
-              var textB = b.name.toUpperCase();
-              return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-          } else {
-              return 0;
-          }
-      });
-      return sortedList
-  },
+    sortingFunction(arr) {
+        let sortedList = arr.sort( (a, b) => {
+            if( a && a.name && b && b.name ) {
+                var textA = a.name.toUpperCase();
+                var textB = b.name.toUpperCase();
+                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            } else {
+                return 0;
+            }
+        });
+        return sortedList
+    },
 
 	render() {
 		let facility = this.state.item;
