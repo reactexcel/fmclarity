@@ -1477,7 +1477,7 @@ const RequestSchema = {
         		let bookingDetails = {
         			businessHours:businessHours,
         			previousBookingEvents:previousBookingEvents,
-        			bookingFor:bookingFor.name,
+        			bookingFor:bookingFor && bookingFor.name ? bookingFor.name : "",
                     areaDetails: bookingFor
         		};
                 return  <CalendarPeriod
