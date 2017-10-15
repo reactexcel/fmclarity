@@ -28,10 +28,7 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 	}
 
 	if ( team ) {
-		// not good enough
-		//  should be something like Facilities.findForUser()
 		facilities = team.getFacilities();
-		//facilities = Facilities.findAll( { 'team._id': team._id } );
 		if ( facilities ) {
 			let facilityThumbs = [],
 				facilityIds = [];

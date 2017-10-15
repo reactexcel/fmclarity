@@ -367,9 +367,6 @@ export default DocumentSchema = {
 
                 if ( item.facility && item.facility._id ) {
                     facility = Facilities.findOne( item.facility._id );
-                    /*if( facility ) {
-                        console.log( facility.getSuppliers() );
-                    }*/
                 }
 
                 return {
