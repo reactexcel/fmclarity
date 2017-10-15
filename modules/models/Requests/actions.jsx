@@ -549,7 +549,7 @@ const editInvoice = new Action( {
             model = { Requests }
             item = { request }
             form = { ['invoiceDetails'] }
-            submitText="Save"
+            //submitText="Save"
             onSubmit = {
                 ( request ) => {
                     if ( request.invoiceDetails.invoice ) {
