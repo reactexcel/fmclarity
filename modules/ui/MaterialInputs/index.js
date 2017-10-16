@@ -4,6 +4,7 @@
  */
 import CalendarPeriod from './imports/CalendarPeriod.jsx';
 import Check from './imports/Check.jsx';
+import RadioButton_Group from './imports/RadioButton_Group.jsx';
 import Currency from './imports/Currency.jsx';
 import DateInput from './imports/DateInput.jsx';
 import DateTime from './imports/DateTime.jsx';
@@ -24,6 +25,7 @@ import FMInstantSearchBox from './imports/FMInstantSearchBox.jsx';
 checkModules( {
 	Currency,
 	Check,
+	RadioButton_Group,
 	DateInput,
 	DateTime,
 	FileField,
@@ -48,6 +50,7 @@ checkModules( {
 export {
 	Currency,
 	Check,
+	RadioButton_Group,
 	DateInput,
 	DateTime,
 	FileField,

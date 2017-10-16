@@ -12,7 +12,7 @@ export default function DocIconHeader( props ) {
 				<table style={{fontStyle:"italic"}}>
 					<tbody>
 		            <tr>
-		                <td><div style={{height:"18px",width:"18px",background:"#ffffcc",border:'1px solid #FFE082'}}></div></td>
+		                <td><div style={{height:"18px",width:"18px",background:"rgba(255, 255, 27, 0.93)",border:'1px solid #FFE082'}}></div></td>
 		                <td style = {{ color: "rgb(153, 153, 153)" }}>Expires within 2 weeks</td>
 		            </tr>
 		            <tr>

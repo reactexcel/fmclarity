@@ -175,22 +175,30 @@ export default ComplianceRuleSchema = {
             item.event && ( query.name = item.event.name ? item.event.name : item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
-            //let lastWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
             let lastWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
-            let status  = lastWO.length && lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ].status;
-                //console.log(lastWO[lastWO.length - 1]);
             let team = Session.getSelectedTeam();
+            let request = lastWO[lastWO.length>1 ? lastWO.length - 2: 0 ],
+                dueDate = null,
+                previousDate = null,
+                previousRequest = null,
+                previousDateString = null;
+            if ( !_.isEmpty(request) ) {
+                previousDate = request.getPreviousDate();
+            }
+            if( previousDate ) {
+                previousRequest = request.findCloneAt( previousDate );
+                previousDateString = moment(previousDate).format('ddd Do MMM');
+            }
             return (
-                lastWO.length ? ( <div>
-                    <span>
-                        <a className="link" href={"javascript:void(0);"} onClick={() => {
-                                RequestActions.view.bind(lastWO[ lastWO.length>1 ? lastWO.length - 2: 0 ]).run()
-                            }}>
-                            Previous work order link
-                        </a>
-                    </span>
-                    <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
-                </div> ) : null
+                previousRequest ? (
+                    <span onClick={() => { RequestActions.view.run( previousRequest )}}>
+                      <a className="link" href={"javascript:void(0);"}>
+                        <span>previous <b>{ previousDateString }</b> </span>
+                      </a>
+                      <span style={{marginLeft:"5px"}}>
+                        <span className = {`label label-${previousRequest.status}`}>{previousRequest.status}</span>
+                      </span>
+                    </span>) : <span style={{color:'gray'}}>No previous</span>
             );
         },
         condition: item => item.event
@@ -200,27 +208,32 @@ export default ComplianceRuleSchema = {
         input( props ) {
             let item = props.item
             let query = {}
-            //item.event && ( query.name = item.event );
             item.event && ( query.name = item.event.name ? item.event.name : item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
-            //let nextWO = Requests.findAll( query, { $sort: { createdAt: -1 } } )
             let nextWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
-                //console.log(nextWO[nextWO.length - 2],"asc");
             let team = Session.getSelectedTeam();
-            //let status = nextWO.length && nextWO[nextWO.length - 1].status;
-            let status  = nextWO.length && nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ].status;
+            let request = nextWO[ nextWO.length && nextWO.length>1 ? nextWO.length - 2: 0 ],
+                nextDate = null,
+                nextRequest = null,
+                nextDateString = null;
+            if ( !_.isEmpty(request) ) {
+                nextDate = request.getNextDate();
+            }
+            if( nextDate ) {
+                nextRequest = request.findCloneAt( nextDate );
+                nextDateString = moment(nextDate).format('ddd Do MMM');
+            }
             return (
-                nextWO.length ? ( <div>
-            <span>
-              <a className="link" href={"javascript:void(0);"} onClick={() => {
-                   //RequestActions.view.bind(nextWO[nextWO.length - 1]).run()
-                   RequestActions.view.bind(nextWO[ nextWO.length>1 ? nextWO.length - 2: 0 ]).run()
-                }
-               }> Next work order link </a>
-            </span>
-            <span style={{marginLeft:"5px"}}>status: <span className = {`label label-${status}`}>{status}</span></span>
-          </div> ) : null
+                nextRequest ? (
+                <span onClick={() => { RequestActions.view.run( nextRequest )}}>
+                  <a className="link" href={"javascript:void(0);"} >
+                    <span>next due <b>{ nextDateString }</b> </span>
+                  </a>
+                  <span style={{marginLeft:"5px"}}>
+                    <span className = {`label label-${nextRequest.status}`}>{nextRequest.status}</span>
+                  </span>
+                </span> ) : <span style={{color:'gray'}}>No next</span>
             );
         },
         condition: item => item.event

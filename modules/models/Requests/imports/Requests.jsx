@@ -20,6 +20,7 @@ import { Files } from '/modules/models/Files';
 import { Users } from '/modules/models/Users';
 import { PPM_Schedulers } from '/modules/models/Requests';
 import { SupplierRequestEmailView } from '/modules/core/Email';
+import { AssigneeRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
 import moment from 'moment';
@@ -276,6 +277,9 @@ Requests.methods( {
                 let owner = null;
                 if ( newRequest.owner ) {
                     owner = newRequest.getOwner();
+                }
+                if (newRequest.assignee ) {
+                    newRequest.setAssignee( newRequest.assignee );
                 }
                 if(!furtherWorkRequired){
                     newRequest.distributeMessage( {
@@ -802,6 +806,24 @@ function setAssignee( request, assignee ) {
 
     request = Requests.collection._transform( request );
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
+    if ( request ) {
+                    
+                request.distributeMessage( {
+                    recipientRoles: [ "assignee" ],
+                    suppressOriginalPost: true,
+                    message: {
+                        verb: "assigned",
+                        subject: "New work request assignment from " + " " + Meteor.user().getName(),
+                        read: false,
+                        digest: false,
+                        emailBody: function( recipient ) {
+                            var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                            var token = LoginService.generateLoginToken( recipient, expiry );
+                            return DocMessages.render( AssigneeRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+                        }
+                    }
+                } );
+            }
 }
 
 function checkIssuePermissions( role, user, request ) {

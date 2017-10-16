@@ -75,7 +75,6 @@ const WoTable = React.createClass( {
           service: r.service.name,
           type : this.props.defect ? "defectToggle" : "toggle" }
         let RemovedWoKeys =  Reports.findOne(query);
-        console.log(RemovedWoKeys);
 
         if(!RemovedWoKeys){
           let item = {
