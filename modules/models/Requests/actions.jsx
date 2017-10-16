@@ -83,6 +83,10 @@ const edit = new Action( {
                     }
                     Modal.hide();
 
+                    if (request.assignee && request.assignee != oldRequest.assignee) {
+                        request.setAssignee( request.assignee );
+                    }
+
                     let notificationBody = "",
                         keys = [ 'costThreshold', 'priority', 'type', 'name' ];
 
@@ -545,7 +549,7 @@ const editInvoice = new Action( {
             model = { Requests }
             item = { request }
             form = { ['invoiceDetails'] }
-            submitText="Save"
+            //submitText="Save"
             onSubmit = {
                 ( request ) => {
                     if ( request.invoiceDetails.invoice ) {
@@ -556,7 +560,7 @@ const editInvoice = new Action( {
                               fileExists = false;
                           $.each(request.attachments, function(k, v){
                             let f = Files.findOne({_id:v._id});
-                            fname = f && f.original && f.original.name; 
+                            fname = f && f.original && f.original.name;
                             if (filename == fname) {
                                 fileExists =  true;
                             }

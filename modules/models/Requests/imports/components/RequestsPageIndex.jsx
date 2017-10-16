@@ -83,8 +83,8 @@ export default class RequestsPageIndex extends Component {
     let requests = [];
     let totalCollectionCount = 0;
     if (this.props.user) {
-      ({requests, totalCollectionCount } = this.props.user.getRequests(
-        {$and: [this.state.statusFilter, this.state.contextFilter]}, { expandPMP: true, skip: this.state.currentPage, limit: this.pageSize }
+      ({ requests, totalCollectionCount } = this.props.user.getRequests(
+        {$and: [this.state.statusFilter, this.state.contextFilter]}, { expandPMP: false, skip: this.state.currentPage, limit: this.pageSize }
       ));
     }
 

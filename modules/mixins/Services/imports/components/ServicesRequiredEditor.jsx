@@ -11,102 +11,95 @@ import ServicesRequiredEditorRow from './ServicesRequiredEditorRow.jsx';
  * @memberOf    module:mixins/Services
  */
 
-const ServicesRequiredEditor = React.createClass({
+const ServicesRequiredEditor = React.createClass( {
 
   oldServices: null,
   updatedService: null,
 
-  getInitialState() {
-    let item = this.props.item || this.state.item;
-    let field = this.props.field || 'servicesRequired';
-    let services = this.sortServices(item && field ? item[field] : []);
+	getInitialState() {
 
+		let item = this.props.item || this.state.item;
+		let field = this.props.field || "servicesRequired";
+    let services = this.sortServices(item && field ? item[field] : []);
     this.oldServices = JSON.parse(JSON.stringify(services));
 
-    return {
-      item,
-      field,
-      services: services || [],
-      expanded: {},
-      drag: false,
+		return {
+			item,
+			field,
+			services: services || [],
+			expanded: {},
+			drag: false,
       suppliers: this.props.suppliers,
-    };
-  },
+		}
+	},
 
-  componentWillReceiveProps(props) {
-    // only update if the item (facility) being displayed has changed
-    // this means the item will fail to refresh if updated by another client
-    // a deep comparison could prevent this (if it is deemed worthwhile)
-    if (props.item._id != this.state.item._id) {
+	componentWillReceiveProps( props ) {
+		//only update if the item (facility) being displayed has changed
+		//this means the item will fail to refresh if updated by another client
+		//a deep comparison could prevent this (if it is deemed worthwhile)
+		if ( props.item._id != this.state.item._id ) {
       let item = props.item;
       let field = props.field || 'servicesRequired';
-      let services = item && field ? item[field] : [];
-      services = this.sortServices(services);
-      this.setState({
-        item: item,
-        field: field,
-        services: services || [],
-        expanded: {},
+      let services = this.sortServices(item && field ? item[field] : []);
+
+			this.setState( {
+				item: item,
+				field: field,
+				services: services || [],
+				expanded: {},
         suppliers: this.props.suppliers,
-      });
-    }
-  },
+			} );
+		}
+	},
 
-  componentDidUpdate() {
+	componentDidUpdate(){
+	},
 
-  },
+	componentDidMount() {
+		this.save = _.debounce(this.save, 1000);
+	},
 
-  componentDidMount() {
-    this.save = _.debounce(this.save, 1000);
-  },
-
-  save() {
+	save() {
     let item = this.state.item;
     let services = this.state.services;
     item.setServicesRequired(services, this.updatedService);
 
     this.oldServices = JSON.parse(JSON.stringify(services));
     this.updatedService = null;
-    /* or???
-     if(this.props.onChange) {
-     this.props.onChange(this.state.services);
-     }
-     */
-  },
+	},
 
-  updateService(idx, newValue) {
-    let services = this.state.services;
-    if (!newValue) {
-      services.splice(idx, 1);
-    } else {
+	updateService( idx, newValue ) {
+		var services = this.state.services;
+		if ( !newValue ) {
+			services.splice( idx, 1 );
+		} else {
       services[idx] = this.updateRuleServiceNames(newValue);
       this.updatedService = {
         oldValue: this.oldServices[idx],
         newValue: newValue,
         parent: null,
       };
-    }
+		}
     this.setState({
       services: services,
     });
 
-    if (services[idx] && services[idx].name &&
-      services[idx].name.trim() !== '') {
-      this.save();
-    } else {
-      Bert.alert({
-        title: '',
-        message: 'Name is required and be 2 or more characters',
-        type: 'danger',
-        style: 'growl-bottom-right',
-        icon: 'fa-ban',
+		if (services[ idx ] && services[ idx ].name && services[ idx ].name.trim() !="") {
+			this.save();
+		} else{
+			Bert.alert({
+          title: '',
+          message: 'Name is required and be 2 or more characters',
+          type: 'danger',
+          style: 'growl-bottom-right',
+          icon: 'fa-ban'
       });
-    }
-  },
+		}
+	},
 
-  updateSubService(idx, subIdx, newValue) {
-    let services = this.state.services;
-    let service = services[idx];
+	updateSubService( idx, subIdx, newValue ) {
+		var services = this.state.services;
+		var service = services[ idx ];
     if (!newValue) {
       service.children.splice(subIdx, 1);
     } else {
@@ -133,8 +126,9 @@ const ServicesRequiredEditor = React.createClass({
         icon: 'fa-ban',
       });
     }
-  },
 
+  },
+  
   updateRuleServiceNames(newService) {
     if (newService.data.complianceRules) {
       if (newService.data.complianceRules.length > 0) {
@@ -169,11 +163,11 @@ const ServicesRequiredEditor = React.createClass({
     return newService;
   },
 
-  addService() {
-    let services = this.state.services;
-    let lastIndex = services.length - 1;
-    let lastService = services[lastIndex];
-    if (!lastService || lastService.name.length) {
+	addService() {
+		var services = this.state.services;
+		var lastIndex = services.length - 1;
+		var lastService = services[ lastIndex ];
+		if ( !lastService || lastService.name.length ) {
       services.push({
         name: '',
       });
@@ -184,55 +178,54 @@ const ServicesRequiredEditor = React.createClass({
         $('input#service-' + (services.length - 1 )).click();
         $('input#service-' + (services.length - 1 )).focus();
       });
-      // this.save();
-    }
-  },
+			// this.save();
+		}
+	},
 
-  addSubService(idx) {
-    let services = this.state.services;
-    let service = services[idx];
-    service.children = service.children || [];
-    let lastIndex = service.children.length - 1;
-    let lastSubService = service.children[lastIndex];
-    if (!lastSubService || lastSubService.name.length) {
-      services[idx].children.push({
-        name: '',
-      });
-
+	addSubService( idx ) {
+		var services = this.state.services;
+		var service = services[ idx ];
+		service.children = service.children || [];
+		var lastIndex = service.children.length - 1;
+		var lastSubService = service.children[ lastIndex ];
+		if ( !lastSubService || lastSubService.name.length ) {
+			services[ idx ].children.push( {
+				name: ""
+			} );
+            //services = this.sortServices(services)
       this.setState({
         services: services,
       }, () => {
         $('input#subservice-' + (services[idx].children.length - 1 )).click();
         $('input#subservice-' + (services[idx].children.length - 1 )).focus();
       });
-    }
-  },
+			// this.save();
+		}
+	},
 
-  toggleExpanded(supplierName) {
-    let expanded = this.state.expanded;
-    expanded[supplierName] = expanded[supplierName] ? false : true;
-    this.setState({
-      expanded: expanded,
-    });
-  },
+	toggleExpanded( supplierName ) {
+		var expanded = this.state.expanded;
+		expanded[ supplierName ] = expanded[ supplierName ] ? false : true;
+		this.setState( {
+			expanded: expanded
+		} )
+	},
 
-  handleKeyDown(event, element, selectorID, row, subRow) {
-    if (event.keyCode == 13) {
-      let len = element.length - 1;
-      if (row == len || subRow == len) {
-        if (subRow >= 0) {
-          this.addSubService(row);
-        } else {
-          this.addService();
-        }
-      } else {
-        console.log(((subRow || row) + 1), 'count', {row, subRow});
-        let elem = $('input' + selectorID +
-          ((subRow && subRow >= 0 ? subRow : row) + 1));
-        elem.click();
-        elem.focus();
+  handleKeyDown( event , element, selectorID, row, subRow ){
+      if ( event.keyCode == 13 ) {
+          let len = element.length - 1 ;
+          if ( row == len || subRow == len ) {
+            if (subRow >= 0) {
+              this.addSubService(row);
+            } else {
+              this.addService();
+            }
+          } else {
+            let elem = $('input' + selectorID + ((subRow && subRow >= 0 ? subRow : row) + 1));
+            elem.click();
+            elem.focus();
+          }
       }
-    }
   },
 
   sortServices(services) {

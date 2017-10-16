@@ -20,7 +20,7 @@
     "react-addons-css-transition-group": "15.3.2",
     "react-addons-linked-state-mixin": "15.3.2",
     "react-addons-perf": "15.3.2",
-    "react-addons-pure-render-mixin": "15.3.2",
+    "react-addons-pure-render-mixin": "^15.6.2",
     "react-addons-shallow-compare": "15.3.2",
     "react-addons-test-utils": "15.3.2",
     "react-addons-transition-group": "15.3.2",
@@ -34,7 +34,9 @@
     "react-tap-event-plugin": "^1.0.0"
   },
   "devDependencies": {
-    "react-addons-perf": "^15.3.2"
+    "eslint": "^4.8.0",
+    "react-addons-perf": "^15.3.2",
+    "stacktrace-js": "^2.0.0"
   },
   "repository": {
     "type": "git",

@@ -82,6 +82,7 @@ const Text = React.createClass( {
 				style 			= {{paddingRight:'60px'}}
       			ref 			= "input"
       			type 			= "text"
+            id = {this.props.id}
       			defaultValue	= { value }
       			onChange 		= { ( event ) => { this.handleChange( event.target.value ) } }
       			onSelect		= { this.handleSelect }

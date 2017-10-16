@@ -63,10 +63,9 @@ export default RequestSearch = {
             q.createdAt = {
                 $gte: startDate.toDate(),
                 $lte: endDate.toDate()
-            }
-            rs.labels.push( label );
-            rs.sets.push( Requests.find( q )
-                .count() );
+            };
+            rs.labels.push(label);
+            rs.sets.push(Requests.find(q).count());
             now.add( 1, groupBy );
         }
         //console.log(rs);

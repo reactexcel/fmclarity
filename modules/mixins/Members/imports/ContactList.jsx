@@ -20,10 +20,6 @@ export default ContactList = React.createClass( {
 			members = this.props.members,
 			filter = this.props.filter;
 
-		//members list is either:
-		// 1.passed in from members prop
-		// 2.loaded from group
-		// 3.initiated as blank array
 		let teamMember = [];
 		if(filter && filter.role && filter.role.$in && _.contains(filter.role.$in,"portfolio manager")){
 			teamMember = team.getMembers( {

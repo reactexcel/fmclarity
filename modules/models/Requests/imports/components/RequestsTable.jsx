@@ -198,7 +198,7 @@ export default function RequestsTable({requests, filter, columns, selectedItem})
   if (Session.get('selectedStatus') && Session.get('selectedStatus') === "Booking") {
     newCols = _.omit(newCols, "Due");
   }
-  console.log(sortByLastUpdate);
+  
   return (
     <div className="request-table">
       <DataTable

@@ -268,8 +268,8 @@ export default DocumentSchema = {
 
 			if ( teamType == 'fm' && item.facility ) {
 				items = item.facility.servicesRequired;
-			} else if ( teamType == 'contractor' && team.getAvailableServices ) {
-				items = team.getAvailableServices();
+			} else if ( teamType == 'contractor' && selectedTeam.getAvailableServices ) {
+				items = selectedTeam.getAvailableServices();
 			}
 
 			return {
@@ -367,9 +367,6 @@ export default DocumentSchema = {
 
                 if ( item.facility && item.facility._id ) {
                     facility = Facilities.findOne( item.facility._id );
-                    /*if( facility ) {
-                        console.log( facility.getSuppliers() );
-                    }*/
                 }
 
                 return {
@@ -675,6 +672,7 @@ export default DocumentSchema = {
 			].indexOf( item.type ) > -1;
 		},
 		defaultValue: new Date(),
+		shouldClearIfHidden: true,
 		label: "Expiry",
 		optional: true,
 		size: 6,

@@ -114,7 +114,7 @@ function FacilityPanel( { item } ) {
 						content:    <Inbox for = { facility } truncate = { true }/>
 					},{
                         //hide:     	!facility.canAddDocument() || teamType!='fm'
-						hide:     	!facility.canAddDocument() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) )  ? false : true ) : false,
+                        hide:     	!facility.canAddDocument() || teamType!='fm' ? ( !_.isEmpty( facility.getMemberRole( Meteor.user() ) )  ? false : ( teamType=="contractor" ? false : true ) ) : false,
 						tab:        <span id="documents-tab">Documents</span>,
 						content:    <AutoForm model = { Facilities } item = { facility } form = { ["documents"] } hideSubmit = { true }/>
 					},{

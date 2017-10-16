@@ -18,7 +18,9 @@ import { LoginService } from '/modules/core/Authentication';
 import { Teams } from '/modules/models/Teams';
 import { Files } from '/modules/models/Files';
 import { Users } from '/modules/models/Users';
+import { PPM_Schedulers } from '/modules/models/Requests';
 import { SupplierRequestEmailView } from '/modules/core/Email';
+import { AssigneeRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
 import moment from 'moment';
@@ -26,7 +28,7 @@ import moment from 'moment';
 /**
  * @memberOf        module:models/Requests
  */
-const Requests = new Model( {
+const Requests = new Model({
     schema: RequestSchema,
     collection: "Issues",
     mixins: [
@@ -89,7 +91,7 @@ const Requests = new Model( {
         } ],
         [ Members ]
     ]
-} )
+});
 
 Requests.save.before( ( request ) => {
     if ( request.type == "Schedular" || request.type == "Scheduler" ) {
@@ -162,7 +164,7 @@ var accessForTeamMembersWithElevatedAccessForManagers = function( role, user, re
 //maybe actions it better terminology?
 Requests.methods( {
 
-    /* funtionality should be encapsulated in members */
+    /* functionality should be encapsulated in members */
     updateSupplierManagers: {
         authentication: true,
         helper: function( request ) {
@@ -275,6 +277,9 @@ Requests.methods( {
                 let owner = null;
                 if ( newRequest.owner ) {
                     owner = newRequest.getOwner();
+                }
+                if (newRequest.assignee ) {
+                    newRequest.setAssignee( newRequest.assignee );
                 }
                 if(!furtherWorkRequired){
                     newRequest.distributeMessage( {
@@ -744,7 +749,7 @@ Requests.methods( {
         method: actionSendReminder
     }
 
-} )
+});
 
 Requests.helpers( {
     // this sent to schema config
@@ -801,6 +806,24 @@ function setAssignee( request, assignee ) {
 
     request = Requests.collection._transform( request );
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
+    if ( request ) {
+                    
+                request.distributeMessage( {
+                    recipientRoles: [ "assignee" ],
+                    suppressOriginalPost: true,
+                    message: {
+                        verb: "assigned",
+                        subject: "New work request assignment from " + " " + Meteor.user().getName(),
+                        read: false,
+                        digest: false,
+                        emailBody: function( recipient ) {
+                            var expiry = moment( request.dueDate ).add( { days: 3 } ).toDate();
+                            var token = LoginService.generateLoginToken( recipient, expiry );
+                            return DocMessages.render( AssigneeRequestEmailView, { recipient: { _id: recipient._id }, item: { _id: request._id }, token: token } );
+                        }
+                    }
+                } );
+            }
 }
 
 function checkIssuePermissions( role, user, request ) {
@@ -1231,6 +1254,276 @@ function actionSendReminder( requests ) {
             } )
         }
     } )
+}
+
+Meteor.methods({
+  'Requests.findFacilityIdsAssociatedOnRequestsForUser': (user, team, filter) => {
+      if (Meteor.isServer) {
+        let query = [];
+        let teamId = null;
+
+        if (team && team._id) {
+          teamId = team._id;
+          query.push({
+            $or: [
+              {'team._id': teamId},
+              {'supplier._id': teamId},
+              {'realEstateAgency._id': teamId}
+            ]
+          });
+        }
+
+        if (filter) {
+          query.push(filter);
+        }
+
+        let pipeline = [{
+            $match: { $and: query }
+          }, {
+            $group: {
+              _id: '$facility._id',
+            }
+          }];
+
+        return Requests.collection.aggregate(pipeline);
+      }
+    },
+    'Requests.getRequestCountPerMonth': (user, filter, config) => {
+      if (Meteor.isServer) {
+
+        let query = [];
+
+        if (filter) {
+          query.push(filter);
+        }
+
+        let start = config.start ? moment(config.start) : moment().subtract(5, 'months').startOf('month');
+        let end = config.end ? moment(config.end) : moment();
+
+        query.push({ createdAt: {
+          $gte: new Date(start.toDate()),
+          $lt: new Date(end.toDate())
+        }});
+
+        let groupId = { month: { $month: "$createdAt" }, year: { $year: "$createdAt" }};
+        if (config.groupBy) {
+          switch (config.groupBy) {
+            case 'hour':
+              groupId['week'] = { $week: '$createdAt' };
+              groupId['day'] = { $dayOfMonth: '$createdAt'};
+              groupId['hour'] = { $hour: '$createdAt'};
+              break;
+            case 'day':
+              groupId['week'] = { $week: '$createdAt' };
+              groupId['day'] = { $dayOfMonth: '$createdAt' };
+              break;
+            case 'week':
+              groupId['week'] = { $week: '$createdAt' };
+              break;
+            default: break;
+          }
+        }
+
+        let pipeline = [
+          { $match: { $and: query }},
+          { $group: {
+            _id : groupId,
+            count: { $sum: 1 },
+          }},
+          { $project: {
+            count: '$count',
+            createdAt: '$_id'
+          }}
+        ];
+
+        return Requests.collection.aggregate(pipeline);
+      }
+    },
+    'Requests.getRequestAmountBreakdown': (config) => {
+      if (Meteor.isServer) {
+        let query = {
+          createdAt: {
+            $gte: new Date(moment(config.date).toDate())
+          },
+          status: { $ne: 'Deleted' }
+        };
+        if (config.team && config.team._id) {
+          query['team._id'] = config.team._id;
+        }
+
+        if (config.facility && config.facility._id) {
+          query['facility._id'] = config.facility._id;
+        }
+
+        let pipeline = [
+          { $match: query },
+          { $project: {
+            serviceName: '$service.name',
+            costThreshold: '$costThreshold'
+          }},
+          { $group: {
+            _id : { serviceName: '$serviceName' },
+            count: { $sum: '$costThreshold' },
+          }},
+          { $project: {
+            serviceName: '$_id.serviceName',
+            totalCostThreshold: '$count'
+          }}
+        ];
+
+        return  Requests.collection.aggregate(pipeline);
+      }
+    }
+  }
+);
+
+
+Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = { start: null, end: null }) => {
+
+  let query = [];
+  let team = Session.getSelectedTeam();
+  let teamId = null;
+
+  if (team) {
+    teamId = team._id;
+    query.push({
+      $or: [
+        {'team._id': teamId},
+        {'supplier._id': teamId},
+        {'realEstateAgency._id': teamId}
+      ]
+    });
+  }
+
+  //if filter passed to function then add that to the query
+  if (filter) {
+    query.push(filter);
+  }
+
+  // clone PPM query the date limit should only apply to requests. Scheduled PPM objects are generated at runtime and
+  // does not use up a lot of memory
+  let PPMQuery = JSON.parse(JSON.stringify(query));
+  if (dateLimit.start && dateLimit.end) {
+    query.push({ dueDate: {
+      $gte: new Date(dateLimit.start),
+      $lt: new Date(dateLimit.end)
+    }});
+  }
+
+  //perform query
+  let currentPage = options.skip ? options.skip : 0;
+  // query option needed to determine current page number and number of documents per collection
+  let queryOptions = {};
+  let totalCollectionCount = 0;
+  let usePager = currentPage > -1 && options.limit;
+  if (usePager) {
+    queryOptions = {
+      limit: options.limit,
+      skip: currentPage * options.limit,
+      sort: {createdDate: -1}
+    };
+    let totalCollection = Requests.find({$and: query});
+    totalCollectionCount = totalCollection ? totalCollection.count() : 0;
+  } else {
+    queryOptions = {sort: {createdDate: -1}};
+  }
+
+  let currentCollection = Requests.find({$and: query}, queryOptions);
+  let requests = currentCollection ? currentCollection.fetch() : [];
+
+  // console.log(query);
+  // console.log(currentCollection.count());
+
+  if (options.expandPMP) {
+    PPMQuery.push({
+      type: "Scheduler"
+    });
+
+    let PPMRequests = PPM_Schedulers.find({
+      $and: PPMQuery
+    }).fetch({ sort: { createdAt: 1 } });
+    PPMRequests.map((r) => {
+      requests = expandPPM(r, requests);
+    });
+  }
+
+  return {
+    requests: requests,
+    totalCollectionCount: totalCollectionCount,
+    currentPage: currentPage
+  };
+};
+
+
+const time = {
+  days: { endDate: "", number: 1, period: "days", repeats: 30, unit: "days" },
+  weeks: { endDate: "", number: 1, period: "weeks", repeats: 10, unit: "weeks" },
+  fortnights: { endDate: "", number: 2, period: "weeks", repeats: 10, unit: "fortnights" },
+  months: { endDate: "", number: 1, period: "months", repeats: 10, unit: "months" },
+  monthly: { endDate: "", number: 1, period: "months", repeats: 10, unit: "months" },
+  quarters: { endDate: "", number: 3, period: "months", repeats: 10, unit: "quarters" },
+  years: { endDate: "", number: 1, period: "years", repeats: 10, unit: "years" }
+};
+
+function expandPPM(r, requests) {
+  if (r.hasOwnProperty('frequency') && r.frequency.hasOwnProperty("repeats")) {
+    if (r.frequency.unit === "custom") {
+      let temp = r.frequency;
+      r.frequency = time[r.frequency.period];
+      r.frequency.number = temp.number;
+      r.frequency.endDate = temp.endDate;
+      let date = moment(r.dueDate);
+      let repeats = parseInt(r.frequency.repeats);
+      let period = {};
+      period[r.frequency.unit] = parseInt(r.frequency.number);
+
+      if (r.frequency.endDate !== "") {
+        for (let i = 0; i < repeats; i++) {
+          let copy = Object.assign({}, r);
+          copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
+          const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
+          if (diff_in_dates_in_days > 0) {
+            return requests;
+          } else {
+            requests.push(PPM_Schedulers.collection._transform(copy));
+          }
+        }
+      } else {
+        for (let i = 0; i < repeats; i++) {
+          let copy = Object.assign({}, r); //_.omit(r,'_id');
+          copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
+          requests.push(PPM_Schedulers.collection._transform(copy));
+        }
+      }
+    } else {
+      r.frequency = time[r.frequency.unit];
+      let date = moment(r.dueDate);
+      let repeats = parseInt(r.frequency.repeats);
+      let period = {};
+      period[r.frequency.unit] = parseInt(r.frequency.number);
+
+      if (r.frequency.endDate !== "") {
+        for (let i = 0; i < repeats; i++) {
+          let copy = Object.assign({}, r); //_.omit(r,'_id');
+          copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
+          const diff_in_dates_in_days = moment(copy.dueDate).diff(moment(r.frequency.endDate), 'days');
+          if (diff_in_dates_in_days > 0) {
+            return requests;
+          } else {
+            requests.push(PPM_Schedulers.collection._transform(copy));
+          }
+        }
+      } else {
+        for (let i = 0; i < repeats; i++) {
+          let copy = Object.assign({}, r); //_.omit(r,'_id');
+          copy.dueDate = date.add(1 * r.frequency.number, r.frequency.period).toDate();
+          requests.push(PPM_Schedulers.collection._transform(copy));
+        }
+      }
+    }
+  }
+
+  return requests;
 }
 
 export default Requests;
