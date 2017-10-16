@@ -8,6 +8,9 @@ import {RequestActions} from '/modules/models/Requests';
 import Requests from '/modules/models/Requests/imports/Requests';
 import moment from 'moment';
 
+import LoaderSmall from '/modules/ui/Loader/imports/components/LoaderSmall';
+
+
 /**
  * An ui component that renders a calendar with requests appearing as events.
  * @class           Calendar
@@ -20,6 +23,7 @@ class Calendar extends React.Component {
   eventt = [];
   statusFilter = {"status": {$nin: ["Cancelled", "Deleted", "Closed", "Reversed"]}};
   calendar = {};
+  mounted = false;
 
   constructor(props) {
     super(props);
@@ -29,62 +33,85 @@ class Calendar extends React.Component {
       facility: props.facility,
       team: props.team,
       requests: [],
+      showLoader: true,
       monthFilter: {
         start: moment().startOf('month').toDate(),
         end: moment().endOf('month').toDate()
       },
     };
-    this.state.requests = this.getRequests();
+    this.getRequests((requests) => {
+      this.state.showLoader = false;
+      this.state.requests = requests;
+    })
   };
 
   componentWillReceiveProps(props) {
+
+    if (this.state.team._id === props.team._id && !props.facility) {
+      return;
+    }
+
     this.setState({
       user: props.user,
       facility: props.facility,
-      team: props.team
+      team: props.team,
+      requests: []
     }, () => {
       this.setState({
-        requests: this.getRequests()
-      }, () => {
-        this._addEvents(this.state);
-        this.calendar.fullCalendar('refetchEvents');
+        showLoader: true
+      });
+      this.getRequests((requests) => {
+        this.setState({
+          requests: requests,
+          showLoader: false,
+        }, () => {
+          this._addEvents(this.state);
+          this.calendar.fullCalendar('refetchEvents');
+        });
       });
     });
   }
 
-  getRequests() {
+  getRequests(callback) {
     let contextFilter = {};
+
     if (this.state.facility && this.state.facility._id) {
       contextFilter['facility._id'] = this.state.facility._id;
     } else if (this.state.team && this.state.team._id) {
       contextFilter['team._id'] = this.state.team._id;
     }
-    let { requests } = Requests.findForUser(
-      this.props.user,
-      {$and: [this.statusFilter, contextFilter]},
-      {expandPMP: true},
-      {start: this.state.monthFilter.start, end: this.state.monthFilter.end}
-    );
 
-    if (Meteor.isClient) {
-      window.calendarEvents = () => {
-        let wos = [];
-        let ppms = [];
-        for (let request of requests) {
-          if (request.type === 'Scheduler') {
-            ppms.push(request);
-          } else {
-            wos.push(request);
+    Meteor.call('Requests.getCalendarEntries', 
+      this.props.user,
+      { $and: [this.statusFilter, contextFilter] },
+      { expandPMP: true, team: this.state.team },
+      { start: this.state.monthFilter.start, end: this.state.monthFilter.end }, 
+      (error, requests) => {
+      
+        if (!error) {
+          if (_.isFunction(callback)) {
+            callback(requests);
+          }
+
+          if (Meteor.isClient) {
+            window.calendarEvents = () => {
+              let wos = [];
+              let ppms = [];
+              for (let request of requests) {
+                if (request.type === 'Scheduler') {
+                  ppms.push(request);
+                } else {
+                  wos.push(request);
+                }
+              }
+      
+              return {WorkOrders: wos, PPMs: ppms };
+            };
           }
         }
-
-        return {WorkOrders: wos, PPMs: ppms };
-      };
-    }
-
-    return requests;
+      }
+    );
   }
-
 
   /**
    * Add events when component mounts
@@ -139,13 +166,22 @@ class Calendar extends React.Component {
               start: startOfMonth,
               end: endOfMonth
             }
-          });
-          self.setState({
-            requests: self.getRequests()
           }, () => {
-            self._addEvents(self.state);
-            self.calendar.fullCalendar('refetchEvents');
+          
+            self.setState({
+              showLoader: true
+            });
+            self.getRequests((requests) => {
+              self.setState({
+                requests: requests,
+                showLoader: false,
+              }, () => {
+                self._addEvents(self.state);
+                self.calendar.fullCalendar('refetchEvents');
+              });
+            })
           });
+          
         } else {
           let event = self.eventt;
           if (event && event.length > 0) {
@@ -272,8 +308,12 @@ class Calendar extends React.Component {
    * @memberOf    module:ui/Calendar.Calendar
    */
   render() {
+    let loader = this.state.showLoader ? <LoaderSmall/> : null; 
     return (
-      <div ref="calendar" id="calendar"/>
+      <div>
+        {loader}
+        <div ref="calendar" id="calendar"/>
+      </div>
     )
   }
 }

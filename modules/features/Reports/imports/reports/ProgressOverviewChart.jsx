@@ -6,6 +6,9 @@ import {Requests} from '/modules/models/Requests';
 import { Menu } from '/modules/ui/MaterialNavigation';
 import ProgressArc from '../components/ProgressArc';
 
+import LoaderSmall from '/modules/ui/Loader/imports/components/LoaderSmall';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader';
+
 import moment from 'moment';
 
 export default class ProgressOverviewChart extends React.Component {
@@ -28,7 +31,8 @@ export default class ProgressOverviewChart extends React.Component {
         New: {thisPeriod: 0, lastPeriod: 0},
         Issued: {thisPeriod: 0, lastPeriod: 0},
         Complete: {thisPeriod: 0, lastPeriod: 0}
-      }
+      },
+      showLoader: true
     };
   }
 
@@ -48,7 +52,8 @@ export default class ProgressOverviewChart extends React.Component {
         New: {thisPeriod: 0, lastPeriod: 0},
         Issued: {thisPeriod: 0, lastPeriod: 0},
         Complete: {thisPeriod: 0, lastPeriod: 0}
-      }
+      },
+      showLoader: true
     }, () => {
       if (_.isFunction(callback)) {
         callback();
@@ -69,7 +74,7 @@ export default class ProgressOverviewChart extends React.Component {
 
     Meteor.call('getProgressOverviewStats', data, (error, results) => {
       if (!error) {
-        this.setState({ results })
+        this.setState({ results, showLoader: false })
       }
     })
   }
@@ -205,9 +210,11 @@ export default class ProgressOverviewChart extends React.Component {
     let results = this.state.results;
     let facility = this.props.facility;
     let facilities = this.props.facilities;
+    let loader = this.state.showLoader ? <LoaderSmall/> : null; 
 
     return (
       <div>
+        {loader}
         <Menu items={this.getMenu()}/>
         <div className="ibox-title">
           <h2>Overview {this.state.title} {facility&&facility.name?" for "+facility.name: (facilities && facilities.length === 1) ? "for "+ facilities[0].name : " for all facilities"}</h2>

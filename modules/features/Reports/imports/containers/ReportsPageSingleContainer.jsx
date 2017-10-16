@@ -31,6 +31,7 @@ const ReportsPageSingleContainer = createContainer( ( params ) => {
 	return {
 		facilities,
 		facility,
+		team
 	}
 }, ReportsPageSingle );
 

@@ -1,5 +1,3 @@
-
-
 /**
  * @author          Leo Keith <leo@fmclarity.com>
  * @copyright       2016 FM Clarity Pty Ltd.
@@ -12,6 +10,8 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { Requests } from '/modules/models/Requests';
 import { ServicesRequestsView } from '/modules/mixins/Services';
+import LoaderSmall from '/modules/ui/Loader/imports/components/LoaderSmall';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader';
 
 import moment from 'moment';
 
@@ -66,7 +66,8 @@ export default class RequestBreakdownChart extends React.Component {
       title: title,
       expandall: false,
       sets: [],
-      labels: []
+      labels: [],
+      showLoader: true
     };
   }
 
@@ -161,7 +162,8 @@ export default class RequestBreakdownChart extends React.Component {
 
   clearChart = (callback) => {
     this.setState({
-      sets: []
+      sets: [],
+      showLoader: true
     }, () => {
       this.updateChart();
       if (_.isFunction(callback)) {
@@ -190,7 +192,6 @@ export default class RequestBreakdownChart extends React.Component {
     }
   };
 
-
   resetChart = () => {
     if (this.barChart) {
       this.barChart.destroy();
@@ -208,7 +209,8 @@ export default class RequestBreakdownChart extends React.Component {
       let items = this.formatDateResponseToChart(response);
       this.setState({
         sets: items.sets,
-        labels: items.labels
+        labels: items.labels,
+        showLoader: false,
       }, () => {
         this.updateChart()
       });
@@ -235,6 +237,7 @@ export default class RequestBreakdownChart extends React.Component {
 
   componentDidMount() {
     this.initChart();
+    hideLoader();
   }
 
   componentWillReceiveProps(props) {
@@ -270,11 +273,10 @@ export default class RequestBreakdownChart extends React.Component {
   render() {
     let facility = this.props.facility;
     let facilities = this.props.facilities;
+    let loader = this.state.showLoader ? <LoaderSmall/> : null; 
     return (
 			<div>
-				<button className="btn btn-flat pull-left noprint"  onClick={() => { this.printChart() }}>
-					<i className="fa fa-print" aria-hidden="true"></i>
-				</button>
+        {loader}
 				<Menu items={this.getMenu()}/>
 				<div className="ibox-title">
 					<h2>Request breakdown {this.state.title} {facility&&facility.name?" for "+facility.name: (facilities && facilities.length === 1) ? "for "+ facilities[0].name : " for all facilities"}</h2>

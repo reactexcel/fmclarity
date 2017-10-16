@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import { Menu } from '/modules/ui/MaterialNavigation';
 import { RequestSearch, Requests } from '/modules/models/Requests';
 
+import LoaderSmall from '/modules/ui/Loader/imports/components/LoaderSmall';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader';
+
 if ( Meteor.isClient ) {
 import Chart from 'chart.js';
 }
@@ -62,7 +65,8 @@ export default class RequestActivityChart extends PureComponent {
       labels: [],
       team: team,
       facility: facility,
-      facilities: []
+      facilities: [],
+      showLoader: true
     };
 
     this.resetChart();
@@ -207,7 +211,8 @@ export default class RequestActivityChart extends PureComponent {
   clearChart = (callback) => {
     this.setState({
       closedSeries: [],
-      openSeries: []
+      openSeries: [],
+      showLoader: true
     }, () => {
       this.updateChart();
       if (_.isFunction(callback)) {
@@ -255,6 +260,7 @@ export default class RequestActivityChart extends PureComponent {
       let items = this.formatDateResponseToChart(response, config);
       this.setState({
         openSeries: items.sets,
+        showLoader: false,
         labels: items.labels
       }, this.updateChart());
     });
@@ -262,6 +268,7 @@ export default class RequestActivityChart extends PureComponent {
     Meteor.call('Requests.getRequestCountPerMonth', Meteor.user(), this.state.closedQuery, config, (error, response) => {
       let items = this.formatDateResponseToChart(response, config);
       this.setState({
+        showLoader: false,
         closedSeries: items.sets
       }, this.updateChart());
     });
@@ -335,6 +342,7 @@ export default class RequestActivityChart extends PureComponent {
 
   componentDidMount() {
     this.initChart();
+    hideLoader();
   }
 
   componentWillReceiveProps(props) {
@@ -373,12 +381,12 @@ export default class RequestActivityChart extends PureComponent {
     let facility = this.props.facility;
     let facilities = this.props.facilities;
     let headerTitle = <span>Request activity {title} {facility && facility.name ? " for " + facility.name : (facilities && facilities.length == '1') ? "for " + facilities[0].name : " for all facilities"}</span>
-
+    
+    let loader = this.state.showLoader ? <LoaderSmall/> : null; 
+    
     return (
       <div>
-        <button className="btn btn-flat pull-left noprint" onClick={() => this.printChart()}>
-          <i className="fa fa-print" aria-hidden="true"/>
-        </button>
+        {loader}
         <Menu items={this.getMenu()} />
         <div className="ibox-title">
           <h2>{headerTitle}</h2>

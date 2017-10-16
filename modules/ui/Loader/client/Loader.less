@@ -10,20 +10,22 @@
   bottom: 0;
   text-align: center;
   overflow: hidden;
+}
 
-  &.hidden {
-    display: block;
-    width: 0;
-    height: 0;
-    padding: 0;
-    position: fixed;
-    left: -10px;
-    top: -10px;
-  }
+.small-loader {
+  background: rgba(255, 255, 255, 0.8);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1500;
+}
 
+.loader, .small-loader {
   .loader-content {
-      position: absolute;
-      width: 100px;
+      position: absolute;    
+      width: 67px;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
