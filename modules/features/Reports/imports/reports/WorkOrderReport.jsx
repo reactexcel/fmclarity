@@ -76,12 +76,6 @@ const WorkOrderReport = React.createClass( {
 				q.issuedAt.$lte = this.state.endDate;
 			}
 			let requests = Requests.findAll(q);
-			let PPMIssued = PPM_Schedulers.findAll(q);
-			if(PPMIssued.length > 0){
-				PPMIssued.map((val)=>{
-					requests.push(val)
-				})
-			}
 			data.requests = requests;
 		}
 		return {
@@ -205,7 +199,6 @@ const WorkOrderReport = React.createClass( {
 
 				</div>
 				<div className = "ibox" ref="printable">
-					{console.log('datadatadata', data)}
           <WoTable WoReport data={data} reload={this.getWorkOrderData}/>
 				</div>
 			</div>

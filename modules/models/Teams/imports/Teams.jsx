@@ -19,6 +19,7 @@ import { Documents, DocAttachments } from '/modules/models/Documents';
 import { LoginService } from '/modules/core/Authentication';
 
 import { Users } from '/modules/models/Users'
+import { Requests } from '/modules/models/Requests';
 
 // to be removed
 import { Facilities } from '/modules/models/Facilities';
@@ -187,6 +188,7 @@ Teams.methods( {
             var user = Meteor.user();
             var teamIds = [];
             let {requests} = user.getRequests();
+            
             if ( requests && requests.length ) {
                 requests.map( function( i ) {
                     if ( i.team ) {
@@ -508,22 +510,29 @@ Teams.helpers( {
         //and all the facilities in the requests user can see
         var user = Meteor.user();
         var facilityIds = [];
-        let {requests} = user.getRequests();
 
-        if ( requests && requests.length ) {
-            requests.map( ( request ) => {
-                let requestIsByThisTeam = request.team && request.team._id && request.team._id == this._id;
-                let requestIsForThisTeam = request.supplier && (
-                    ( request.supplier._id && request.supplier._id == this._id ) ||
-                    ( request.supplier.name && request.supplier.name == this.name )
-                );
-                if ( request.facility && ( requestIsForThisTeam || requestIsByThisTeam ) ) {
-                    facilityIds.push( request.facility._id );
-                }
-            } )
-        }
+        let team = Session.getSelectedTeam();
+        let filter = {
+            $or: [
+              {'team._id': this._id},
+              {
+                  $or: [
+                    {'supplier._id': this._id},
+                    {'supplier.name': this.name}
+                  ]
+              },
+            ]
+        };
 
-        var facilities = Facilities.findAll( {
+        Meteor.call('Requests.findFacilityIdsAssociatedOnRequestsForUser', user, team, filter, (error, response) => {
+            if (response) {
+              response.map((item) => {
+                facilityIds.push(item._id);
+              });
+            }
+        });
+
+        return Facilities.findAll({
             $or: [
                 { 'team._id': this._id },
                 { 'realEstateAgency._id': this._id },
@@ -533,10 +542,7 @@ Teams.helpers( {
             sort: {
                 name: 1
             }
-        } );
-
-        //console.log(facilities);
-        return facilities;
+        });
     },
 
     getStaffFacilities( filterQuery ) {
@@ -546,16 +552,15 @@ Teams.helpers( {
         if ( !user ) {
             return []
         }
-
-        var facilityIds = [];
-        let {requests} = user.getRequests();
-        if ( requests && requests.length ) {
-            requests.map( function( i ) {
-                if ( i.facility ) {
-                    facilityIds.push( i.facility._id );
-                }
-            } )
-        }
+        let team = Session.getSelectedTeam();
+        let facilityIds = [];
+        Meteor.call('Requests.findFacilityIdsAssociatedOnRequestsForUser', user, team, {}, (error, response) => {
+            if (response) {
+              response.map((item) => {
+                facilityIds.push(item._id);
+              });
+            }
+        });
 
         let q = null,
             facilitiesQuery = {
@@ -567,7 +572,7 @@ Teams.helpers( {
                 }, {
                     _id: { $in: facilityIds }
                 } ]
-            }
+            };
 
         if ( filterQuery ) {
             q = {
@@ -580,12 +585,7 @@ Teams.helpers( {
             q = facilitiesQuery;
         }
 
-        //console.log(facilityIds);
-
-        let facilities = Facilities.findAll( q, { sort: { name: 1 } } );
-
-        //console.log(facilities);
-        return facilities;
+        return Facilities.findAll( q, { sort: { name: 1 } } );
     },
 
     getFacilities( q ) {

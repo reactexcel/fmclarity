@@ -172,7 +172,7 @@ class AutoForm extends React.Component {
 			if ( !schema[ key ] ) {
 				throw new Meteor.Error( `No schema definition for field: ${key}` )
 			}
-			let { input, size = 12, label, description, options, condition, maxLength,nextRow } = schema[ key ],
+			let { input, size = 12, label, description, options, condition, maxLength, shouldClearIfHidden } = schema[ key ],
 				placeholder = label,
 				Input = null;
 			// Create default value for this field
@@ -186,7 +186,9 @@ class AutoForm extends React.Component {
 			if ( condition != null ) {
 				if ( !this.checkCondition( condition, item ) ) {
 					// remove fields that do not meet condition from being added to collection
-					//delete item[key];
+					if (shouldClearIfHidden) {
+						delete item[key];
+					}
 					return;
 				}
 			}
@@ -263,10 +265,10 @@ class AutoForm extends React.Component {
 							placeholder	= { placeholder }
 							description	= { description }
 							maxLength 	= { maxLength }
-							changeSubmitText={(value)=> {
+							/*changeSubmitText={(value)=> {
 								let val = value==null?"Save":"Issue"
 								this.setState({submitText: val})
-							}}
+							}}*/
 							item 		= { this.props.item }
 							model 		= { this.props.model }
 							edit = {this.props.edit ? this.props.edit : false}
@@ -294,7 +296,7 @@ class AutoForm extends React.Component {
 						<div style={ {textAlign:"right", clear:"both"}}>
 							{
 
-							this.state.submitText && this.state.submitText == "Issue"?
+							/*this.state.submitText && this.state.submitText == "Issue"?
 
 							<button
 								type 		= "button"
@@ -306,7 +308,7 @@ class AutoForm extends React.Component {
 
 							</button>
 
-							:null
+							:null*/
 
 							}
 

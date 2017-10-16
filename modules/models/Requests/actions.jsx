@@ -83,6 +83,10 @@ const edit = new Action( {
                     }
                     Modal.hide();
 
+                    if (request.assignee && request.assignee != oldRequest.assignee) {
+                        request.setAssignee( request.assignee );
+                    }
+
                     let notificationBody = "",
                         keys = [ 'costThreshold', 'priority', 'type', 'name' ];
 
@@ -545,7 +549,7 @@ const editInvoice = new Action( {
             model = { Requests }
             item = { request }
             form = { ['invoiceDetails'] }
-            submitText="Save"
+            //submitText="Save"
             onSubmit = {
                 ( request ) => {
                     if ( request.invoiceDetails.invoice ) {

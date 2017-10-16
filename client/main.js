@@ -178,7 +178,7 @@ Actions.addAccessRule( {
     ],
     role: [
         '*',
-    ],
+    ]
 } )
 
 Actions.addAccessRule( {
@@ -246,8 +246,11 @@ Actions.addAccessRule( {
     condition: ( team, request ) => {
         let user = Meteor.user(),
             role = team.getMemberRole( user );
-
-        return team.type == 'fm' || team.type == 'contractor' || team.type == 'real estate' || role == 'portfolio manager' || role == 'fmc support';
+            if(_.contains(['contractor'],team.type)){
+                return false;
+            }
+        //return _.contains(['fm','contractor','real estate'],team.type) || _.contains(['portfolio manager','fmc support'],role);
+        return _.contains(['fm','real estate'],team.type) || _.contains(['portfolio manager','fmc support'],role);
     },
     action: [
         'create team document'

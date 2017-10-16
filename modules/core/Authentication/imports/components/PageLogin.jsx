@@ -19,10 +19,6 @@ const PageLogin = React.createClass( {
 		}
 	},
 
-	componentWillMount() {
-		Meteor.logout();
-	},
-
 	handleSubmit( e ) {
 		e.preventDefault();
 		var email = this.refs.email.value.trim();
@@ -32,7 +28,6 @@ const PageLogin = React.createClass( {
 		}
 		setTimeout( () => { this.setState( { loading: true } ) }, 0 );
 		Meteor.loginWithPassword( email, password, ( error ) => {
-
 			if ( error ) {
 				let errorMessage = null;
 				switch ( error.error ) {

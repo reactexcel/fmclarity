@@ -130,8 +130,17 @@ const DocViewEdit = React.createClass( {
                             _id: this.props.team._id,
                             name: this.props.team.name
                         };
-                        Documents.save.call( item );
-                        this.handleChangeCallback( null, item );
+                        Documents.save.call( item ).then( (doc) => {
+                            let savedDoc = Documents.findOne( doc._id );
+                            if (savedDoc) {
+                                this.handleChangeCallback( null, savedDoc );
+                            }
+                            else{
+                                console.log('document could not be saved');
+                            }
+                            
+                        } );
+                        
                         let newItem = Documents.findOne( item._id );
                         if ( newItem ) {
                             let owner = null;
