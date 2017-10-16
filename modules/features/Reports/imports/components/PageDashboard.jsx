@@ -26,7 +26,6 @@ function PageDashboard(props) {
   if (!team) {
     return null;
   }
-  console.log(Meteor.user().getRole(),"**********");
 
   return (
     <div className="dashboard-page animated fadeIn">
