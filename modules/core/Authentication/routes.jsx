@@ -19,7 +19,11 @@ AccessGroups.exposed.add( {
 	action() {
 		var redirect = Session.get( 'redirectAfterLogin' );
 		if ( !redirect ) {
+			redirect = '/';
 			Session.set( 'redirectAfterLogin', '/' );
+		}
+		if(Meteor.userId()){
+			FlowRouter.go( redirect );
 		}
 		mount( LayoutBlank, { content: <PageLogin/> } );
 	},
@@ -101,15 +105,19 @@ AccessGroups.exposed.add( {
 		} );
 	}
 } );
-
+Meteor.logout = function (callback) {
+			if(Meteor.userId()){
+				Accounts.makeClientLoggedOut();
+			}
+			callback && callback();
+  }
 AccessGroups.loggedIn.add( {
 	name: 'logout',
 	path: '/logout',
 	label: 'Logout',
 	icon: 'fa fa-sign-out',
 	action() {
-		Meteor.logout( function() {
-			FlowRouter.go( '/login' );
+		Meteor.logout( function(err) {
 			location.reload();
 		} );
 	}

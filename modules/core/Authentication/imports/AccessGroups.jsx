@@ -17,7 +17,7 @@ import PageNotFound from './components/PageNotFound.jsx';
  */
 const AccessGroups = {
 
-	/** 
+	/**
 	 * A group of routes that are visible to the public
 	 * named 'exposed' because 'public' is a reserved word
 	 * @type function
@@ -26,7 +26,7 @@ const AccessGroups = {
 		name: 'exposed'
 	} ),
 
-	/** 
+	/**
 	 * Routes available only to logged in, registered members
 	 * @type function
 	 */
@@ -35,7 +35,7 @@ const AccessGroups = {
 		onEnter: ( context, redirect ) => {
 			if ( !( Meteor.loggingIn() || Meteor.userId() ) ) {
 				let route = FlowRouter.current();
-				if ( route.route.name == 'login' ) {
+				if ( route.route.name == 'login' || route.route.name == 'logout') {
 					Session.set( 'redirectAfterLogin', '/' );
 				} else {
 					Session.set( 'redirectAfterLogin', route.path );
@@ -45,7 +45,7 @@ const AccessGroups = {
 		}
 	} ),
 
-	/** 
+	/**
 	 * Routes for app administrators or developers
 	 * @type function
 	 */

@@ -28,10 +28,7 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 	}
 
 	if ( team ) {
-		// not good enough
-		//  should be something like Facilities.findForUser()
 		facilities = team.getFacilities();
-		//facilities = Facilities.findAll( { 'team._id': team._id } );
 		if ( facilities ) {
 			let facilityThumbs = [],
 				facilityIds = [];
@@ -46,7 +43,7 @@ const FacilitiesPageIndexContainer = createContainer( ( params ) => {
 	}
 	let logedUser = Meteor.user();
 	if(logedUser){
-		if(!_.contains(['fmc support','portfolio manager'],logedUser.getRole())){
+		if(!_.contains(['fmc support','portfolio manager'],logedUser.getRole()) && !_.contains(['contractor'],team.type)){
 	        let newFacilityList = Roles.getAssociateFacility( logedUser );
 	        facilities = newFacilityList
 	    }

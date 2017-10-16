@@ -74,7 +74,7 @@ export default PMPList = React.createClass({
 				{keys.map((k,idx)=>{
                     return (
                         <div key={idx}>
-                            <div style={{borderBottom:"1px solid #ddd",backgroundColor:"#eee",padding:"14px 10px"}}>{k}</div>
+                            <div style={{borderBottom:"1px solid #ddd",backgroundColor:"#eee",padding:"14px 10px",fontWeight:'bold'}}>{k}</div>
                             <PMPGroup items={requests[k]}/>
                         </div>
                     )

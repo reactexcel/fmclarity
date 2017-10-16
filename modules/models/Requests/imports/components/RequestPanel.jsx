@@ -36,8 +36,6 @@ export default RequestPanel = React.createClass( {
             defaultIndex = this.props.item.hasOwnProperty("tabIndex")? this.props.item.tabIndex : 0 ,
             date_diff = null ;
 
-
-
         if ( this.props.item && this.props.item._id ) {
             //request = Requests.findOne( this.props.item._id );
             request = Requests.findOne( { _id: this.props.item._id } );
@@ -67,7 +65,7 @@ export default RequestPanel = React.createClass( {
                     nextRequest = request.findCloneAt( nextDate );
                     previousRequest = request.findCloneAt( previousDate );
                 }
-                if(date_diff === 0 && request.type == 'Schedular'){
+                if(date_diff === 0 && (request.type == 'Schedular' || request.type == 'Scheduler')){
                   let lastdate = request.getPreviousDate();
                   let adhocRequest = request.findCloneAt( lastdate );
                   if(adhocRequest != undefined || null){
@@ -198,8 +196,8 @@ const RequestPanelInner = ( { request, nextDate, previousDate, nextRequest, prev
         if ( ( request.readBy.length - 1 ) != idx && u._id != Meteor.userId() ) {
             viewers.push( user.profile.name );
         }
-
     } ) : null;
+
     request.readBy=_.uniq(request.readBy, '_id');
     let userRole = Meteor.user().getRole();
     /*let group = Teams.findOne({'_id':request.supplier._id});
