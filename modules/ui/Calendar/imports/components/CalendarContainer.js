@@ -13,7 +13,7 @@ export default (CalendarContainer = withTracker(
       let contextFilter = {};
 
       if (calendarConfig.facility && calendarConfig.facility._id) {
-        contextFilter["facility._id"] = config.facility._id;
+        contextFilter["facility._id"] = calendarConfig.facility._id;
       }
       if (calendarConfig.team && calendarConfig.team._id) {
         contextFilter["team._id"] = calendarConfig.team._id;
