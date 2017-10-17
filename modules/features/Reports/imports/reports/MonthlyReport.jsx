@@ -14,6 +14,7 @@ import MBMReport from '../reports/MBMReport.jsx';
 import MonthlyReportHeader from '../reports/MonthlyReportHeader.jsx';
 import MBMBuildingServiceReport from '../reports/MBMBuildingServiceReport.jsx';
 import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
+import { CalendarContainer } from '/modules/ui/Calendar';
 
 export default MonthlyReport = React.createClass( {
 
@@ -253,7 +254,7 @@ export default MonthlyReport = React.createClass( {
 			</div>
 			<div style={{width:"600px",marginLeft:"200px"}}>
 				<div className="ibox-content" style={{padding:"7px",marginBottom:"5%"}}>
-					<Calendar requests = { requests } />
+					<CalendarContainer requests={requests} team={team} facility={facility} user={user} />
 				</div>
 			</div>
 			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>

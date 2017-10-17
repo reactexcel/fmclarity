@@ -2,17 +2,17 @@
  * @author          Leo Keith <leo@fmclarity.com>
  * @copyright       2016 FM Clarity Pty Ltd.
  */
-import React from 'react';
-import Perf from 'react-addons-perf';
+import React from "react";
+import Perf from "react-addons-perf";
 
-import {Calendar} from '/modules/ui/Calendar';
-import {InboxWidget} from '/modules/models/Messages';
-import {FacilityFilter} from '/modules/models/Facilities';
+import { CalendarContainer } from "/modules/ui/Calendar";
+import { InboxWidget } from "/modules/models/Messages";
+import { FacilityFilter } from "/modules/models/Facilities";
 
-import ProgressOverviewChart from '../reports/ProgressOverviewChart.jsx';
-import RequestActivityChart from '../reports/RequestActivityChart';
-import ReportsNavWidget from '../reports/ReportsNavWidget';
-import RequestBreakdownChartContainer from '../reports/RequestBreakdownChartContainer';
+import ProgressOverviewChart from "../reports/ProgressOverviewChart.jsx";
+import RequestActivityChart from "../reports/RequestActivityChart";
+import ReportsNavWidget from "../reports/ReportsNavWidget";
+import RequestBreakdownChartContainer from "../reports/RequestBreakdownChartContainer";
 
 /**
  * The main landing page for FMs which is intended to give a broad overview of job status
@@ -21,7 +21,7 @@ import RequestBreakdownChartContainer from '../reports/RequestBreakdownChartCont
  */
 function PageDashboard(props) {
   let canGetMessages = false;
-  let {team, facilities, facility, user} = props;
+  let { team, facilities, facility, user } = props;
 
   if (!team) {
     return null;
@@ -29,34 +29,42 @@ function PageDashboard(props) {
 
   return (
     <div className="dashboard-page animated fadeIn">
-      <FacilityFilter items={ facilities } selectedItem={ facility } />
-      <div className="row" style={{paddingTop: "50px"}}>
-        <div className="col-sm-6" style={{paddingRight: "0px"}}>
+      <FacilityFilter items={facilities} selectedItem={facility} />
+      <div className="row" style={{ paddingTop: "50px" }}>
+        <div className="col-sm-6" style={{ paddingRight: "0px" }}>
           <div className="ibox">
-            <div className="ibox-content" style={{padding: "7px"}}>
-              <Calendar team={team} facility={facility} user={user}/>
+            <div className="ibox-content" style={{ padding: "7px" }}>
+              <CalendarContainer team={team} facility={facility} user={user} />
             </div>
           </div>
           <div className="ibox">
             <ReportsNavWidget />
           </div>
 
-          { canGetMessages ?
+          {canGetMessages ? (
             <div className="ibox">
-              <InboxWidget/>
+              <InboxWidget />
             </div>
-            : null }
-
+          ) : null}
         </div>
-        <div className="col-sm-6" style={{paddingRight: "0px"}}>
+        <div className="col-sm-6" style={{ paddingRight: "0px" }}>
           <div className="ibox">
-            <ProgressOverviewChart facility={facility} team={team}/>
+            <ProgressOverviewChart facility={facility} team={team} />
           </div>
           <div className="ibox">
-            <RequestActivityChart facility={facility} facilities={facilities} team={team} minimal={ true }/>
+            <RequestActivityChart
+              facility={facility}
+              facilities={facilities}
+              team={team}
+              minimal={true}
+            />
           </div>
           <div className="ibox">
-            <RequestBreakdownChartContainer facility={facility} facilities={facilities} team={team} />
+            <RequestBreakdownChartContainer
+              facility={facility}
+              facilities={facilities}
+              team={team}
+            />
           </div>
         </div>
       </div>
