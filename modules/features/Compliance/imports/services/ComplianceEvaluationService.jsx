@@ -486,9 +486,9 @@ ComplianceEvaluationService = new function() {
                     message = {
                         summary: summary,
                         //detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
-                        detail: (previousRequest? 'Last Overdue ➡️️ '+previousDateString+'':'')+(nextDate?'Next due '+nextDateString+'':'Next due '+nextDateString+'')
+                        detail: ( previousRequest ? 'Last Overdue ' + previousDateString + '' : '' ) + ( nextDate ? '➡️️ Next due ' + nextDateString + '' : '' )
                     }
-                }else{
+                } else {
                     message = {
                         summary: summary,
                         detail: "No PPM WO issued. Click here to issue "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM WO"
