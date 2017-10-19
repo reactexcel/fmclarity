@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import CronJobs from "./cronJobs.js";
 import CheckCronsAccessability from '/modules/config/CheckCronsAccessability.js';
+import ReportsCron from '/modules/models/Reports/server/cron';
 //import { FlowRouter } from 'meteor/kadira:flow-router-ssr';
 
 Meteor.startup( function() {
@@ -24,6 +25,8 @@ Meteor.startup( function() {
         },
         job: CronJobs.issuePPM_Schedulers,
     } );
+
+    SyncedCron.add(ReportsCron);
 
     SyncedCron.add( {
         name: 'Send Email Digests',

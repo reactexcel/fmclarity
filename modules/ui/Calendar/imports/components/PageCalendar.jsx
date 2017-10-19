@@ -5,7 +5,7 @@
 import React from "react";
 
 import { FacilityFilter } from "/modules/models/Facilities";
-import CalendarContainer from "./CalendarContainer";
+import CalendarContainer from "../containers/CalendarContainer";
 
 /**
  * @class           PageCalendar

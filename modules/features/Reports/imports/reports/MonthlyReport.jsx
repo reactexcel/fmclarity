@@ -254,7 +254,7 @@ export default MonthlyReport = React.createClass( {
 			</div>
 			<div style={{width:"600px",marginLeft:"200px"}}>
 				<div className="ibox-content" style={{padding:"7px",marginBottom:"5%"}}>
-					<CalendarContainer requests={requests} team={team} facility={facility} user={user} />
+					<CalendarContainer team={team} facility={facility} user={user} />
 				</div>
 			</div>
 			<div style={{borderTop:"2px solid black",paddingTop:"25px"}}>

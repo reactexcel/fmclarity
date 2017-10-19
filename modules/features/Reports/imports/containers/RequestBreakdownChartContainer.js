@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import RequestBreakdownChart from "./RequestBreakdownChart";
+import RequestBreakdownChart from "../reports/RequestBreakdownChart";
 
 let getRequestBreakdown = (config, callback) => {
   Meteor.call(

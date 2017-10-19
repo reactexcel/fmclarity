@@ -23,6 +23,8 @@ import { SupplierRequestEmailView } from '/modules/core/Email';
 import { AssigneeRequestEmailView } from '/modules/core/Email';
 import { OverdueWorkOrderEmailView } from '/modules/core/Email';
 
+import { RequestOverviewAggregate } from '/modules/models/Reports'
+
 import moment from 'moment';
 
 /**
@@ -118,6 +120,8 @@ Requests.save.before( ( request ) => {
             name: request.team.name
         };
     }
+
+    Meteor.call('RequestOverviewAggregate.computeAggregateData', request);
 } );
 
 // *********************** this is an insecure temporary solution for updating status of requests ***********************

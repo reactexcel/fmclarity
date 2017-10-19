@@ -20,9 +20,6 @@ import LoaderSmall from "/modules/ui/Loader/imports/components/LoaderSmall";
 
 export default class Calendar extends React.Component {
   eventt = [];
-  statusFilter = {
-    status: { $nin: ["Cancelled", "Deleted", "Closed", "Reversed"] }
-  };
   calendar = {};
   mounted = false;
 
@@ -54,29 +51,10 @@ export default class Calendar extends React.Component {
         this.calendar.fullCalendar("refetchEvents");
       });
     }
-
-    if (this.state.team._id === props.team._id && !props.facility) {
-      return;
-    }
-
-    this.setState(
-      {
-        user: props.user,
-        facility: props.facility,
-        team: props.team,
-        requests: []
-      },
-      () => {
-        this.getRequests();
-      }
-    );
   }
 
   getRequests = () => {
     let config = {
-      team: this.state.team,
-      facility: this.state.facility,
-      statusFilter: this.statusFilter,
       monthFilter: {
         start: this.state.monthFilter.start,
         end: this.state.monthFilter.end

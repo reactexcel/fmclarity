@@ -12,9 +12,12 @@ import Reports 		from './imports/Reports.jsx';
 // import DocumentSearchSchema 		from './imports/schemas/DocumentSearchSchema.jsx';
 // import DocActions 		from './actions.jsx';
 
+import RequestOverviewAggregate from './imports/RequestOverviewAggregate';
+
 /**
  * @module 			models/Documents
  */
 export {
-	Reports
+	Reports,
+	RequestOverviewAggregate
 }

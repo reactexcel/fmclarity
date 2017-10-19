@@ -9,10 +9,10 @@ import { CalendarContainer } from "/modules/ui/Calendar";
 import { InboxWidget } from "/modules/models/Messages";
 import { FacilityFilter } from "/modules/models/Facilities";
 
-import ProgressOverviewChart from "../reports/ProgressOverviewChart.jsx";
+import ProgressOverviewChartContainer from "../containers/ProgressOverviewChartContainer";
 import RequestActivityChart from "../reports/RequestActivityChart";
 import ReportsNavWidget from "../reports/ReportsNavWidget";
-import RequestBreakdownChartContainer from "../reports/RequestBreakdownChartContainer";
+import RequestBreakdownChartContainer from "../containers/RequestBreakdownChartContainer";
 
 /**
  * The main landing page for FMs which is intended to give a broad overview of job status
@@ -49,7 +49,7 @@ function PageDashboard(props) {
         </div>
         <div className="col-sm-6" style={{ paddingRight: "0px" }}>
           <div className="ibox">
-            <ProgressOverviewChart facility={facility} team={team} />
+            <ProgressOverviewChartContainer facility={facility} team={team} />
           </div>
           <div className="ibox">
             <RequestActivityChart
