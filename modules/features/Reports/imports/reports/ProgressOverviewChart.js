@@ -34,7 +34,7 @@ export default class ProgressOverviewChart extends React.Component {
       }
     };
 
-    Session.set('progress-overview-config', {
+    this.props.configVar.set({
       start: moment(this.state.startDate).toDate(),
       end: moment(this.state.endDate).toDate(),
       period: this.state.period,
@@ -66,7 +66,7 @@ export default class ProgressOverviewChart extends React.Component {
   };
 
   updateStats() {
-    Session.set('progress-overview-config', {
+    this.props.configVar.set({
       start: moment(this.state.startDate).toDate(),
       end: moment(this.state.endDate).toDate(),
       period: this.state.period,
@@ -176,9 +176,11 @@ export default class ProgressOverviewChart extends React.Component {
     let results = this.state.results;
     let facility = this.props.facility;
     let facilities = this.props.facilities;
+    let loader = !this.props.ready ? <LoaderSmall/> : null; 
 
     return (
       <div>
+        {loader}
         <Menu items={this.getMenu()} />
         <div className="ibox-title">
           <h2>
@@ -220,4 +222,5 @@ export default class ProgressOverviewChart extends React.Component {
 ProgressOverviewChart.propTypes = {
   facility: PropTypes.object,
   facilities: PropTypes.array,
+  configVar: PropTypes.object.isRequired
 };

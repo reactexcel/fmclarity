@@ -52,19 +52,19 @@ function PageDashboard(props) {
             <ProgressOverviewChartContainer facility={facility} team={team} />
           </div>
           <div className="ibox">
-            <RequestActivityChart
+            {/* <RequestActivityChart
               facility={facility}
               facilities={facilities}
               team={team}
               minimal={true}
-            />
+            /> */}
           </div>
           <div className="ibox">
-            <RequestBreakdownChartContainer
+            {/* <RequestBreakdownChartContainer
               facility={facility}
               facilities={facilities}
               team={team}
-            />
+            /> */}
           </div>
         </div>
       </div>

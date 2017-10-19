@@ -1,18 +1,29 @@
-import { Meteor } from "meteor/meteor";
-import { withTracker } from "meteor/react-meteor-data";
-import ProgressOverviewChart from "../reports/ProgressOverviewChart";
-import { RequestOverviewAggregate } from "/modules/models/Reports";
+import { Meteor } from 'meteor/meteor';
+import { withTracker } from 'meteor/react-meteor-data';
+import { ReactiveVar } from 'meteor/reactive-var'
+
+import ProgressOverviewChart from '../reports/ProgressOverviewChart';
+import { RequestOverviewAggregate } from '/modules/models/Reports';
+
+const defaultStartDate = moment().subtract(2, 'months').startOf('month');
+const defaultEndDate = moment().endOf('month');
+const defaultPeriod = { number: 3, unit: 'month' };
+const dateOneYearAgo = moment().subtract(1, 'y').startOf('month');
+
+const ProgressOverviewConfig = new ReactiveVar({
+  start: defaultStartDate,
+  end: defaultEndDate,
+  period: defaultPeriod,
+});
 
 export default (ProgressOverviewChartContainer = withTracker(
   ({ facility, team }) => {
-    let progressOverviewConfig = Session.get("progress-overview-config");
+    let progressOverviewConfig = ProgressOverviewConfig.get();
+
     let handle = Meteor.subscribe(
-      "RequestOverview: Aggregate",
-      moment()
-        .subtract(1, "y")
-        .startOf("month")
-        .toDate(),
-      moment().toDate(),
+      'RequestOverview: Aggregate',
+      dateOneYearAgo.toDate(),
+      defaultEndDate.toDate(),
       team,
       facility || null
     );
@@ -23,44 +34,32 @@ export default (ProgressOverviewChartContainer = withTracker(
       Complete: { thisPeriod: 0, lastPeriod: 0 }
     };
 
-    let defaultStartDate = moment()
-      .subtract(2, "months")
-      .startOf("month");
-    let defaultEndDate = moment().endOf("month");
-    let defaultPeriod = { number: 3, unit: "month" };
-
-    let startDate = moment(
-      progressOverviewConfig ? progressOverviewConfig.start : defaultStartDate
-    );
-    let endDate = moment(
-      progressOverviewConfig ? progressOverviewConfig.end : defaultEndDate
-    );
-    let period = progressOverviewConfig
-      ? progressOverviewConfig.period
-      : defaultPeriod;
+    let startDate = moment(progressOverviewConfig.start);
+    let endDate = moment(progressOverviewConfig.end);
+    let period = progressOverviewConfig.period;
 
     if (team && team._id) {
       let baseQuery = {
         team_id: team._id
       };
       if (facility && facility._id) {
-        baseQuery["facility_id"] = facility._id;
+        baseQuery['facility_id'] = facility._id;
       }
 
       let current = {
-        start: startDate.clone().startOf("month"),
-        end: endDate.clone().endOf("month")
+        start: startDate.clone().startOf('month'),
+        end: endDate.clone().endOf('month')
       };
 
       let previous = {
         start: startDate
           .clone()
-          .subtract(period.number, period.unit + "s")
-          .startOf("month"),
+          .subtract(period.number, period.unit + 's')
+          .startOf('month'),
         end: endDate
           .clone()
-          .subtract(period.number, period.unit + "s")
-          .endOf("month")
+          .subtract(period.number, period.unit + 's')
+          .endOf('month')
       };
 
       let qCurrent = _.extend({}, baseQuery, {
@@ -110,7 +109,8 @@ export default (ProgressOverviewChartContainer = withTracker(
       ready: handle.ready(),
       facility,
       team,
-      queries
+      queries,
+      configVar: ProgressOverviewConfig
     };
   }
 )(ProgressOverviewChart));
