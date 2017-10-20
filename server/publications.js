@@ -5,6 +5,8 @@ import { PPM_Schedulers } from '/modules/models/Requests';
 import { Messages } from '/modules/models/Messages';
 import { Files } from '/modules/models/Files';
 
+import '/modules/models/Reports/server/publications';
+
 import moment from 'moment';
 
 Meteor.publish( 'User: Teams', function() {

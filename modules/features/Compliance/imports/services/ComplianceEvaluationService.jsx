@@ -308,7 +308,7 @@ ComplianceEvaluationService = new function() {
                 serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
-            var requestCurser = PPM_Schedulers.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Schedular" } );
+            var requestCurser = PPM_Schedulers.find( { 'facility._id': facility._id,status: {$nin:["Deleted"]} , 'service.name': rule.service.name, type: "Scheduler" } );
             var numEvents = requestCurser.count();
             var requests = requestCurser.fetch();
             if ( numEvents ) {
@@ -355,11 +355,12 @@ ComplianceEvaluationService = new function() {
             if ( rule.event ) {
                 query = {
                     'facility._id': rule.facility._id,
-                    name: rule.event,
+                    name: rule.event.name,
                     "service.name": rule.service.name,
                     status: {$in:["PMP","PPM"]}
                 }
                 if (rule.subservice) query["subservice.name"] = rule.subservice.name;
+
                 event = PPM_Schedulers.findOne( query );
             }
 
@@ -374,18 +375,19 @@ ComplianceEvaluationService = new function() {
                 serviceReq = allServices.filter((val) => rule.service.name === val.name)
               }
             }
+
             if ( event ) {
                 nextDate = event.getNextDate(),
                 previousDate = event.getPreviousDate();
             }
             if ( event ) {
-                let nextRequest = PPM_Schedulers.findOne( _.extend( query, {
+                let nextRequest = Requests.findOne( _.extend( query, {
                     type:"Preventative",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
                     dueDate:nextDate
                 })),
-                previousRequest = PPM_Schedulers.findOne( _.extend( query, {
+                previousRequest = Requests.findOne( _.extend( query, {
                     type:"Preventative",
                     priority: {$in:["PPM","PMP","Scheduled"]},
                     status: "Complete",
@@ -466,7 +468,7 @@ ComplianceEvaluationService = new function() {
                 "facility._id": facility._id,
                 status: {$in:["PMP","PPM"]},
                 "service.name": rule.service.name,
-                name: rule.event
+                name: rule.event.name
             };
             if (rule.subservice){
                  q["subservice.name"] = rule.subservice.name;
@@ -475,7 +477,7 @@ ComplianceEvaluationService = new function() {
             let message = {}
             let passed = false;
             let summary = "failed"
-            if(request && previousDate && nextDate){
+            if(request && (previousDate || nextDate)) {
                 let nextRequest = request.findCloneAt( nextDate ),
                     previousRequest = request.findCloneAt(previousDate),
                     nextDateString = moment( nextDate ).format('ddd Do MMM YYYY'),
@@ -486,9 +488,9 @@ ComplianceEvaluationService = new function() {
                     message = {
                         summary: summary,
                         //detail: 'Last completed '+moment( previousDate ).format( 'ddd Do MMM YYYY' )+' ➡️️ '+'Next due date is '+moment( nextDate ).format( 'ddd Do MMM YYYY' )
-                        detail: (previousRequest? 'Last Overdue ➡️️ '+previousDateString+'':'')+(nextDate?'Next due '+nextDateString+'':'Next due '+nextDateString+'')
+                        detail: ( previousRequest ? 'Last Overdue ' + previousDateString + '' : '' ) + ( nextDate ? '➡️️ Next due ' + nextDateString + '' : '' )
                     }
-                }else{
+                } else {
                     message = {
                         summary: summary,
                         detail: "No PPM WO issued. Click here to issue "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM WO"
@@ -526,7 +528,7 @@ ComplianceEvaluationService = new function() {
                         }
                     }
                 } )
-            }else if(!request){
+            } else if (!request) {
                 message = {
                     summary: summary,
                     detail: "No PPM exists. Click here to set up "+( rule.service.name ? ( rule.service.name + " " )+" " : "" )+"PPM"

@@ -22,6 +22,7 @@ const TeamPageSuppliersContainer = createContainer((params) => {
         team = Session.getSelectedTeam(),
         facilities = null,
         suppliers = null;
+    let thumbsReady = false;
 
     if (team != null) {
         facilities = team.getFacilities(); //Facilities.findAll( { 'team._id': team._id } );
@@ -30,7 +31,8 @@ const TeamPageSuppliersContainer = createContainer((params) => {
     }
     if (facilities) {
         let facilityThumbs = _.pluck(facilities, 'thumb');
-        Meteor.subscribe('Thumbs', facilityThumbs);
+        let thumbsHandle = Meteor.subscribe('Thumbs', facilityThumbs);
+        thumbsReady = thumbsHandle.ready()
     }
 
 
@@ -85,7 +87,8 @@ const TeamPageSuppliersContainer = createContainer((params) => {
         team,
         facility,
         facilities,
-        suppliers
+        suppliers,
+        thumbsReady
     }
 
 }, TeamPageSuppliersMobile);

@@ -30,7 +30,7 @@ const PMPListTile = React.createClass( {
         let nextDateString = null;
         let frequency = request.frequency || {};
         let previousDateString = null;
-        console.log(nextDate, previousDate);
+        
         if( nextDate ) {
             nextDateString = moment(nextDate).format('ddd Do MMM');
         }

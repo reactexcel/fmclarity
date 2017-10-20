@@ -49,7 +49,6 @@ Meteor.methods( {
               }
             });
 
-            
             let thisMonthPipeline = [
                 { $match: qThisMonth },
                 { $project: { team_id: "$team._id"}},
@@ -72,6 +71,8 @@ Meteor.methods( {
                     count: '$count'
                 }}
             ];
+            
+            console.log(JSON.stringify(thisMonthPipeline));
 
             let lastPeriod = Requests.collection.aggregate(lastMonthPipeline);
             let thisPeriod = Requests.collection.aggregate(thisMonthPipeline);

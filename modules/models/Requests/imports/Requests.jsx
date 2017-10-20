@@ -118,6 +118,8 @@ Requests.save.before( ( request ) => {
             name: request.team.name
         };
     }
+
+    Meteor.call('Reports.computeAggregateData', request);
 } );
 
 // *********************** this is an insecure temporary solution for updating status of requests ***********************
@@ -1339,40 +1341,60 @@ Meteor.methods({
         return Requests.collection.aggregate(pipeline);
       }
     },
-    'Requests.getRequestAmountBreakdown': (config) => {
-      if (Meteor.isServer) {
-        let query = {
-          createdAt: {
-            $gte: new Date(moment(config.date).toDate())
-          },
-          status: { $ne: 'Deleted' }
-        };
-        if (config.team && config.team._id) {
-          query['team._id'] = config.team._id;
+    'Requests.getCalendarEntries': (user, filter, options = {expandPMP: false}, dateLimit = { start: null, end: null }) => {
+        if (Meteor.isServer) {
+
+            let query = [];
+            let team;
+            if (Meteor.isServer) {
+              team = options.team ? options.team : null;
+            }
+          
+            let teamId = null;
+            if (team) {
+              teamId = team._id;
+              query.push({
+                $or: [
+                  {'team._id': teamId},
+                  {'supplier._id': teamId},
+                  {'realEstateAgency._id': teamId}
+                ]
+              });
+            }
+          
+            //if filter passed to function then add that to the query
+            if (filter) {
+              query.push(filter);
+            }
+          
+            // clone PPM query the date limit should only apply to requests. Scheduled PPM objects are generated at runtime and
+            // does not use up a lot of memory
+            let PPMQuery = JSON.parse(JSON.stringify(query));
+            if (dateLimit.start && dateLimit.end) {
+              query.push({ dueDate: {
+                $gte: new Date(dateLimit.start),
+                $lt: new Date(dateLimit.end)
+              }});
+            }
+        
+          
+            let currentCollection = Requests.collection.find({$and: query});
+            let requests = currentCollection ? currentCollection.fetch() : [];
+          
+            if (options.expandPMP) {
+              PPMQuery.push({
+                type: "Scheduler"
+              });
+          
+              let PPMRequests = PPM_Schedulers.collection.find({
+                $and: PPMQuery
+              }).fetch({ sort: { createdAt: 1 } });
+              PPMRequests.map((r) => {
+                requests = expandPPM(r, requests);
+              });
+            }
+            return requests;
         }
-
-        if (config.facility && config.facility._id) {
-          query['facility._id'] = config.facility._id;
-        }
-
-        let pipeline = [
-          { $match: query },
-          { $project: {
-            serviceName: '$service.name',
-            costThreshold: '$costThreshold'
-          }},
-          { $group: {
-            _id : { serviceName: '$serviceName' },
-            count: { $sum: '$costThreshold' },
-          }},
-          { $project: {
-            serviceName: '$_id.serviceName',
-            totalCostThreshold: '$count'
-          }}
-        ];
-
-        return  Requests.collection.aggregate(pipeline);
-      }
     }
   }
 );
@@ -1381,7 +1403,13 @@ Meteor.methods({
 Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = { start: null, end: null }) => {
 
   let query = [];
-  let team = Session.getSelectedTeam();
+  let team;
+  if (Meteor.isServer) {
+    team = options.team ? options.team : null;
+  } else {
+    team = options.team ? options.team : Session.getSelectedTeam();
+  }
+
   let teamId = null;
 
   if (team) {
@@ -1430,9 +1458,6 @@ Requests.findForUser = (user, filter, options = {expandPMP: false}, dateLimit = 
 
   let currentCollection = Requests.find({$and: query}, queryOptions);
   let requests = currentCollection ? currentCollection.fetch() : [];
-
-  // console.log(query);
-  // console.log(currentCollection.count());
 
   if (options.expandPMP) {
     PPMQuery.push({
