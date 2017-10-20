@@ -20,12 +20,14 @@ const PageDashboardContainer = createContainer((params) => {
     facilities = null,
     statusFilter = {"status": {$nin: ["Cancelled", "Deleted", "Closed", "Reversed"]}},
     contextFilter = {};
+  let thumbsReady = false;
 
   if (team) {
     facilities = team.getFacilities(); //Facilities.findAll( { 'team._id': team._id } );
     if (facilities) {
       let facilityThumbs = _.pluck(facilities, 'thumb');
-      Meteor.subscribe('Thumbs', facilityThumbs);
+      let thumbsHandle = Meteor.subscribe('Thumbs', facilityThumbs);
+      thumbsReady = thumbsHandle.ready()
     }
   }
 
@@ -39,7 +41,8 @@ const PageDashboardContainer = createContainer((params) => {
     team,
     facilities,
     facility,
-    user
+    user,
+    thumbsReady
   }
 }, PageDashboard);
 

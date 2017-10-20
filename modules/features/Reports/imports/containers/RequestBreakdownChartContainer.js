@@ -28,11 +28,9 @@ export default (RequestBreakdownChartContainer = withTracker(
       facility || null
     );
 
-
     let startDate = RequestBreakdownConfig.get().start;
     let requestBreakDownData = RequestBreakdownAggregate.getData(startDate, team, facility);
-    console.log(requestBreakDownData)
-
+    
     return {
       ready: handle.ready(),
       data: requestBreakDownData,

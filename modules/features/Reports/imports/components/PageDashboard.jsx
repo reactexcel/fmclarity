@@ -22,15 +22,15 @@ import RequestActivityChartContainer from "../containers/RequestActivityChartCon
  */
 function PageDashboard(props) {
   let canGetMessages = false;
-  let { team, facilities, facility, user } = props;
+  let { team, facilities, facility, user, thumbsReady } = props;
 
   if (!team) {
     return null;
   }
-
+  
   return (
     <div className="dashboard-page animated fadeIn">
-      <FacilityFilter items={facilities} selectedItem={facility} />
+      {thumbsReady ? <FacilityFilter items={facilities} selectedItem={facility} />: null}
       <div className="row" style={{ paddingTop: "50px" }}>
         <div className="col-sm-6" style={{ paddingRight: "0px" }}>
           <div className="ibox">

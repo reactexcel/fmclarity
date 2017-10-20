@@ -3,20 +3,20 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 
-import React from "react";
-import PropTypes from "prop-types";
-import { ReactMeteorData } from "meteor/react-meteor-data";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 
-import { Menu } from "/modules/ui/MaterialNavigation";
-import { Requests } from "/modules/models/Requests";
-import { ServicesRequestsView } from "/modules/mixins/Services";
-import LoaderSmall from "/modules/ui/Loader/imports/components/LoaderSmall";
-import { hideLoader } from "/modules/ui/Loader/imports/components/Loader";
+import { Menu } from '/modules/ui/MaterialNavigation';
+import { Requests } from '/modules/models/Requests';
+import { ServicesRequestsView } from '/modules/mixins/Services';
+import LoaderSmall from '/modules/ui/Loader/imports/components/LoaderSmall';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader';
 
-import moment from "moment";
+import moment from 'moment';
 
 if (Meteor.isClient) {
-  import Chart from "chart.js";
+  import Chart from 'chart.js';
 }
 
 /**
@@ -26,13 +26,13 @@ if (Meteor.isClient) {
 export default class RequestBreakdownChart extends React.Component {
   barChart = null;
   barData = {
-    labels: [""],
+    labels: [''],
     datasets: [
       {
-        backgroundColor: "rgba(117,170,238,0.8)",
-        borderColor: "rgba(117,170,238,1)",
-        hoverBackgroundColor: "rgba(117,170,238,0.5)",
-        hoverBorderColor: "rgba(117,170,238,1)",
+        backgroundColor: 'rgba(117,170,238,0.8)',
+        borderColor: 'rgba(117,170,238,1)',
+        hoverBackgroundColor: 'rgba(117,170,238,0.5)',
+        hoverBorderColor: 'rgba(117,170,238,1)',
         data: [0]
       }
     ]
@@ -62,12 +62,14 @@ export default class RequestBreakdownChart extends React.Component {
   constructor(props) {
     super(props);
 
-    let title = moment(this.props.startDate).format("[since] MMMM YYYY");
+    let title = moment(this.props.startDate).format('[since] MMMM YYYY');
     this.state = {
       title: title,
       sets: [],
       labels: []
     };
+
+    this.resetChart();
   }
 
   printChart = () => {
@@ -86,12 +88,12 @@ export default class RequestBreakdownChart extends React.Component {
   getMenu() {
     return [
       {
-        label: "Month",
+        label: 'Month',
         run: () => {
-          let startDate = moment().startOf("month");
+          let startDate = moment().startOf('month');
           this.setState(
             {
-              title: startDate.format("[since] MMMM YYYY")
+              title: startDate.format('[since] MMMM YYYY')
             },
             () => {
               this.updateRequestData(startDate);
@@ -100,14 +102,14 @@ export default class RequestBreakdownChart extends React.Component {
         }
       },
       {
-        label: "3 Months",
+        label: '3 Months',
         run: () => {
           let startDate = moment()
-            .subtract(2, "months")
-            .startOf("month");
+            .subtract(2, 'months')
+            .startOf('month');
           this.setState(
             {
-              title: startDate.format("[since] MMMM YYYY")
+              title: startDate.format('[since] MMMM YYYY')
             },
             () => {
               this.updateRequestData(startDate);
@@ -116,14 +118,14 @@ export default class RequestBreakdownChart extends React.Component {
         }
       },
       {
-        label: "6 Months",
+        label: '6 Months',
         run: () => {
           let startDate = moment()
-            .subtract(5, "months")
-            .startOf("month");
+            .subtract(5, 'months')
+            .startOf('month');
           this.setState(
             {
-              title: startDate.format("[since] MMMM YYYY")
+              title: startDate.format('[since] MMMM YYYY')
             },
             () => {
               this.updateRequestData(startDate);
@@ -132,10 +134,10 @@ export default class RequestBreakdownChart extends React.Component {
         }
       },
       {
-        label: "Year",
+        label: 'Year',
         run: () => {
-          let startDate = moment().startOf("year");
-          this.setState({ title: startDate.format("YYYY") }, () => {
+          let startDate = moment().startOf('year');
+          this.setState({ title: startDate.format('YYYY') }, () => {
             this.updateRequestData(startDate);
           });
         }
@@ -144,12 +146,17 @@ export default class RequestBreakdownChart extends React.Component {
   }
 
   initChart = () => {
-    let ctx = document.getElementById("bar-chart").getContext("2d");
+    let ctx = document.getElementById('bar-chart').getContext('2d');
     this.barChart = new Chart(ctx, {
-      type: "bar",
+      type: 'bar',
       data: this.barData,
       options: this.barOptions
     });
+    this.updateRequestData(
+      moment()
+        .subtract(2, 'months')
+        .startOf('month')
+    );
     this.updateChart();
   };
 
@@ -200,7 +207,7 @@ export default class RequestBreakdownChart extends React.Component {
       let item = response[key];
       let serviceName = item.serviceName;
       if (serviceName && serviceName.length > 15) {
-        serviceName = serviceName.substring(0, 13) + "...";
+        serviceName = serviceName.substring(0, 13) + '...';
       }
       chartItems.labels.push(serviceName);
       chartItems.sets.push(item.totalCostThreshold);
@@ -210,6 +217,7 @@ export default class RequestBreakdownChart extends React.Component {
   };
 
   componentDidMount() {
+    console.log(this.state);
     this.initChart();
     hideLoader();
   }
@@ -243,12 +251,12 @@ export default class RequestBreakdownChart extends React.Component {
         <Menu items={this.getMenu()} />
         <div className="ibox-title">
           <h2>
-            Request breakdown {this.state.title}{" "}
+            Request breakdown {this.state.title}{' '}
             {facility && facility.name
-              ? " for " + facility.name
+              ? ' for ' + facility.name
               : facilities && facilities.length === 1
-                ? "for " + facilities[0].name
-                : " for all facilities"}
+                ? 'for ' + facilities[0].name
+                : ' for all facilities'}
           </h2>
         </div>
         <div className="ibox-content">

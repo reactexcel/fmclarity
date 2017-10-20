@@ -7,8 +7,8 @@ import { RequestSearch, Requests } from '/modules/models/Requests';
 import LoaderSmall from '/modules/ui/Loader/imports/components/LoaderSmall';
 import { hideLoader } from '/modules/ui/Loader/imports/components/Loader';
 
-if ( Meteor.isClient ) {
-import Chart from 'chart.js';
+if (Meteor.isClient) {
+  import Chart from 'chart.js';
 }
 
 export default class RequestActivityChart extends PureComponent {
@@ -21,25 +21,28 @@ export default class RequestActivityChart extends PureComponent {
   };
   lineData = {
     labels: [''],
-    datasets: [{
-      label: "Complete",
-      backgroundColor: "rgba(193,217,245,0.3)",
-      borderColor: "rgba(193,217,245,1)",
-      pointBackgroundColor: "rgba(193,217,245,1)",
-      pointBorderColor: "#fff",
-      pointHoverBackgroundColor: "#fff",
-      pointHoverBorderColor: "rgba(220,220,220,1)",
-      data: [0]
-    }, {
-      label: "Open",
-      backgroundColor: "rgba(117,170,238,0.3)",
-      borderColor: "rgba(117,170,238,1)",
-      pointBackgroundColor: "rgba(117,170,238,1)",
-      pointBorderColor: "#fff",
-      pointHoverBackgroundColor: "#fff",
-      pointHoverBorderColor: "rgba(220,220,220,1)",
-      data: [0]
-    }]
+    datasets: [
+      {
+        label: 'Complete',
+        backgroundColor: 'rgba(193,217,245,0.3)',
+        borderColor: 'rgba(193,217,245,1)',
+        pointBackgroundColor: 'rgba(193,217,245,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(220,220,220,1)',
+        data: [0]
+      },
+      {
+        label: 'Open',
+        backgroundColor: 'rgba(117,170,238,0.3)',
+        borderColor: 'rgba(117,170,238,1)',
+        pointBackgroundColor: 'rgba(117,170,238,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(220,220,220,1)',
+        data: [0]
+      }
+    ]
   };
 
   constructor(props) {
@@ -50,75 +53,93 @@ export default class RequestActivityChart extends PureComponent {
     this.state = {
       viewConfig: {
         format: 'MMM',
-        title: "[since] MMMM YYYY",
-        startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
-        endDate: moment().endOf( 'month' ),
+        title: '[since] MMMM YYYY',
+        startDate: moment()
+          .subtract(2, 'months')
+          .startOf('month'),
+        endDate: moment().endOf('month'),
         groupBy: 'month'
       },
       expandAll: false,
       openSeries: [],
       closedSeries: [],
-      labels: [],
+      labels: []
     };
 
     this.resetChart();
-  };
+  }
 
   getMenu = () => {
-    return [ 
-    {
-      label: ( "3 Months" ),
-      run: () => {
-        let startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
-        let endDate = moment().endOf( 'month' );
-        this.setState({
-          viewConfig: {
-            format: 'MMM',
-            title: "[since] MMMM YYYY",
-            groupBy: 'month',
-            startDate,
-            endDate
-          }
-        }, () => {
-          this.updateRequestData(startDate, endDate);
-        });
-      }
-    }, {
-      label: ( "6 Months" ),
-      run: () => {
-        let startDate = moment().subtract( 5, 'months' ).startOf( 'month' );
-        let endDate = moment().endOf( 'month' );
+    return [
+      {
+        label: '3 Months',
+        run: () => {
+          let startDate = moment()
+            .subtract(2, 'months')
+            .startOf('month');
+          let endDate = moment().endOf('month');
+          this.setState(
+            {
+              viewConfig: {
+                format: 'MMM',
+                title: '[since] MMMM YYYY',
+                groupBy: 'month',
+                startDate,
+                endDate
+              }
+            },
+            () => {
+              this.updateRequestData(startDate, endDate);
+            }
+          );
+        }
+      },
+      {
+        label: '6 Months',
+        run: () => {
+          let startDate = moment()
+            .subtract(5, 'months')
+            .startOf('month');
+          let endDate = moment().endOf('month');
 
-        this.setState({
-          viewConfig: {
-            format: 'MMM',
-            title: "[since] MMMM YYYY",
-            startDate,
-            endDate,
-            groupBy: 'month',
-          }
-        }, () => {
-          this.updateRequestData(startDate, endDate);
-        });
+          this.setState(
+            {
+              viewConfig: {
+                format: 'MMM',
+                title: '[since] MMMM YYYY',
+                startDate,
+                endDate,
+                groupBy: 'month'
+              }
+            },
+            () => {
+              this.updateRequestData(startDate, endDate);
+            }
+          );
+        }
+      },
+      {
+        label: 'Year',
+        run: () => {
+          let startDate = moment().startOf('year');
+          let endDate = moment().endOf('year');
+          this.setState(
+            {
+              viewConfig: {
+                format: 'MMM',
+                title: 'YYYY',
+                groupBy: 'month',
+                startDate,
+                endDate
+              }
+            },
+            () => {
+              this.updateRequestData(startDate, endDate);
+            }
+          );
+        }
       }
-    }, {
-      label: ( "Year" ),
-      run: () => {
-        let startDate = moment().startOf('year');
-        let endDate = moment().endOf('year');
-        this.setState({
-          viewConfig: {
-            format: 'MMM',
-            title: "YYYY",
-            groupBy: 'month',
-            startDate,
-            endDate,
-          }
-        }, () => {
-          this.updateRequestData(startDate, endDate);
-        });
-      }
-    }];
+    ];
   };
 
   printChart = () => {
@@ -150,12 +171,19 @@ export default class RequestActivityChart extends PureComponent {
   };
 
   initChart = () => {
-    let ctx = document.getElementById( "line-chart" ).getContext("2d");
+    let ctx = document.getElementById('line-chart').getContext('2d');
     this.lineChart = new Chart(ctx, {
-      type: "line",
+      type: 'line',
       data: this.lineData,
       options: this.lineOptions
     });
+    this.updateRequestData(
+      moment()
+        .subtract(2, 'months')
+        .startOf('month'),
+      moment().endOf('month')
+    );
+    this.updateChart();
   };
 
   updateChart = () => {
@@ -182,8 +210,8 @@ export default class RequestActivityChart extends PureComponent {
       });
     });
   };
-  
-  formatDateResponseToChart = (response) => {
+
+  formatDateResponseToChart = response => {
     let config = this.props.configVar.get();
     let start = moment(config.start);
     let end = moment(config.end);
@@ -200,7 +228,7 @@ export default class RequestActivityChart extends PureComponent {
       let startDate = now.clone();
 
       let label = moment(startDate).format(this.state.viewConfig.format);
-      if ( label !== previousLabel ) {
+      if (label !== previousLabel) {
         previousLabel = label;
       } else {
         label = '';
@@ -235,11 +263,14 @@ export default class RequestActivityChart extends PureComponent {
 
   componentWillReceiveProps(props) {
     let data = this.formatDateResponseToChart(props.data);
-    this.setState({
-      closedSeries: data.closed,
-      openSeries: data.open,
-      labels: data.labels
-    }, this.updateChart);
+    this.setState(
+      {
+        closedSeries: data.closed,
+        openSeries: data.open,
+        labels: data.labels
+      },
+      this.updateChart
+    );
   }
 
   componentDidUpdate() {
@@ -247,15 +278,26 @@ export default class RequestActivityChart extends PureComponent {
   }
 
   render() {
-    let title = this.state.viewConfig.startDate.format(this.state.viewConfig.title);
+    let title = this.state.viewConfig.startDate.format(
+      this.state.viewConfig.title
+    );
     let facility = this.props.facility;
     let facilities = this.props.facilities;
-    let headerTitle = <span>Request activity {title} {facility && facility.name ? " for " + facility.name : (facilities && facilities.length == '1') ? "for " + facilities[0].name : " for all facilities"}</span>
-    
-    let loader = !this.props.ready ? <LoaderSmall/> : null; 
+    let headerTitle = (
+      <span>
+        Request activity {title}{' '}
+        {facility && facility.name
+          ? ' for ' + facility.name
+          : facilities && facilities.length == '1'
+            ? 'for ' + facilities[0].name
+            : ' for all facilities'}
+      </span>
+    );
+
+    let loader = !this.props.ready ? <LoaderSmall /> : null;
     return (
       <div>
-        { loader }
+        {loader}
         <Menu items={this.getMenu()} />
         <div className="ibox-title">
           <h2>{headerTitle}</h2>
@@ -264,7 +306,7 @@ export default class RequestActivityChart extends PureComponent {
           <div className="row">
             <div className="col-sm-12">
               <div id="line-chart-wrapper">
-                <canvas id="line-chart"/>
+                <canvas id="line-chart" />
               </div>
             </div>
           </div>
@@ -277,5 +319,5 @@ export default class RequestActivityChart extends PureComponent {
 RequestActivityChart.propTypes = {
   facility: PropTypes.object,
   facilities: PropTypes.array,
-  team: PropTypes.object.isRequired,
+  team: PropTypes.object.isRequired
 };
