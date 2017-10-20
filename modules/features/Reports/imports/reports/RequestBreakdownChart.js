@@ -62,19 +62,11 @@ export default class RequestBreakdownChart extends React.Component {
   constructor(props) {
     super(props);
 
-    let startDate = moment()
-      .subtract(2, "months")
-      .startOf("month");
-    let title = startDate.format("[since] MMMM YYYY");
+    let title = moment(this.props.startDate).format("[since] MMMM YYYY");
     this.state = {
-      startDate: startDate,
-      team: props.team,
-      facility: props.facility,
       title: title,
-      expandall: false,
       sets: [],
-      labels: [],
-      showLoader: true
+      labels: []
     };
   }
 
@@ -94,46 +86,15 @@ export default class RequestBreakdownChart extends React.Component {
   getMenu() {
     return [
       {
-        label: "Day",
-        run: () => {
-          let startDate = moment().startOf("day");
-          this.setState(
-            {
-              startDate: startDate,
-              title: startDate.format("[on] dddd Do MMMM")
-            },
-            () => {
-              this.onMenuClick();
-            }
-          );
-        }
-      },
-      {
-        label: "Week",
-        run: () => {
-          let startDate = moment().startOf("week");
-          this.setState(
-            {
-              startDate: startDate,
-              title: startDate.format("[for week starting] Do MMMM")
-            },
-            () => {
-              this.onMenuClick();
-            }
-          );
-        }
-      },
-      {
         label: "Month",
         run: () => {
           let startDate = moment().startOf("month");
           this.setState(
             {
-              startDate: startDate,
               title: startDate.format("[since] MMMM YYYY")
             },
             () => {
-              this.onMenuClick();
+              this.updateRequestData(startDate);
             }
           );
         }
@@ -146,11 +107,10 @@ export default class RequestBreakdownChart extends React.Component {
             .startOf("month");
           this.setState(
             {
-              startDate: startDate,
               title: startDate.format("[since] MMMM YYYY")
             },
             () => {
-              this.onMenuClick();
+              this.updateRequestData(startDate);
             }
           );
         }
@@ -163,11 +123,10 @@ export default class RequestBreakdownChart extends React.Component {
             .startOf("month");
           this.setState(
             {
-              startDate: startDate,
               title: startDate.format("[since] MMMM YYYY")
             },
             () => {
-              this.onMenuClick();
+              this.updateRequestData(startDate);
             }
           );
         }
@@ -176,40 +135,13 @@ export default class RequestBreakdownChart extends React.Component {
         label: "Year",
         run: () => {
           let startDate = moment().startOf("year");
-          this.setState(
-            {
-              startDate: startDate,
-              title: startDate.format("YYYY")
-            },
-            () => {
-              this.onMenuClick();
-            }
-          );
+          this.setState({ title: startDate.format("YYYY") }, () => {
+            this.updateRequestData(startDate);
+          });
         }
       }
     ];
   }
-
-  onMenuClick = () => {
-    this.clearChart(() => {
-      this.getRequestData();
-    });
-  };
-
-  clearChart = callback => {
-    this.setState(
-      {
-        sets: [],
-        showLoader: true
-      },
-      () => {
-        this.updateChart();
-        if (_.isFunction(callback)) {
-          callback();
-        }
-      }
-    );
-  };
 
   initChart = () => {
     let ctx = document.getElementById("bar-chart").getContext("2d");
@@ -218,8 +150,21 @@ export default class RequestBreakdownChart extends React.Component {
       data: this.barData,
       options: this.barOptions
     });
+    this.updateChart();
+  };
 
-    this.getRequestData();
+  clearChart = callback => {
+    this.setState(
+      {
+        sets: []
+      },
+      () => {
+        this.updateChart();
+        if (_.isFunction(callback)) {
+          callback();
+        }
+      }
+    );
   };
 
   updateChart = () => {
@@ -237,36 +182,24 @@ export default class RequestBreakdownChart extends React.Component {
     }
   };
 
-  getRequestData = () => {
-    let config = {
-      date: moment(this.state.startDate).toDate(),
-      team: this.props.team,
-      facility: this.props.facility
-    };
-    this.props.getRequestBreakdown(config, response => {
-      let items = this.formatDateResponseToChart(response);
-      this.setState(
-        {
-          sets: items.sets,
-          labels: items.labels,
-          showLoader: false
-        },
-        () => {
-          this.updateChart();
-        }
-      );
+  updateRequestData = startDate => {
+    this.clearChart(() => {
+      this.props.configVar.set({
+        start: moment(startDate).toDate()
+      });
     });
   };
 
-  formatDateResponseToChart = response => {
+  formatDataResponseToChart = response => {
     let chartItems = {
       labels: [],
       sets: []
     };
 
-    for (let item of response) {
+    for (let key in response) {
+      let item = response[key];
       let serviceName = item.serviceName;
-      if (serviceName.length > 15) {
+      if (serviceName && serviceName.length > 15) {
         serviceName = serviceName.substring(0, 13) + "...";
       }
       chartItems.labels.push(serviceName);
@@ -282,30 +215,17 @@ export default class RequestBreakdownChart extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    if (props.facility || props.team) {
-      let update = {};
-
-      update["facility"] = props.facility;
-      if (props.team) {
-        update["team"] = props.team;
-      }
-
-      let doUpdate =
-        (this.state.team &&
-          props.team &&
-          props.team._id !== this.state.team._id) ||
-        Boolean(props.facility) ||
-        (Boolean(this.state.facility) && !Boolean(props.facility));
-
-      doUpdate = !doUpdate ? Boolean(props.facility) : doUpdate;
-
-      if (doUpdate) {
-        this.clearChart(() => {
-          this.setState(update, () => {
-            this.resetChart();
-          });
-        });
-      }
+    if (props.data) {
+      let items = this.formatDataResponseToChart(props.data);
+      this.setState(
+        {
+          sets: items.sets,
+          labels: items.labels
+        },
+        () => {
+          this.updateChart();
+        }
+      );
     }
   }
 
@@ -316,7 +236,7 @@ export default class RequestBreakdownChart extends React.Component {
   render() {
     let facility = this.props.facility;
     let facilities = this.props.facilities;
-    let loader = this.state.showLoader ? <LoaderSmall /> : null;
+    let loader = !this.props.ready ? <LoaderSmall /> : null;
     return (
       <div>
         {loader}
@@ -342,8 +262,7 @@ export default class RequestBreakdownChart extends React.Component {
 }
 
 RequestBreakdownChart.propTypes = {
-  team: PropTypes.object.isRequired,
   facility: PropTypes.object,
   facilities: PropTypes.array,
-  getRequestBreakdown: PropTypes.func.isRequired
+  configVar: PropTypes.object.isRequired
 };

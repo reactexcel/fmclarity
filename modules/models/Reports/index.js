@@ -13,11 +13,15 @@ import Reports 		from './imports/Reports.jsx';
 // import DocActions 		from './actions.jsx';
 
 import RequestOverviewAggregate from './imports/RequestOverviewAggregate';
+import RequestBreakdownAggregate from './imports/RequestBreakdownAggregate';
+import RequestActivityAggregate from './imports/RequestActivityAggregate';
 
 /**
  * @module 			models/Documents
  */
 export {
 	Reports,
-	RequestOverviewAggregate
+	RequestOverviewAggregate,
+	RequestBreakdownAggregate,
+	RequestActivityAggregate
 }

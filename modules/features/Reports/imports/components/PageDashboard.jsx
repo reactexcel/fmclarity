@@ -13,6 +13,7 @@ import ProgressOverviewChartContainer from "../containers/ProgressOverviewChartC
 import RequestActivityChart from "../reports/RequestActivityChart";
 import ReportsNavWidget from "../reports/ReportsNavWidget";
 import RequestBreakdownChartContainer from "../containers/RequestBreakdownChartContainer";
+import RequestActivityChartContainer from "../containers/RequestActivityChartContainer";
 
 /**
  * The main landing page for FMs which is intended to give a broad overview of job status
@@ -52,19 +53,19 @@ function PageDashboard(props) {
             <ProgressOverviewChartContainer facility={facility} team={team} />
           </div>
           <div className="ibox">
-            {/* <RequestActivityChart
+            <RequestActivityChartContainer
               facility={facility}
               facilities={facilities}
               team={team}
               minimal={true}
-            /> */}
+            />
           </div>
           <div className="ibox">
-            {/* <RequestBreakdownChartContainer
+            <RequestBreakdownChartContainer
               facility={facility}
               facilities={facilities}
               team={team}
-            /> */}
+            />
           </div>
         </div>
       </div>

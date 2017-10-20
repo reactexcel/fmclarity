@@ -47,143 +47,75 @@ export default class RequestActivityChart extends PureComponent {
     let team = props.team;
     let facility = props.facility;
 
-    let {openQuery, closedQuery } = this.getQueries(team, facility);
-
     this.state = {
       viewConfig: {
         format: 'MMM',
         title: "[since] MMMM YYYY",
         startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
         endDate: moment().endOf( 'month' ),
-        groupBy: 'week'
+        groupBy: 'month'
       },
       expandAll: false,
-      openQuery: openQuery,
-      closedQuery: closedQuery,
       openSeries: [],
       closedSeries: [],
       labels: [],
-      team: team,
-      facility: facility,
-      facilities: [],
-      showLoader: true
     };
 
     this.resetChart();
   };
 
-  getQueries = (teamObj, facilityObj) => {
-    let openQuery = { status: { $ne: 'Complete' } };
-    let closedQuery = { status: "Complete" };
-
-    let team = teamObj ? teamObj : this.state && this.state.team ? this.state.team : null;
-    let facility = facilityObj ? facilityObj : this.state && this.state.facility ? this.state.facility : null;
-
-    if (team) {
-      openQuery['team._id'] = team._id;
-      closedQuery['team._id'] = team._id;
-    }
-
-    if (facility) {
-      openQuery['facility._id'] = facility._id;
-      closedQuery['facility._id'] = facility._id;
-    }
-
-    return {
-      openQuery,
-      closedQuery,
-    }
-  };
-
   getMenu = () => {
-    return [ {
-      label: ( "Day" ),
-      run: () => {
-        this.setState({
-          viewConfig: {
-            format: 'hA',
-            title: "dddd Do MMMM",
-            startDate: moment().startOf('day'),
-            endDate: moment().endOf('day'),
-            groupBy: 'hour'
-          }
-        }, () => {
-          this.onMenuClick();
-        });
-      }
-    }, {
-      label: ("Week"),
-      run: () => {
-        this.setState({
-          viewConfig: {
-            format: 'ddd',
-            title: "for [week starting] Do MMMM",
-            startDate: moment().startOf( 'week' ),
-            endDate: moment().endOf( 'week' ),
-            groupBy: 'day'
-          }
-        }, () => {
-          this.onMenuClick();
-        });
-      }
-    }, {
-      label: ( "Month" ),
-      run: () => {
-        this.setState({
-          viewConfig: {
-            format: 'D',
-            title: "MMMM YYYY",
-            startDate: moment().startOf( 'month' ),
-            endDate: moment().endOf( 'month' ),
-            groupBy: 'day'
-          }
-        }, () => {
-          this.onMenuClick();
-        });
-      }
-    }, {
+    return [ 
+    {
       label: ( "3 Months" ),
       run: () => {
+        let startDate = moment().subtract( 2, 'months' ).startOf( 'month' );
+        let endDate = moment().endOf( 'month' );
         this.setState({
           viewConfig: {
             format: 'MMM',
             title: "[since] MMMM YYYY",
-            startDate: moment().subtract( 2, 'months' ).startOf( 'month' ),
-            endDate: moment().endOf( 'month' ),
             groupBy: 'month',
+            startDate,
+            endDate
           }
         }, () => {
-          this.onMenuClick();
+          this.updateRequestData(startDate, endDate);
         });
       }
     }, {
       label: ( "6 Months" ),
       run: () => {
+        let startDate = moment().subtract( 5, 'months' ).startOf( 'month' );
+        let endDate = moment().endOf( 'month' );
+
         this.setState({
           viewConfig: {
             format: 'MMM',
             title: "[since] MMMM YYYY",
-            startDate: moment().subtract( 5, 'months' ).startOf( 'month' ),
-            endDate: moment().endOf( 'month' ),
+            startDate,
+            endDate,
             groupBy: 'month',
           }
         }, () => {
-          this.onMenuClick();
+          this.updateRequestData(startDate, endDate);
         });
       }
     }, {
       label: ( "Year" ),
       run: () => {
+        let startDate = moment().startOf('year');
+        let endDate = moment().endOf('year');
         this.setState({
           viewConfig: {
             format: 'MMM',
             title: "YYYY",
-            startDate: moment().startOf( 'year' ),
-            endDate: moment().endOf( 'year' ),
             groupBy: 'month',
+            startDate,
+            endDate,
           }
         }, () => {
-          this.onMenuClick();
+          this.updateRequestData(startDate, endDate);
         });
       }
     }];
@@ -202,23 +134,19 @@ export default class RequestActivityChart extends PureComponent {
     }, 200);
   };
 
-  onMenuClick = () => {
-    this.clearChart(() => {
-      this.getRequestData();
-    });
-  };
-
-  clearChart = (callback) => {
-    this.setState({
-      closedSeries: [],
-      openSeries: [],
-      showLoader: true
-    }, () => {
-      this.updateChart();
-      if (_.isFunction(callback)) {
-        callback();
+  clearChart = callback => {
+    this.setState(
+      {
+        openSeries: [],
+        closedSeries: []
+      },
+      () => {
+        this.updateChart();
+        if (_.isFunction(callback)) {
+          callback();
+        }
       }
-    });
+    );
   };
 
   initChart = () => {
@@ -228,8 +156,6 @@ export default class RequestActivityChart extends PureComponent {
       data: this.lineData,
       options: this.lineOptions
     });
-
-    this.getRequestData();
   };
 
   updateChart = () => {
@@ -248,95 +174,57 @@ export default class RequestActivityChart extends PureComponent {
     }
   };
 
-  getRequestData = () => {
-    let config = {
-      start: this.state.viewConfig.startDate.toDate(),
-      end: this.state.viewConfig.endDate.toDate(),
-      format: this.state.viewConfig.format,
-      groupBy: this.state.viewConfig.groupBy
-    };
-
-    Meteor.call('Requests.getRequestCountPerMonth', Meteor.user(), this.state.openQuery, config, (error, response) => {
-      let items = this.formatDateResponseToChart(response, config);
-      this.setState({
-        openSeries: items.sets,
-        showLoader: false,
-        labels: items.labels
-      }, this.updateChart());
+  updateRequestData = (startDate, endDate) => {
+    this.clearChart(() => {
+      this.props.configVar.set({
+        start: moment(startDate).toDate(),
+        end: moment(endDate).toDate()
+      });
     });
-
-    Meteor.call('Requests.getRequestCountPerMonth', Meteor.user(), this.state.closedQuery, config, (error, response) => {
-      let items = this.formatDateResponseToChart(response, config);
-      this.setState({
-        showLoader: false,
-        closedSeries: items.sets
-      }, this.updateChart());
-    });
-
   };
-
-  formatDateResponseToChart = (response, config) => {
+  
+  formatDateResponseToChart = (response) => {
+    let config = this.props.configVar.get();
     let start = moment(config.start);
     let end = moment(config.end);
-
     let now = start.clone();
+
     let previousLabel = '';
     let chartItems = {
       labels: [],
-      sets: []
+      open: [],
+      closed: []
     };
 
     while (!now.isAfter(end)) {
       let startDate = now.clone();
 
-      let label = moment(startDate).format(config.format);
+      let label = moment(startDate).format(this.state.viewConfig.format);
       if ( label !== previousLabel ) {
         previousLabel = label;
       } else {
         label = '';
       }
+
       chartItems.labels.push(label);
-      let count = 0;
-      for (let item of response) {
-        if (count > 0) {
+      let open = 0;
+      let closed = 0;
+
+      for (let key in response) {
+        let item = response[key];
+        let itemDate = moment(item.date);
+        if (now.isSame(itemDate, 'year') && now.isSame(itemDate, 'month')) {
+          open = item.openRequests;
+          closed = item.closedRequests;
           break;
         }
-        let monthYearCondition = (item.createdAt.month === (now.month() + 1) &&
-          item.createdAt.year === now.year());
-
-        switch (config.groupBy) {
-          case 'week':
-            if (monthYearCondition && item.createdAt.week === now.week()) {
-              count = item.count;
-            }
-            break;
-          case 'day':
-            if (monthYearCondition &&
-                item.createdAt.week === now.week() &&
-                item.createdAt.day === now.date()
-            ) {
-              count = item.count;
-            }
-            break;
-          case 'hour':
-            if (monthYearCondition &&
-                item.createdAt.week === now.week() &&
-                item.createdAt.day === now.date() &&
-                item.createdAt.hour === now.hour()
-            ) {
-              count = item.count;
-            }
-            break;
-          default:
-            if (monthYearCondition) {
-              count = item.count;
-            }
-            break;
-        }
       }
-      chartItems.sets.push(count);
-      now.add(1, config.groupBy);
+
+      chartItems.open.push(open);
+      chartItems.closed.push(closed);
+      now.add(1, this.state.viewConfig.groupBy);
     }
+
     return chartItems;
   };
 
@@ -346,30 +234,12 @@ export default class RequestActivityChart extends PureComponent {
   }
 
   componentWillReceiveProps(props) {
-    if (props.facility || props.team) {
-      let update = {};
-
-      update['facility'] = props.facility;
-      
-      if (props.team) {
-        update['team'] = props.team;
-      }
-
-      let doUpdate = (
-        ((this.state.team && props.team) && (props.team._id !== this.state.team._id)) ||
-        Boolean(props.facility) || (Boolean(this.state.facility) && !Boolean(props.facility))
-      );
-
-      if (doUpdate) {
-        this.clearChart(() => {
-          this.setState(update, () => {
-            this.setState(this.getQueries(), () => {
-              this.resetChart();
-            });
-          });
-        });        
-      }
-    }
+    let data = this.formatDateResponseToChart(props.data);
+    this.setState({
+      closedSeries: data.closed,
+      openSeries: data.open,
+      labels: data.labels
+    }, this.updateChart);
   }
 
   componentDidUpdate() {
@@ -382,11 +252,10 @@ export default class RequestActivityChart extends PureComponent {
     let facilities = this.props.facilities;
     let headerTitle = <span>Request activity {title} {facility && facility.name ? " for " + facility.name : (facilities && facilities.length == '1') ? "for " + facilities[0].name : " for all facilities"}</span>
     
-    let loader = this.state.showLoader ? <LoaderSmall/> : null; 
-    
+    let loader = !this.props.ready ? <LoaderSmall/> : null; 
     return (
       <div>
-        {loader}
+        { loader }
         <Menu items={this.getMenu()} />
         <div className="ibox-title">
           <h2>{headerTitle}</h2>

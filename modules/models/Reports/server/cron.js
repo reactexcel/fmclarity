@@ -6,7 +6,7 @@ const ReportsCron = {
       // return parser.text("every 1 minute");
   },
   job: () => {
-    Meteor.call('RequestOverviewAggregate.computeAggregateDataForThePastYear');
+    Meteor.call('Reports.computeAggregateDataForThePastTwoYears');
   }
 }
 

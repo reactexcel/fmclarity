@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import CronJobs from "./cronJobs.js";
 import CheckCronsAccessability from '/modules/config/CheckCronsAccessability.js';
 import ReportsCron from '/modules/models/Reports/server/cron';
+
+import '/modules/models/Reports/server/methods';
 //import { FlowRouter } from 'meteor/kadira:flow-router-ssr';
 
 Meteor.startup( function() {
@@ -49,6 +51,9 @@ Meteor.startup( function() {
     SyncedCron.start();
     import './scripts/MigrateGFStoS3';
     import './scripts';
+
+    // compute aggregate data for the dashboard content on build time
+    Meteor.call('Reports.computeAggregateDataForThePastTwoYears');
 } );
 
 FM.inDevelopment = function() {

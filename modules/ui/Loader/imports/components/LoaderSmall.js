@@ -6,7 +6,7 @@ export default class LoaderSmall extends React.Component {
     return (
       <div className="small-loader">
         <div className="loader-content">
-          <div className="preloader-wrapper big active">
+          <div className="preloader-wrapper small active">
             <div className="spinner-layer spinner-custom-blue-only">
               <div className="circle-clipper left">
                 <div className="circle"/>
