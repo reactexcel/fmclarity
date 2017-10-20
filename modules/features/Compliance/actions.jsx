@@ -82,7 +82,12 @@ function createNewComplianceRule( newRule ) {
 
             if( isSubService == false ){   // existing code of adding in service
                 service.data.complianceRules.push( copy );
-            }else{
+            } else {
+                if (!service.children[subserviceId].data.complianceRules) {
+                    service.children[subserviceId].data = {
+                      complianceRules: []
+                    };
+                }
                 service.children[subserviceId].data.complianceRules.push( copy )
             }
             services[ idx ] = service;
