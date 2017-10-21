@@ -175,6 +175,7 @@ export default ComplianceRuleSchema = {
             item.event && ( query.name = item.event.name ? item.event.name : item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
+
             let lastWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
             let team = Session.getSelectedTeam();
             let request = lastWO[lastWO.length>1 ? lastWO.length - 2: 0 ],
@@ -190,6 +191,7 @@ export default ComplianceRuleSchema = {
                 previousDateString = moment(previousDate).format('ddd Do MMM');
             }
             return (
+
                 previousRequest ? (
                     <span onClick={() => { RequestActions.view.run( previousRequest )}}>
                       <a className="link" href={"javascript:void(0);"}>
@@ -211,6 +213,7 @@ export default ComplianceRuleSchema = {
             item.event && ( query.name = item.event.name ? item.event.name : item.event );
             item.service && item.service.name && ( query[ 'service.name' ] = item.service.name );
             item.subservice && item.subservice.name && ( query[ 'subservice.name' ] = item.subservice.name );
+
             let nextWO = PPM_Schedulers.findAll( query, { $sort: { createdAt: -1 } } )
             let team = Session.getSelectedTeam();
             let request = nextWO[ nextWO.length && nextWO.length>1 ? nextWO.length - 2: 0 ],

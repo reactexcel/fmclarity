@@ -2,8 +2,8 @@ import moment from 'moment';
 import RequestsStatusReport from './reports/RequestsStatusReport.jsx';
 import ResidentDetails from './reports/ResidentDetails.jsx';
 import BookingReport from './reports/BookingReport.jsx';
-import RequestBreakdownChart from './reports/RequestBreakdownChart';
-import RequestActivityChart from './reports/RequestActivityChart';
+import RequestBreakdownChartContainer from './containers/RequestBreakdownChartContainer';
+import RequestActivityChartContainer from './containers/RequestActivityChartContainer';
 import MBMServiceImages from './reports/MBMServiceImages.jsx';
 import MBMDefectImages from './reports/MBMDefectImages.jsx';
 import MBMReport from './reports/MBMReport.jsx';
@@ -45,13 +45,13 @@ Reports.register( {
 Reports.register( {
     id: "request-breakdown-chart",
     name: "Request Breakdown Chart",
-    content: RequestBreakdownChart
+    content: RequestBreakdownChartContainer
 } )
 
 Reports.register( {
 	id: "request-activity-chart",
 	name: "Request Activity Chart",
-	content: RequestActivityChart
+	content: RequestActivityChartContainer
 } )
 
 

@@ -25,7 +25,7 @@ function FacilityFilter( props ) {
 	}
 	return (
 		<div style = { { position:"absolute", zIndex:1300 } }>
-		{props.items && props.items.length > 1 ? <NavListDropDown
+		{props.items && props.items.length ? <NavListDropDown
 					{ ...props }
 					items = { newFacilityList && newFacilityList.length ? newFacilityList : props.items } 
 					ListTile = { FacilityListTile }

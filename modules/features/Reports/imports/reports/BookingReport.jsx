@@ -11,6 +11,7 @@ import { DataTable } from '/modules/ui/DataTable';
 import { download, print } from '/modules/ui/DataTable/source/DataSetActions.jsx';
 import { DateTime, Select } from '/modules/ui/MaterialInputs';
 
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 import { ContactCard } from '/modules/mixins/Members';
 
@@ -64,10 +65,10 @@ const BookingReport = React.createClass( {
 	},
 
     componentDidMount(){
-        $('.nav-list-selected').css('display','none')
+        $('.nav-list-selected').css('display','none');
 				setTimeout(function(){
-					$(".loader").hide();
-				},2000)
+          hideLoader();
+				}, 2000)
     },
 
     componentWillUnmount(){

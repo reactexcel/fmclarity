@@ -40,7 +40,7 @@ AccessGroups.loggedIn.add( {
             Layout = LayoutPrint;
         }
         mount( Layout, {
-            content: <ReportsPageSingle id = {params.reportId}/>
+            content: <ReportsPageSingle id={params.reportId}/>
         } );
     }
 } );

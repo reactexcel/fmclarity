@@ -77,7 +77,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 		return <div className="facility-page animated fadeIn">
 			<div className="row">
 				<div className="col-sm-6">
-					<FacilityFilter
+					{ this.props.thumbsReady ? <FacilityFilter
 						items           = { facilities }
 						selectedItem    = { facility }
 						onChange = {
@@ -87,7 +87,8 @@ export default class TeamPageSuppliersMobile extends React.Component {
 								} )
 							}
 						}
-					/>
+					/> : null }
+					
 				</div>
 				<div className="col-sm-6" style={{float:"right"}}>
 					<span style={{float: "right"}}>

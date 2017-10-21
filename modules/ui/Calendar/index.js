@@ -3,6 +3,7 @@
  * @copyright 		2016 FM Clarity Pty Ltd.
  */
 import Calendar from './imports/components/Calendar.jsx';
+import CalendarContainer from './imports/containers/CalendarContainer'
 import PageCalendar from './imports/components/PageCalendar.jsx';
 import { CalendarRoute } from './routes.jsx';
 
@@ -13,4 +14,5 @@ export {
 	Calendar,
 	PageCalendar,
 	CalendarRoute,
+	CalendarContainer
 }
