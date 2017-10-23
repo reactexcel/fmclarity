@@ -1,4 +1,5 @@
 import React from "react";
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 function TopNavigationBar( props ) {
 
@@ -7,8 +8,8 @@ function TopNavigationBar( props ) {
     import { FMInstantSearchBox } from '/modules/ui/MaterialInputs';
     import { NotificationList } from '/modules/models/Messages';
 
-    $(".loader").children("div").children("div").css({backgroundColor:"",boxShadow:""})
-    $(".loader").hide();
+    hideLoader();
+
     setTimeout( () => {
 
         $( '#alerts-icon' ).on( 'hidden.bs.dropdown', () => {

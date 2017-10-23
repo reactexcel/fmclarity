@@ -4,6 +4,7 @@
  */
 
 import FacilitySchema from './schemas/FacilitySchema.jsx';
+import PPM_Schedulers from '/modules/models/Requests/imports/PPM_Schedulers';
 
 //import { Teams } from '/modules/models/Teams';
 
@@ -242,12 +243,13 @@ Facilities.actions( {
 
     setServicesRequired: {
         authentication: AuthHelpers.managerOfRelatedTeam,
-        method: function( facility, servicesRequired ) {
-            Facilities.update( facility._id, {
-                $set: {
-                    servicesRequired: servicesRequired
-                }
-            } );
+        method: function(facility, servicesRequired, updatedService) {
+          updatePPMServiceNames(facility, updatedService);
+          Facilities.update( facility._id, {
+              $set: {
+                  servicesRequired: servicesRequired
+              }
+          } );
         }
     },
 
@@ -586,7 +588,6 @@ Facilities.actions( {
     addSupplier: {
         authentication: true,
         method: function( facility, supplier ) {
-            //console.log("addSupplier");
             if ( supplier && supplier._id ) {
                 let suppliers = facility.suppliers;
                 if (!suppliers || !_.isArray(suppliers)) {
@@ -911,6 +912,34 @@ function clearComplianceRules( facility ) {
         } );
     }
     return services;
+}
+
+function updatePPMServiceNames(facility, updatedServices) {
+  if (!facility || !updatedServices) {
+    return;
+  }
+
+  let query = {
+    'facility._id': facility._id,
+    'service.name': updatedServices.parent ? updatedServices.parent.name : updatedServices.oldValue.name,
+  };
+  if (updatedServices.parent) {
+    query['subservice.name'] = updatedServices.oldValue.name;
+  }
+
+  let PPMs = PPM_Schedulers.find(query).fetch();
+  let update = {
+    service: updatedServices.parent ? updatedServices.parent : updatedServices.newValue,
+    subservice: updatedServices.parent ? updatedServices.newValue : {}
+  };
+
+  for (let PPM of PPMs) {
+    PPM_Schedulers.update({
+      _id: PPM._id
+    }, {
+      $set: update
+    });
+  }
 }
 
 

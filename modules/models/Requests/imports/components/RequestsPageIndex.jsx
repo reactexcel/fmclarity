@@ -9,6 +9,7 @@ import {RequestActions, RequestsTable} from '/modules/models/Requests';
 
 import {RequestFilter} from '/modules/models/Requests';
 import RequestPagination from './RequestPagination';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 import {Switch} from '/modules/ui/MaterialInputs';
 import moment from 'moment';
@@ -83,8 +84,8 @@ export default class RequestsPageIndex extends Component {
     let requests = [];
     let totalCollectionCount = 0;
     if (this.props.user) {
-      ({requests, totalCollectionCount } = this.props.user.getRequests(
-        {$and: [this.state.statusFilter, this.state.contextFilter]}, { expandPMP: true, skip: this.state.currentPage, limit: this.pageSize }
+      ({ requests, totalCollectionCount } = this.props.user.getRequests(
+        {$and: [this.state.statusFilter, this.state.contextFilter]}, { expandPMP: false, skip: this.state.currentPage, limit: this.pageSize }
       ));
     }
 
@@ -110,7 +111,9 @@ export default class RequestsPageIndex extends Component {
       <div>
         <div className="row">
           <div className="col-xs-3">
-            <FacilityFilter items={ facilities } selectedItem={ facility } onChange={ facility => this.onFacilityChange(facility) } />
+            { this.props.thumbsReady ? 
+              <FacilityFilter items={ facilities } selectedItem={ facility } onChange={ facility => this.onFacilityChange(facility) } />: 
+              null }
           </div>
           <div className="col-xs-offset-3 col-xs-3 desktop-only">
             <RequestFilter

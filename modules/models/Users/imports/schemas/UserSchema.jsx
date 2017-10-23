@@ -3,7 +3,7 @@
  * @copyright       2016 FM Clarity Pty Ltd.
  */
 
-import { Text, Phone, DateInput, Select, FileField, Switch } from '/modules/ui/MaterialInputs';
+import { RadioButton_Group, Text, Phone, DateInput, Select, FileField, Switch } from '/modules/ui/MaterialInputs';
 
 import { Facilities, FacilityListTile } from '/modules/models/Facilities';
 import { Teams } from '/modules/models/Teams';
@@ -229,10 +229,21 @@ const UserSchema = {
 	},
 
 	status:{
-		label: "Tenant",
-		type: "boolean",
-		defaultValue: false,
-		input: Switch,
+		label: "Owner/Tenant",
+		type: "string",
+		//defaultValue: false,
+		input: (props)=>{
+			let option1 = "Tenant",
+			    option2 = "Owner"
+			return <RadioButton_Group
+				option1 = {option1}
+				option2 = {option2}
+				defaultValue = { props.item.status == "" ? option1 : props.item.status }
+				onChange={( value ) => {
+                    props.onChange(value);
+                }}
+			/>
+		},
 		options: ( item ) => {
 			return{
 				afterChange: ( item ) => {
@@ -398,7 +409,7 @@ const UserSchema = {
 				}
 			},
 			condition: ( item ) => {
-				return role === "resident" && item.status;
+				return role === "resident" && item.status === "Tenant";
 			}
 		},
 
@@ -456,23 +467,11 @@ const UserSchema = {
 			label: "Site Address",
 			optional: true,
 			type: "object",
-			// relation: {
-			// 	join: ( item ) => {
-			// 		if ( item.facility && item.facility._id ) {
-			// 			return Facilities.findOne( item.facility._id );
-			// 		}
-			// 	},
-			// 	unjoin: ( item ) => {
-			// 		if ( item.facility && item.facility._id ) {
-			// 			return _.pick( item.facility, '_id', 'name' );
-			// 		}
-			// 	}
-			// },
 			input: ( props ) => (
 				<div className="row">
 					<div className="col-sm-12">
 						<Select {...props} />
-						<h4 style={{marginBottom: "0px"}}>Apartment address </h4>
+						<h4>Occupant Status </h4>
 					</div>
 				</div>
 			),
@@ -598,7 +597,7 @@ const UserSchema = {
 				}
 			},
 			condition: ( item ) => {
-				return role === "resident" && item.status
+				return role === "resident" && item.status === "Tenant"
 			}
 		},
 
@@ -626,7 +625,7 @@ const UserSchema = {
 				}
 			},
 			condition: ( item ) => {
-				return role === "resident" && item.status;
+				return role === "resident" && item.status === "Tenant";
 			}
 		},
 
@@ -638,7 +637,7 @@ const UserSchema = {
 			type: "date",
 			defaultValue: () => ( new Date() ),
 			condition: ( item ) => {
-				return role === "resident"
+				return role === "resident" && item.status === "Tenant";
 			}
 		},
 

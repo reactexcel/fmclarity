@@ -5,10 +5,12 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import Reports from '../Reports.js';
 import { Documents } from '/modules/models/Documents';
 import moment from 'moment';
+import { showLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 export default ReportsNavWidget = React.createClass( {
- 	abc(id){
-		$(".loader").show();
+  navigateToReport(id) {
+    showLoader();
+
 		setTimeout(function(){
 			FlowRouter.go("/report/"+id+"/");
 		},2000)
@@ -27,9 +29,9 @@ export default ReportsNavWidget = React.createClass( {
 			}
 		}
 		let xyz = _.map(reportIds, (id) => {
-			report = reports[id];
+			let report = reports[id];
 			return (
-				<div id="report-link" onClick={()=>this.abc(id)} className="grid-item" style={{padding:"15px", cursor:"pointer", textDecoration:'underline'}} key={id}>
+				<div id="report-link" onClick={ () => this.navigateToReport(id) } className="grid-item" style={{padding:"15px", cursor:"pointer", textDecoration:'underline'}} key={id}>
 					{report.name}
 				</div>
 			)

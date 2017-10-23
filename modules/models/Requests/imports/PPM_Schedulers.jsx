@@ -451,8 +451,7 @@ PPM_Schedulers.methods( {
                           unit : "years"
                         }
                       };
-                console.log(request.dueDate);
-                console.log(dueDate);
+
                 if ( request.frequency.unit === "custom" ) {
                     unit = request.frequency.unit === "fortnightly" || request.frequency.unit === "fortnights" ?
                       'weeks' : request.frequency.period;
@@ -476,7 +475,6 @@ PPM_Schedulers.methods( {
                     period[ unit ] *= 2;
                 }
                 for ( var i = 0; i <= repeats; i++ ) {
-                  console.log(period);
                     if ( dueDate.isAfter() ) {
                         return dueDate.toDate();
                     }

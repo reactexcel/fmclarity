@@ -1,7 +1,7 @@
 import React from "react";
 import { ContactCard } from '/modules/mixins/Members';
 import { FacilityFilter } from '/modules/models/Facilities';
-import { Teams, TeamActions, TeamPanel, TeamStepper, SupplierStepper } from '/modules/models/Teams';
+import { Teams, TeamActions, TeamPanel, TeamStepper, SupplierStepper, SearchGlobalSuppliers } from '/modules/models/Teams';
 import { DropFileContainer } from '/modules/ui/MaterialInputs';
 import RaisedButton from 'material-ui/RaisedButton';
 
@@ -30,22 +30,27 @@ export default class TeamPageSuppliersMobile extends React.Component {
 
 	addSupplier({addNewSupplier}){
 		let facility = Session.getSelectedFacility();
-
-        Modal.show( {
-            content: <DropFileContainer model = { Teams }>
-				{addNewSupplier?<SupplierStepper item = { null } onChange = { ( supplier ) => {
-                	if( facility ) {
-                		facility.addSupplier( supplier );
-                	}
-                }}
-				/>:<TeamStepper item = { null } onChange = { ( supplier ) => {
-                	if( facility ) {
-                		facility.addSupplier( supplier );
-                	}
-                }}
-                />}
-            </DropFileContainer>
-        } )
+		if(_.isEmpty(facility)){
+			alert("Please select a facility first")
+		}else{
+			Modal.show( {
+				content: <SearchGlobalSuppliers />
+			// 	<DropFileContainer model = { Teams }>
+			// 	{addNewSupplier? <SupplierStepper item = { null } onChange = { ( supplier ) => {
+			// 		if( facility ) {
+			// 			facility.addSupplier( supplier );
+			// 		}
+			// 	}}
+			// 	/>
+			// :<TeamStepper item = { null } showFilter={true} onChange = { ( supplier ) => {
+			// 		if( facility ) {
+			// 			facility.addSupplier( supplier );
+			// 		}
+			// 	}}
+			// 	/>}
+			// </DropFileContainer>
+		} )
+		}
 	}
 
 	sortSuppliers(arr) {
@@ -72,7 +77,7 @@ export default class TeamPageSuppliersMobile extends React.Component {
 		return <div className="facility-page animated fadeIn">
 			<div className="row">
 				<div className="col-sm-6">
-					<FacilityFilter
+					{ this.props.thumbsReady ? <FacilityFilter
 						items           = { facilities }
 						selectedItem    = { facility }
 						onChange = {
@@ -82,7 +87,8 @@ export default class TeamPageSuppliersMobile extends React.Component {
 								} )
 							}
 						}
-					/>
+					/> : null }
+					
 				</div>
 				<div className="col-sm-6" style={{float:"right"}}>
 					<span style={{float: "right"}}>

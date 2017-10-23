@@ -13,6 +13,7 @@ import TeamPanel from './imports/components/TeamPanel.jsx';
 import TeamInviteEmailTemplate from './imports/components/TeamInviteEmailTemplate.jsx';
 import TeamGlobalSupplierPage from './imports/components/TeamGlobalSupplierPage.jsx';
 import SearchSuppliersWithinNetwork from './imports/components/SearchSuppliersWithinNetwork.jsx';
+import SearchGlobalSuppliers from './imports/components/SearchGlobalSuppliers.jsx';
 
 /**
  * @module 			models/Teams
@@ -29,4 +30,5 @@ export {
 	TeamInviteEmailTemplate,
 	TeamGlobalSupplierPageContainer,
 	SearchSuppliersWithinNetwork,
+	SearchGlobalSuppliers,
 }

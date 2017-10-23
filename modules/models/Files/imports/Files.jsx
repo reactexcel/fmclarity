@@ -23,13 +23,17 @@ if (Meteor.isServer) {
     if (!s3Config.migrate.gridfs.enabled) {
       stores.push(new FS.Store.S3("s3Images", s3Options));
     } else if (s3Config.migrate.gridfs.enabled) {
-      stores.push(new FS.Store.S3("s3Images", s3Options));
+    //Put Gridfs first to keep gridfs as the primary store (until we can fix the partial download issue with S3
       stores.push(new FS.Store.GridFS("master"));
+      stores.push(new FS.Store.S3("s3Images", s3Options));
+
     }
   }
 }
 
 if (Meteor.isClient) {
+//Put Gridfs first to keep gridfs as the primary store (until we can fix the partial download issue with S3
+  stores.push(new FS.Store.GridFS("master"));
   stores.push(new FS.Store.S3("s3Images"));
 }
 

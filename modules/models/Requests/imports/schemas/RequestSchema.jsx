@@ -26,7 +26,7 @@ import moment from 'moment';
  * @memberOf        module:models/Requests
  */
 const defaultContactRole = 'supplier manager';
-let onServiceChange = null;
+//let onServiceChange = null;
 
 const RequestSchema = {
 
@@ -111,7 +111,7 @@ const RequestSchema = {
                         afterChange: ( request ) => {
                             // prefill value with zero for defect
                             if (_.contains( [ "Defect", "Incident", "Schedular", "Scheduler", "Reminder" ], request.type )) {
-                                request.costThreshold= '0';
+                                request.costThreshold= 0;
                             }
                             if (request.type == 'Incident') {
                                 request.priority = 'Urgent';
@@ -161,7 +161,7 @@ const RequestSchema = {
 
                                     // prefill value with zero for defect
                                     if (_.contains( [ 'Defect', 'Schedular', 'Scheduler' ], request.type )) {
-                                        request.costThreshold= '0';
+                                        request.costThreshold= 0;
                                         /*request.frequency = {
                                             number: (request.type == 'Preventative' ? 1 : ""),
                                             repeats: (request.type == 'Preventative' ? 10 : ""),
@@ -178,11 +178,11 @@ const RequestSchema = {
                                         }
                                     }
                                     if (request.type == 'Reminder') {
-                                        request.costThreshold = '0';
+                                        request.costThreshold = 0;
                                         request.priority = 'Urgent';
                                     }
                                     if(request.type == 'Incident'){
-                                        request.costThreshold= '0';
+                                        request.costThreshold= 0;
                                         request.priority = 'Urgent';
                                         request.supplier = Session.getSelectedTeam();
                                         request.area = null;
@@ -751,7 +751,7 @@ const RequestSchema = {
                                 costAbleToIssue = actualCost <= team.defaultCostThreshold;
                               }
                             }
-                            onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
+                            //onServiceChange = costAbleToIssue == true ? props.changeSubmitText : props.changeSubmitText(null)
                             props.item.occupancy = value && value.data && value.data.baseBuilding ? value.data.baseBuilding : false;
                             props.onChange(value);
                         }}/>
@@ -809,9 +809,9 @@ const RequestSchema = {
                                         defaultSupplier = Teams.findOne( { name: supplier.name } );
                                     }
                                     request.supplier = defaultSupplier;
-                                    if( request.supplier && onServiceChange ) {
+                                    /*if( request.supplier && onServiceChange ) {
                                         onServiceChange( request.supplier );
-                                    }
+                                    }*/
                                     if ( request.service.data.defaultContact && request.service.data.defaultContact.length ) {
                                         request.supplierContacts = request.service.data.defaultContact;
                                     } else if ( Teams.isFacilityTeam( defaultSupplier ) ) {
@@ -1050,15 +1050,15 @@ const RequestSchema = {
             size: 6,
             defaultValue: ( item ) => {
                 if(item.type && _.contains(['Key Request','Incident', 'Reminder'],item.type)){
-                    return '0';
+                    return 0;
                 }
                 // get the default value from the team and return that as default costThreshold
                 let team = Session.getSelectedTeam();
                 if( team && ( team.defaultWorkOrderValue != null ) ) {
-                    return  team.defaultWorkOrderValue;
+                    return  parseFloat(team.defaultWorkOrderValue);
                 }
                 // if none exists return 0
-                return '0';
+                return 0;
             },
             // input: Currency,
             input: (props)=>{
@@ -1078,7 +1078,7 @@ const RequestSchema = {
                     return false;
                 }
                 if(request.type == "Booking"){
-                    request.costThreshold = '0';
+                    request.costThreshold = 0;
                     let selectedAreaDetail = null;
 
 
@@ -1134,7 +1134,7 @@ const RequestSchema = {
                             bookingIncreament = selectedAreaDetail.week.replace(/[^\d.-]/g, '');
                         }
                         bookingIncreament = parseInt(_.isEmpty(bookingIncreament)?0:bookingIncreament)
-                        request.costThreshold = (cost*bookingIncreament*(request.duration == "" ? 0 : parseFloat(request.duration))).toString();
+                        request.costThreshold = (cost*bookingIncreament*(request.duration == "" ? 0 : parseFloat(request.duration)));
                     }
                 } else {
                     // request.costThreshold = '500';
@@ -1477,7 +1477,7 @@ const RequestSchema = {
         		let bookingDetails = {
         			businessHours:businessHours,
         			previousBookingEvents:previousBookingEvents,
-        			bookingFor:bookingFor.name,
+        			bookingFor:bookingFor && bookingFor.name ? bookingFor.name : "",
                     areaDetails: bookingFor
         		};
                 return  <CalendarPeriod
@@ -1674,6 +1674,7 @@ const RequestSchema = {
                                let costAbleToIssue = true;
                                let actualCost;
                                if (team.defaultCostThreshold) {
+                                   costAbleToIssue = false;
                                  if (props.item.hasOwnProperty("costThreshold")) {
                                    if (typeof props.item.costThreshold === 'string') {
                                      actualCost = props.item.costThreshold.replace(/,/g, "");
@@ -1684,7 +1685,7 @@ const RequestSchema = {
                                    costAbleToIssue = actualCost <= team.defaultCostThreshold;
                                  }
                                }
-                               onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
+                               //onServiceChange = costAbleToIssue == true ? props.changeSubmitText(value) : props.changeSubmitText(null)
                                props.onChange(value);
                              }}/>
             },

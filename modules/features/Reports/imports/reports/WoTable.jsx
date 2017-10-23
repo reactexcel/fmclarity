@@ -8,6 +8,7 @@ import { TextArea } from '/modules/ui/MaterialInputs';
 import { AutoForm } from '/modules/core/AutoForm';
 import { ContactCard } from '/modules/mixins/Members';
 import { Modal } from '/modules/ui/Modal';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader'
 
 const WoTable = React.createClass( {
     getInitialState(){
@@ -32,7 +33,7 @@ const WoTable = React.createClass( {
   },
 
   componentDidMount(){
-    	$(".loader").hide();
+    hideLoader();
   },
 
   isHidden(facility, service ){
@@ -74,7 +75,6 @@ const WoTable = React.createClass( {
           service: r.service.name,
           type : this.props.defect ? "defectToggle" : "toggle" }
         let RemovedWoKeys =  Reports.findOne(query);
-        console.log(RemovedWoKeys);
 
         if(!RemovedWoKeys){
           let item = {
@@ -175,13 +175,7 @@ const WoTable = React.createClass( {
 
 		return (
 			<div className = "defectTable">
-        {!this.props.WoReport && <div style={{
-          color:"#0152b5",
-          fontSize:"10px",
-          fontWeight:"900",
-          cursor:"pointer",
-          padding:"10px 0 0 15px"
-              }} onClick={(e)=>{
+        {!this.props.WoReport && <div id = "NoWOReport"  onClick={(e)=>{
                 e.stopPropagation();
                 this.handleReload();
               }}>Reload</div>}
@@ -189,13 +183,13 @@ const WoTable = React.createClass( {
                   <table>
                     <thead>
                     <tr>
-                    <th>WO#</th>
-                    <th>Summary & Images</th>
-                    {this.props.defect ? <th>Status</th> : <th>Value</th>}
-                    {this.props.WoReport && <th>Status</th> }
-                    {this.props.WoReport && <th>Supplier</th>}
-                    <th>Comments</th>
-                    <th>Opt</th>
+                    <th id = "WO" >WO#</th>
+                    <th id = "summary" >Summary & Images</th>
+                    {this.props.defect ? <th id = "value" >Status</th> : <th id = "value" >Value</th>}
+                    {this.props.WoReport && <th id="status">Status</th> }
+                    {this.props.WoReport && <th id="supplier" >Supplier</th>}
+                    <th id = "comment" >Comments</th>
+                    <th id = "optHeading" >Opt</th>
                   </tr>
                   </thead>
                 <tbody>
@@ -214,22 +208,15 @@ const WoTable = React.createClass( {
                       }
                       return (
                         <tr key={idx} className="row-WO">
-                          <td onClick={()=>{
+                          <td id = "WO" onClick={()=>{
                             r["tabIndex"]= 0
                             RequestActions.view.run( r )
                           }}><label style={{cursor:"pointer"}}>{r.code}</label></td>
-                          <td style={{width:"45%"}} onClick={()=>{
+                          <td id = "summary" onClick={()=>{
                             r["tabIndex"]= 0
                             RequestActions.view.run( r )
                           }}>
-                          <span style={{
-                            color:"#0152b5",
-                            fontSize:"10px",
-                            fontWeight:"900",
-                            float:"right",
-                            cursor:"pointer",
-                            padding:"5px"
-                          }} onClick={(e)=>{
+                          <span id = "summary-info"  onClick={(e)=>{
                             e.stopPropagation();
                             r["tabIndex"]= 1
                             RequestActions.view.run( r )
@@ -240,17 +227,11 @@ const WoTable = React.createClass( {
                           <div style={{cursor:"pointer"}}>Issued Date : {moment(r.issuedAt).format("DD-MM-YYYY")}</div>
                           {imgs}
                         </td>
-                        {this.props.defect ? <td>{r.status}</td> : <td>{r.costThreshold}</td>}
-                        {this.props.WoReport && <td>{r.status}</td> }
-                        {this.props.WoReport && <td><ContactCard item = { r.supplier }/></td>}
-                        <td key ={idx + 20}>{this.getComment(r.facility, r)}</td>
-                        <td  style={{
-                          color:"#0152b5",
-                          fontSize:"10px",
-                          fontWeight:"900",
-                          cursor:"pointer",
-                          padding:"5px"
-                        }} onClick={(e)=>{
+                        {this.props.defect ? <td id = "value">{r.status}</td> : <td id = "value">{r.costThreshold}</td>}
+                        {this.props.WoReport && <td id = "status">{r.status}</td> }
+                        {this.props.WoReport && <td id = "supplier"><ContactCard item = { r.supplier }/></td>}
+                        <td id = "comment" key ={idx + 20}>{this.getComment(r.facility, r)}</td>
+                        <td id = "opt" onClick={(e)=>{
                           e.stopPropagation();
                           this.handleRemove(r.facility, r._id, r)
                         }}>hide</td>
