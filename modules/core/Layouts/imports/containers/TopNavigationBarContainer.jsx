@@ -27,7 +27,7 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
     Meteor.subscribe( 'Request: Last 10 Cancelled' );
     Meteor.subscribe( 'Team: Last 10 Created' );
 
-    if (!window.matchMedia("(min-width: 768px)").matches) {  
+    if (window.matchMedia("(min-width: 768px)").matches) {  
         Meteor.subscribe( 'Teams' );
         Meteor.subscribe( 'Reports' );
         Meteor.subscribe( 'Documents' );
