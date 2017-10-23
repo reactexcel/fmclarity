@@ -10,33 +10,36 @@
 import s3Config from '/modules/config/s3';
 let stores = [];
 
-let s3Options = {
-  accessKeyId: s3Config.account.accessKeyId,
-  secretAccessKey: s3Config.account.secretAccessKey,
-  bucket: s3Config.bucket.name,
-  folder: s3Config.bucket.folder,
-  endpoint: s3Config.bucket.endpoint
-};
-
-if (Meteor.isServer) {
-  if (s3Config.enabled()) {
-    if (!s3Config.migrate.gridfs.enabled) {
-      stores.push(new FS.Store.S3("s3Images", s3Options));
-    } else if (s3Config.migrate.gridfs.enabled) {
-    //Put Gridfs first to keep gridfs as the primary store (until we can fix the partial download issue with S3
-      stores.push(new FS.Store.GridFS("master"));
-      stores.push(new FS.Store.S3("s3Images", s3Options));
-
+// ignore s3 changes
+if (false === true) {
+    let s3Options = {
+        accessKeyId: s3Config.account.accessKeyId,
+        secretAccessKey: s3Config.account.secretAccessKey,
+        bucket: s3Config.bucket.name,
+        folder: s3Config.bucket.folder,
+        endpoint: s3Config.bucket.endpoint
+    };
+      
+    if (Meteor.isServer) {
+        if (s3Config.enabled()) {
+            if (!s3Config.migrate.gridfs.enabled) {
+                stores.push(new FS.Store.S3("s3Images", s3Options));
+            } else if (s3Config.migrate.gridfs.enabled) {
+                //Put Gridfs first to keep gridfs as the primary store (until we can fix the partial download issue with S3
+                stores.push(new FS.Store.GridFS("master"));
+                stores.push(new FS.Store.S3("s3Images", s3Options));
+            }
+        }
     }
-  }
+      
+      if (Meteor.isClient) {
+      //Put Gridfs first to keep gridfs as the primary store (until we can fix the partial download issue with S3
+        stores.push(new FS.Store.GridFS("master"));
+        stores.push(new FS.Store.S3("s3Images"));
+      }
 }
 
-if (Meteor.isClient) {
-//Put Gridfs first to keep gridfs as the primary store (until we can fix the partial download issue with S3
-  stores.push(new FS.Store.GridFS("master"));
-  stores.push(new FS.Store.S3("s3Images"));
-}
-
+stores.push(new FS.Store.GridFS("master"));
 const Files = new FS.Collection("File", {
   stores: stores
 });
