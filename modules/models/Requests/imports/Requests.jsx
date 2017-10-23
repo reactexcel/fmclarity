@@ -118,6 +118,8 @@ Requests.save.before( ( request ) => {
             name: request.team.name
         };
     }
+
+    Meteor.call('Reports.computeAggregateData', request);
 } );
 
 // *********************** this is an insecure temporary solution for updating status of requests ***********************
@@ -1337,41 +1339,6 @@ Meteor.methods({
         ];
 
         return Requests.collection.aggregate(pipeline);
-      }
-    },
-    'Requests.getRequestAmountBreakdown': (config) => {
-      if (Meteor.isServer) {
-        let query = {
-          createdAt: {
-            $gte: new Date(moment(config.date).toDate())
-          },
-          status: { $ne: 'Deleted' }
-        };
-        if (config.team && config.team._id) {
-          query['team._id'] = config.team._id;
-        }
-
-        if (config.facility && config.facility._id) {
-          query['facility._id'] = config.facility._id;
-        }
-
-        let pipeline = [
-          { $match: query },
-          { $project: {
-            serviceName: '$service.name',
-            costThreshold: '$costThreshold'
-          }},
-          { $group: {
-            _id : { serviceName: '$serviceName' },
-            count: { $sum: '$costThreshold' },
-          }},
-          { $project: {
-            serviceName: '$_id.serviceName',
-            totalCostThreshold: '$count'
-          }}
-        ];
-
-        return  Requests.collection.aggregate(pipeline);
       }
     },
     'Requests.getCalendarEntries': (user, filter, options = {expandPMP: false}, dateLimit = { start: null, end: null }) => {

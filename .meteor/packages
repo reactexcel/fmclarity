@@ -89,3 +89,4 @@ dynamic-import@0.1.3
 momentjs:moment
 meteorhacks:aggregate
 cfs:s3
+aldeed:simple-schema

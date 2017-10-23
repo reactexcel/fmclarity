@@ -15,8 +15,6 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
 
     Meteor.subscribe( 'User: Teams' );
     Meteor.subscribe( 'Users' );
-    Meteor.subscribe( 'Teams' );
-    Meteor.subscribe( 'Reports' );
 
     ////////////////////////////////////////
     //Meteor.subscribe( 'Request: Files' );
@@ -28,10 +26,14 @@ const TopNavigationBarContainer = createContainer( ( { params } ) => {
     Meteor.subscribe( 'Request: Last 10 Complete' );
     Meteor.subscribe( 'Request: Last 10 Cancelled' );
     Meteor.subscribe( 'Team: Last 10 Created' );
-    /*These need to be reduced*/
-    Meteor.subscribe( 'Documents' );
-    Meteor.subscribe( 'PPM_Schedulers' );
-    Meteor.subscribe( 'Files' );
+
+    if (window.matchMedia("(min-width: 768px)").matches) {  
+        Meteor.subscribe( 'Teams' );
+        Meteor.subscribe( 'Reports' );
+        Meteor.subscribe( 'Documents' );
+        Meteor.subscribe( 'PPM_Schedulers' );
+        Meteor.subscribe( 'Files' );
+    }
 
     let user = Meteor.user(),
         team = null,

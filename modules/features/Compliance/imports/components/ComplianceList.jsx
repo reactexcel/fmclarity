@@ -2,7 +2,7 @@ import React from "react";
 import ReactDom from "react-dom";
 import {ReactMeteorData} from 'meteor/react-meteor-data';
 
-import './ComplianceListTile.jsx';
+import ComplianceListTile from './ComplianceListTile.jsx';
 
 //
 // A variation on the 1 column filterbox which includes a left navigation bar
@@ -16,7 +16,7 @@ import './ComplianceListTile.jsx';
 // filter (object)
 //      a mongodb query object used to filter the request results
 //
-ComplianceList = React.createClass({
+export const ComplianceList = React.createClass({
 
 	render(){
         var facility,item,rules;
@@ -40,7 +40,7 @@ ComplianceList = React.createClass({
 	}
 })
 
-ComplianceGroup = React.createClass({
+export const ComplianceGroup = React.createClass({
 
     render() {
         var facility,item,rules,results;

@@ -15,6 +15,7 @@ export default RequestsPageIndexContainer = createContainer(({selectedRequestId}
     contextFilter = {},
     selectedRequest = null,
     includeComplete = false;
+  let thumbsReady = false;
 
   let statusFilterResult = getStatusFilter(selectedStatus);
   let statusFilter = statusFilterResult.statusFilter;
@@ -33,7 +34,8 @@ export default RequestsPageIndexContainer = createContainer(({selectedRequestId}
     facilities = team.getFacilities();
     if (facilities) {
       let facilityThumbs = _.pluck(facilities, 'thumb');
-      Meteor.subscribe('Thumbs', facilityThumbs);
+      let thumbsHandle = Meteor.subscribe('Thumbs', facilityThumbs);
+      thumbsReady = thumbsHandle.ready()
     }
   }
 
@@ -96,6 +98,7 @@ export default RequestsPageIndexContainer = createContainer(({selectedRequestId}
     contextFilter,
     statusFilter,
     user,
-    getStatusFilter
+    getStatusFilter,
+    thumbsReady
   }
 }, RequestsPageIndex);
