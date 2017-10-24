@@ -27,6 +27,7 @@ const RequestsStatusReport = React.createClass( {
 
 	getInitialState() {
 		return {
+			facility: this.props.facility,
 			service: null,
 			showServiceField:true,
 			startDate: null,
