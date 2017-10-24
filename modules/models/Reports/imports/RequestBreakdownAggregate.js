@@ -11,7 +11,7 @@ RequestBreakdownAggregate.schema = new SimpleSchema(
   RequestBreakdownAggregateSchema
 );
 
-RequestBreakdownAggregate.computeAggregateData = (
+RequestBreakdownAggregate.computeAggregateData = async (
   requestDate,
   team_id,
   facility_id

@@ -1,5 +1,6 @@
 import { Teams } from '/modules/models/Teams';
 import { Facilities } from '/modules/models/Facilities';
+import { Requests } from '/modules/models/Requests';
 
 import {
   RequestOverviewAggregate,
@@ -7,10 +8,24 @@ import {
   RequestActivityAggregate
 } from "../";
 
-function computeAggregateData(requestDate, team_id, facility_id) {
-  RequestOverviewAggregate.computeAggregateData(requestDate, team_id, facility_id);
-  RequestBreakdownAggregate.computeAggregateData(requestDate, team_id, facility_id);
-  RequestActivityAggregate.computeAggregateData(requestDate, team_id, facility_id);
+async function cleanupRequestsCollection() {
+  let requests = Requests.find({ costThreshold: { $type: 2 }}); // find all requests that has the type of string
+  let total = requests.count();
+  let count = 1;
+  requests.fetch().map((request) => {
+    if (request && request._id) {
+      let costThreshold = parseFloat(request.costThreshold);
+      Requests.collection.update(
+        { _id: request._id },
+        {
+          $set: {
+            costThreshold: isNaN(costThreshold) ? 0 : costThreshold
+          }
+        }
+      );
+      count++;
+    }
+  });
 }
 
 Meteor.methods({
@@ -32,7 +47,9 @@ Meteor.methods({
   },
   // compute requests aggregate data for all facilities and teams for the last 2 years
   // this should be ran only by a cron which should be set to be ran between long periods of time
-  'Reports.computeAggregateDataForThePastTwoYears': () => {
+  'Reports.computeAggregateDataForThePastTwoYears': async () => {
+    await cleanupRequestsCollection();
+
     let date = moment()
       .startOf('month')
       .add(1, 'd');
@@ -40,24 +57,30 @@ Meteor.methods({
       .clone()
       .subtract(2, 'y')
       .startOf('month');
+    let oneYearAgo = date
+      .clone()
+      .subtract(1, 'y')
+      .startOf('month');
     let endDate = date.clone().endOf('month');
-    let currentDate = startDate.clone();
+    let currentDate = endDate.clone();
 
-    // get all teams
     let teams = Teams.find({}).fetch();
-
-    // loop through all teams
-    for (let team of teams) {
-      let facilities = Facilities.find({ 'team._id': team._id }).fetch();
-
-      if (facilities.length > 0) {
-        while (moment(currentDate).isBefore(moment(endDate))) {
-          for (let facility of facilities) {
-            computeAggregateData(currentDate, team._id, facility._id);
+    let facilities = Facilities.find({}).fetch();
+    
+    while (moment(currentDate).isAfter(moment(startDate))) {
+      for (let team of teams) {
+        for (let facility of facilities) {    
+          if (facility.team && facility.team._id === team._id) {
+            await RequestOverviewAggregate.computeAggregateData(currentDate, team._id, facility._id);
+            if (moment(currentDate).isAfter(oneYearAgo)) {
+              await RequestBreakdownAggregate.computeAggregateData(currentDate, team._id, facility._id);
+              await RequestActivityAggregate.computeAggregateData(currentDate, team._id, facility._id);
+            }
+            console.log(currentDate.format('MMM YYYY') + ' Team ' + team.name + ': Finished Aggregation of Facility ' + facility.name + '');
           }
-          currentDate.add(1, 'M');
         }
       }
+      currentDate.subtract(1, 'M');
     }
   }
 });

@@ -11,7 +11,7 @@ RequestActivityAggregate.schema = new SimpleSchema(
   RequestActivityAggregateSchema
 );
 
-RequestActivityAggregate.computeAggregateData = (
+RequestActivityAggregate.computeAggregateData = async (
   requestDate,
   team_id,
   facility_id
