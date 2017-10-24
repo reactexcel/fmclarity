@@ -1,5 +1,6 @@
 const s3Config = {
   enabled: function () {
+    return false; // force disable of s3
     let enabled = process.env.S3_ENABLED === 'true';
     if (enabled) {
       return (Boolean(enabled) &&
