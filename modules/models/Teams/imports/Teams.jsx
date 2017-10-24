@@ -580,26 +580,30 @@ Teams.helpers( {
         }
         let team = Session.getSelectedTeam();
         let facilityIds = [];
-        Meteor.call('Requests.findFacilityIdsAssociatedOnRequestsForUser', user, team, {}, (error, response) => {
-            if (response) {
-              response.map((item) => {
-                facilityIds.push(item._id);
-              });
+        let query = [];
+        let teamId = null;
+        if (team && team._id) {
+            teamId = team._id;
+            query.push({
+                $or: [
+                    {'team._id': teamId},
+                    {'supplier._id': teamId},
+                    {'realEstateAgency._id': teamId}
+                ]
+            });
+        }
+        let allRequest =  Requests.find(query[0]).fetch();
+        _.map( allRequest, ( req ) => {
+            if(req.facility && req.facility._id && !_.contains(facilityIds,req.facility._id)){
+                facilityIds.push(req.facility._id)
             }
-        });
+        })
 
-        let q = null,
-            facilitiesQuery = {
-                $or: [ {
-                    $and: [
-                        //{ "team._id": this._id },
-                        { "members._id": user._id },
-                    ]
-                }, {
-                    _id: { $in: facilityIds }
-                } ]
-            };
+        facilitiesQuery = {
+            '_id': { $in: facilityIds }
+        };
 
+        let q = null;
         if ( filterQuery ) {
             q = {
                 $and: [
@@ -610,7 +614,6 @@ Teams.helpers( {
         } else {
             q = facilitiesQuery;
         }
-
         return Facilities.findAll( q, { sort: { name: 1 } } );
     },
 
