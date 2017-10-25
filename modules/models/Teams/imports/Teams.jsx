@@ -25,7 +25,6 @@ import { Requests } from '/modules/models/Requests';
 import { Facilities } from '/modules/models/Facilities';
 
 import { SupplierInviteEmailTemplate } from '/modules/core/Email';
-//console.log( Members );
 
 /**
  * @memberOf module:models/Teams
@@ -188,7 +187,7 @@ Teams.methods( {
             var user = Meteor.user();
             var teamIds = [];
             let {requests} = user.getRequests();
-            
+
             if ( requests && requests.length ) {
                 requests.map( function( i ) {
                     if ( i.team ) {
@@ -371,22 +370,6 @@ function sendMemberInvite( team, recipient ) {
             } )
         );
 
-        /*
-            getEmail( notification ) {
-            // we need to see the notification to do this
-            let body = ReactDOMServer.renderToStaticMarkup(
-                    React.createElement( EmailMessageView, { notification } )
-               );
-
-            let { recipient } = notification;
-            console.log( body );
-            return {
-                to:recipient.name?(recipient.name+" <"+recipient.profile.email+">"):recipient.profile.email,
-                from:"FM Clarity <no-reply@fmclarity.com>",
-                subject:"FM Clarity notification",
-                emailBody:body
-            }
-        }*/
         Meteor.call( 'Messages.sendEmail', recipient, {
             subject: team.name + " has invited you to join FM Clarity",
             emailBody: body
@@ -588,13 +571,60 @@ Teams.helpers( {
         return Facilities.findAll( q, { sort: { name: 1 } } );
     },
 
+    getSuppliersFacilities( filterQuery ) {
+        //return all facilities user is a member of
+        //and all the facilities in the requests user can see
+        var user = Meteor.user();
+        if ( !user ) {
+            return []
+        }
+        let team = Session.getSelectedTeam();
+        let facilityIds = [];
+        let query = [];
+        let teamId = null;
+        if (team && team._id) {
+            teamId = team._id;
+            query.push({
+                $or: [
+                    {'team._id': teamId},
+                    {'supplier._id': teamId},
+                    {'realEstateAgency._id': teamId}
+                ]
+            });
+        }
+        let allRequest =  Requests.find(query[0]).fetch();
+        _.map( allRequest, ( req ) => {
+            if(req.facility && req.facility._id && !_.contains(facilityIds,req.facility._id)){
+                facilityIds.push(req.facility._id)
+            }
+        })
+
+        facilitiesQuery = {
+            '_id': { $in: facilityIds }
+        };
+
+        let q = null;
+        if ( filterQuery ) {
+            q = {
+                $and: [
+                    facilitiesQuery,
+                    filterQuery
+                ]
+            };
+        } else {
+            q = facilitiesQuery;
+        }
+        return Facilities.findAll( q, { sort: { name: 1 } } );
+    },
+
     getFacilities( q ) {
         //this is vulnerable to error - what if the name changes
         //of course if we only have the name then we need to add the id at some point
         var role = this.getMemberRole( Meteor.user() );
-        //console.log(role);
-        if ( role == "fmc support" || role == "support" || role == "portfolio manager" || ( this.type == "contractor" && role == "manager" ) ) {
+        if ( role == "fmc support" || role == "support" || role == "portfolio manager"  ) {
             return this.getManagerFacilities( q );
+        } else if ( ( this.type == "contractor" && role == "manager" ) ){
+            return this.getSuppliersFacilities( q );
         }
         /*else if ( role == "manager" ) {
           return this.getManagerFacilities( q ).concat( this.getStaffFacilities( q ) );
@@ -667,7 +697,6 @@ Teams.helpers( {
             q = requestsQuery;
         }
 
-        console.log( q );
 
         return Requests.find( q )
             .fetch();
@@ -723,8 +752,6 @@ Teams.helpers( {
         } else {
             q = requestsQuery;
         }
-
-        console.log( q );
 
         return Requests.find( q )
             .fetch();

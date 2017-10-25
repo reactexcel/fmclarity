@@ -809,7 +809,7 @@ function setAssignee( request, assignee ) {
     request = Requests.collection._transform( request );
     request.dangerouslyAddMember( request, assignee, { role: "assignee" } );
     if ( request ) {
-                    
+
                 request.distributeMessage( {
                     recipientRoles: [ "assignee" ],
                     suppressOriginalPost: true,
@@ -1349,7 +1349,7 @@ Meteor.methods({
             if (Meteor.isServer) {
               team = options.team ? options.team : null;
             }
-          
+
             let teamId = null;
             if (team) {
               teamId = team._id;
@@ -1361,12 +1361,12 @@ Meteor.methods({
                 ]
               });
             }
-          
+
             //if filter passed to function then add that to the query
             if (filter) {
               query.push(filter);
             }
-          
+
             // clone PPM query the date limit should only apply to requests. Scheduled PPM objects are generated at runtime and
             // does not use up a lot of memory
             let PPMQuery = JSON.parse(JSON.stringify(query));
@@ -1376,16 +1376,16 @@ Meteor.methods({
                 $lt: new Date(dateLimit.end)
               }});
             }
-        
-          
+
+
             let currentCollection = Requests.collection.find({$and: query});
             let requests = currentCollection ? currentCollection.fetch() : [];
-          
+
             if (options.expandPMP) {
               PPMQuery.push({
                 type: "Scheduler"
               });
-          
+
               let PPMRequests = PPM_Schedulers.collection.find({
                 $and: PPMQuery
               }).fetch({ sort: { createdAt: 1 } });
