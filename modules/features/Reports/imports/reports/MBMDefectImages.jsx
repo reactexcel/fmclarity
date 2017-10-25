@@ -3,7 +3,7 @@ import PubSub from 'pubsub-js';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 
 import { Menu } from '/modules/ui/MaterialNavigation';
-import { Requests } from '/modules/models/Requests';
+import { Requests, PPM_Schedulers } from '/modules/models/Requests';
 import { Reports } from '/modules/models/Reports';
 import { ServicesRequestsView } from '/modules/mixins/Services';
 import { Facilities } from '/modules/models/Facilities';
