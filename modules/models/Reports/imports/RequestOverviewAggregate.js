@@ -9,7 +9,7 @@ const RequestOverviewAggregate = new Mongo.Collection('RequestOverviewAggregate'
 RequestOverviewAggregate.schema = new SimpleSchema(RequestOverviewAggregateSchema);
 
 
-RequestOverviewAggregate.computeAggregateData = (requestDate, team_id, facility_id) => {
+RequestOverviewAggregate.computeAggregateData = async (requestDate, team_id, facility_id) => {
   let date = (requestDate ? moment(requestDate) : moment())
     .startOf('month')
     .add(1, 'd');

@@ -27,6 +27,7 @@ const RequestsStatusReport = React.createClass( {
 
 	getInitialState() {
 		return {
+			facility: this.props.facility,
 			service: null,
 			showServiceField:true,
 			startDate: null,
@@ -81,7 +82,7 @@ const RequestsStatusReport = React.createClass( {
 			}
 			if ( team ) {
 				let { requests } = user.getRequests( q );
-				data.requests = requests;
+      	data.requests = requests;
 			}
 		}
 		return {
@@ -327,10 +328,9 @@ const RequestsStatusReport = React.createClass( {
 							/>
 						</div>
 					</div>
-
 				</div>
 				<div className = "ibox" ref="printable">
-					<DataTable items={data.requests} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
+					<DataTable items={data} fields={fields} includeActionMenu={true} setDataSet={this.setDataSet}/>
 				</div>
 			</div>
 		)

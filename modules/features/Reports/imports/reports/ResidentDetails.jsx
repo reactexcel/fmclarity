@@ -14,6 +14,7 @@ import { Facilities } from '/modules/models/Facilities';
 
 
 import { ContactCard } from '/modules/mixins/Members';
+import { hideLoader } from '/modules/ui/Loader/imports/components/Loader';
 
 import moment from 'moment';
 
@@ -109,7 +110,8 @@ const ResidentDetails = React.createClass( {
  		return sortedList
 	},
 	componentDidUpdate(){
-    Session.set('showLoader', false);
+		hideLoader();
+    	Session.set('showLoader', false);
 	},
 
 	render() {

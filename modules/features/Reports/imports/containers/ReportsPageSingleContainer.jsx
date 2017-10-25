@@ -19,19 +19,21 @@ const ReportsPageSingleContainer = createContainer( ( params ) => {
 	let facility = Session.getSelectedFacility(),
 		team = Session.getSelectedTeam(),
 		facilities = null;
-
+	let thumbsReady = false;
 	if ( team ) {
 		facilities = team.getFacilities();//Facilities.findAll( { 'team._id': team._id } );
 		if ( facilities ) {
 			let facilityThumbs = _.pluck( facilities, 'thumb' );
-			Meteor.subscribe( 'Thumbs', facilityThumbs );
+			let thumbsHandle = Meteor.subscribe('Thumbs', facilityThumbs);
+      thumbsReady = thumbsHandle.ready()
 		}
 	}
 
 	return {
 		facilities,
 		facility,
-		team
+		team,
+    thumbsReady
 	}
 }, ReportsPageSingle );
 
