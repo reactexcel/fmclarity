@@ -26,6 +26,7 @@ const WorkOrderReport = React.createClass( {
 
 	getInitialState() {
 		return {
+			facility: this.props.facility,
 			service: null,
 			status: null,
 			startDate: null,

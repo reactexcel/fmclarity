@@ -14,7 +14,7 @@ import { FacilityFilter } from '/modules/models/Facilities';
  * @param 			{string} id - the registered id of the report that should be rendered
  */
 function ReportsPageSingle( props ) {
-	let { id, facilities, facility, team } = props;
+	let { id, facilities, facility, team, thumbsReady } = props;
 	let report = Reports.get( { id } ),
 		ReportComponent = null;
 	if ( report ) {
@@ -22,7 +22,7 @@ function ReportsPageSingle( props ) {
 	}
 	return (
 		<div className="report-page animated fadeIn">
-			<FacilityFilter items={ facilities } selectedItem={ facility }/>
+			{thumbsReady ? <FacilityFilter items={facilities} selectedItem={facility} />: null}
 			<div className="row" style={{paddingTop:'50px'}}>
 				<div className="col-md-12">
 					<div className="ibox">
